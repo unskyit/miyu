@@ -39,7 +39,7 @@
         button:active:not(:disabled) { transform: scale(0.95); }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        .btn-primary { background: var(--text-primary); color: var(--bg-color); padding: 12px 20px; border-radius: 20px; font-weight: 500; font-size: 14px; width: 100%; }
+        .btn-primary { background: var(--text-primary); color: var(--bg-color); padding: 12px 20px; border-radius: 20px; font-weight: 500; font-size: 14px; width: 100%; transition: 0.3s; }
         .btn-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-color); border: 0.5px solid var(--border); }
         input { background: var(--surface-color); border: 0.5px solid var(--border); color: var(--text-primary); padding: 12px 16px; border-radius: 12px; outline: none; width: 100%; transition: 0.2s; }
         input:focus { border-color: var(--text-secondary); }
@@ -182,7 +182,7 @@
                 <input type="file" id="upload-file" accept="audio/*" style="padding: 10px 0; border: none; background: transparent;">
                 
                 <div id="upload-progress-container" class="hidden" style="width: 100%; height: 6px; background: var(--surface-hover); border-radius: 3px; overflow: hidden; margin-top: 8px;">
-                    <div id="upload-progress-bar" style="height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease, background-color 0.3s;"></div>
+                    <div id="upload-progress-bar" style="height: 100%; background: var(--accent); width: 0%; transition: width 0.1s linear, background-color 0.3s;"></div>
                 </div>
 
                 <button type="button" id="upload-submit-btn" class="btn-primary" onclick="App.library.uploadSong()">Upload to Miyu</button>
@@ -314,7 +314,7 @@
                     `).join('');
                 },
                 
-                // --- UPDATED UPLOAD LOGIC ---
+                // --- NATIVE REAL-TIME UPLOAD ---
                 async uploadSong() {
                     const btn = document.getElementById('upload-submit-btn');
                     const progressContainer = document.getElementById('upload-progress-container');
@@ -325,6 +325,9 @@
                     try {
                         if(!fileInput.files.length) { App.ui.toast("Select an audio file"); return; }
                         
+                        const { data: { session }, error: sessionErr } = await miyuDB.auth.getSession();
+                        if (!session || sessionErr) { App.ui.toast("Authentication required to upload"); return; }
+
                         const file = fileInput.files[0];
                         if(!file.type.includes('audio')) { App.ui.toast("File must be audio format"); return; }
 
@@ -332,53 +335,82 @@
                         const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
                         const filePath = `${App.state.user.id}/${Date.now()}_${safeFileName}`;
                         
-                        // Setup UI for uploading
+                        // Setup UI
                         btn.innerText = "Uploading...";
                         btn.disabled = true;
                         progressContainer.classList.remove('hidden');
                         progressBar.style.backgroundColor = 'var(--accent)';
-                        progressBar.style.width = '10%';
+                        progressBar.style.width = '0%';
 
-                        // Simulate progress bar moving
-                        let fakeProgress = 10;
-                        const progressInterval = setInterval(() => {
-                            if (fakeProgress < 90) {
-                                fakeProgress += (Math.random() * 5);
-                                progressBar.style.width = `${fakeProgress}%`;
-                            }
-                        }, 400);
-
-                        // Upload to Storage
-                        const { error: uploadErr } = await miyuDB.storage.from('music').upload(filePath, file);
+                        // Native XMLHttpRequest to track actual bytes uploaded
+                        const xhr = new XMLHttpRequest();
                         
-                        clearInterval(progressInterval);
+                        // Storage Endpoint
+                        xhr.open('POST', `${MIYU_URL}/storage/v1/object/music/${filePath}`, true);
+                        xhr.setRequestHeader('Authorization', `Bearer ${session.access_token}`);
+                        xhr.setRequestHeader('apikey', MIYU_KEY);
+                        xhr.setRequestHeader('Content-Type', file.type || 'audio/mpeg');
 
-                        if (uploadErr) {
-                            progressBar.style.backgroundColor = '#ff3b30'; // Turn red on fail
-                            throw uploadErr;
-                        }
+                        // Track Progress
+                        xhr.upload.onprogress = (e) => {
+                            if (e.lengthComputable) {
+                                const percent = (e.loaded / e.total) * 100;
+                                // We cap at 98% because we still need to wait for the Database Insert to finish
+                                progressBar.style.width = `${Math.min(percent, 98)}%`;
+                            }
+                        };
 
-                        // Snap to 100%
-                        progressBar.style.width = '100%';
+                        // Handle Completion
+                        xhr.onload = async () => {
+                            if (xhr.status >= 200 && xhr.status < 300) {
+                                // Storage upload succeeded! Now save metadata to the Database.
+                                const { error: dbErr } = await miyuDB.from('songs').insert([
+                                    { user_id: App.state.user.id, title, file_path: filePath, file_size: file.size }
+                                ]);
 
-                        // Insert to Database
-                        const { error: dbErr } = await miyuDB.from('songs').insert([
-                            { user_id: App.state.user.id, title, file_path: filePath, file_size: file.size }
-                        ]);
-                        if (dbErr) throw dbErr;
+                                if (dbErr) {
+                                    progressBar.style.backgroundColor = '#ff3b30'; // Turn red
+                                    App.ui.toast("Database Error: " + dbErr.message);
+                                    btn.innerText = "Try Again";
+                                    btn.disabled = false;
+                                    return;
+                                }
 
-                        // Reset UI after short delay for visual satisfaction
-                        setTimeout(() => {
-                            App.ui.toast("Upload complete!");
-                            App.ui.toggleModal('upload-modal');
-                            fileInput.value = '';
-                            titleInput.value = '';
-                            progressBar.style.width = '0%';
-                            progressContainer.classList.add('hidden');
-                            btn.innerText = "Upload to Miyu";
+                                // 100% Success
+                                progressBar.style.width = '100%';
+                                
+                                setTimeout(() => {
+                                    App.ui.toast("Upload complete!");
+                                    App.ui.toggleModal('upload-modal');
+                                    fileInput.value = '';
+                                    titleInput.value = '';
+                                    progressBar.style.width = '0%';
+                                    progressContainer.classList.add('hidden');
+                                    btn.innerText = "Upload to Miyu";
+                                    btn.disabled = false;
+                                    this.loadLibrary();
+                                }, 600);
+
+                            } else {
+                                // Supabase returned an error code (e.g. 403 Forbidden because of RLS)
+                                let msg = "Storage rejected file";
+                                try { msg = JSON.parse(xhr.responseText).message; } catch(e){}
+                                progressBar.style.backgroundColor = '#ff3b30'; // Turn red
+                                App.ui.toast("Upload Error: " + msg);
+                                btn.innerText = "Try Again";
+                                btn.disabled = false;
+                            }
+                        };
+
+                        xhr.onerror = () => {
+                            progressBar.style.backgroundColor = '#ff3b30'; // Turn red
+                            App.ui.toast("Network Connection Lost");
+                            btn.innerText = "Try Again";
                             btn.disabled = false;
-                            this.loadLibrary();
-                        }, 600);
+                        };
+
+                        // Send the actual file bytes
+                        xhr.send(file);
 
                     } catch (err) {
                         App.ui.toast("Upload failed: " + err.message);
