@@ -2,81 +2,117 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Miyu</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23000%22/></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Miyu | Premium</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23ffffff%22/></svg>">
     
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
-            --bg-color: #000000; --surface-color: rgba(20, 20, 20, 0.6); --surface-hover: rgba(40, 40, 40, 0.8);
-            --text-primary: #ffffff; --text-secondary: #888888; --accent: #ffffff;
-            --border: rgba(255, 255, 255, 0.1); --glass-blur: blur(20px); --shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            /* AMOLED Dark */
+            --bg: #000000; --surface: rgba(20, 20, 20, 0.65); --surface-hover: rgba(40, 40, 40, 0.85);
+            --text-main: #ffffff; --text-muted: #888888; --accent: #ffffff;
+            --border: rgba(255, 255, 255, 0.08); --blur: blur(24px); --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --danger: #ff453a; --success: #32d74b;
+        }
+        [data-theme="ips"] {
+            /* IPS Premium Deep Gray */
+            --bg: #121212; --surface: rgba(30, 30, 30, 0.7); --surface-hover: rgba(50, 50, 50, 0.9);
+            --text-main: #f5f5f5; --text-muted: #9e9e9e; --accent: #ffffff;
+            --border: rgba(255, 255, 255, 0.05); --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
         [data-theme="light"] {
-            --bg-color: #f5f5f7; --surface-color: rgba(255, 255, 255, 0.7); --surface-hover: rgba(240, 240, 240, 0.9);
-            --text-primary: #000000; --text-secondary: #666666; --accent: #000000;
-            --border: rgba(0, 0, 0, 0.05); --shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            /* Crisp Light */
+            --bg: #f5f5f7; --surface: rgba(255, 255, 255, 0.7); --surface-hover: rgba(240, 240, 240, 0.9);
+            --text-main: #1d1d1f; --text-muted: #86868b; --accent: #000000;
+            --border: rgba(0, 0, 0, 0.06); --shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
         }
 
-        ::backdrop { background-color: var(--bg-color); }
-        :fullscreen { background-color: var(--bg-color); display: flex; flex-direction: column; width: 100vw; height: 100vh; }
+        ::backdrop { background-color: var(--bg); }
+        :fullscreen { background-color: var(--bg); display: flex; flex-direction: column; width: 100vw; height: 100vh; }
         
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lexend', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color); color: var(--text-primary); min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; transition: background-color 0.3s, color 0.3s; }
-        .glass { background: var(--surface-color); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 0.5px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; transition: background-color 0.4s ease; }
         
+        .glass { background: var(--surface); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); }
         .hidden { display: none !important; }
         .flex { display: flex; } .flex-col { display: flex; flex-direction: column; }
         .items-center { align-items: center; } .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
         .gap-2 { gap: 8px; } .gap-4 { gap: 16px; }
 
-        button { background: none; border: none; color: inherit; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; outline: none; }
-        button:hover:not(:disabled) { opacity: 0.7; transform: scale(0.98); }
-        button:active:not(:disabled) { transform: scale(0.95); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button { background: none; border: none; color: inherit; cursor: pointer; transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1); display: flex; align-items: center; justify-content: center; outline: none; }
+        button:hover:not(:disabled) { transform: scale(0.96); opacity: 0.8; }
+        button:active:not(:disabled) { transform: scale(0.92); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; }
         
-        .btn-primary { background: var(--text-primary); color: var(--bg-color); padding: 12px 20px; border-radius: 20px; font-weight: 500; font-size: 14px; width: 100%; transition: 0.3s; }
-        .btn-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-color); border: 0.5px solid var(--border); }
-        input { background: var(--surface-color); border: 0.5px solid var(--border); color: var(--text-primary); padding: 12px 16px; border-radius: 12px; outline: none; width: 100%; transition: 0.2s; }
-        input:focus { border-color: var(--text-secondary); }
+        .btn-primary { background: var(--text-main); color: var(--bg); padding: 14px 24px; border-radius: 24px; font-weight: 600; font-size: 14px; width: 100%; transition: 0.3s; }
+        .btn-icon { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); }
         
-        #app-screen { flex: 1; display: flex; flex-direction: column; height: 100%; width: 100%; position: relative; }
-        header { padding: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        main { flex: 1; overflow-y: auto; padding: 0 20px 140px 20px; scroll-behavior: smooth; } 
+        input, textarea, select { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); padding: 14px 16px; border-radius: 14px; outline: none; width: 100%; transition: 0.2s; font-size: 14px; }
+        input:focus, textarea:focus { border-color: var(--text-muted); }
+
+        /* Typography & Layout */
+        header { padding: env(safe-area-inset-top, 20px) 24px 20px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+        h2 { font-size: 20px; font-weight: 600; margin: 24px 0 16px 0; letter-spacing: -0.3px; }
+        h3 { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-top: 24px; margin-bottom: 12px; }
+        
+        main { flex: 1; overflow-y: auto; padding: 0 24px 180px 24px; scroll-behavior: smooth; } 
         main::-webkit-scrollbar { display: none; }
+
+        /* Component Cards */
+        .card { padding: 14px 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        .card:hover { background: var(--surface-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .card-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 200px;}
+        .card-info p { font-size: 12px; color: var(--text-muted); font-weight: 500;}
         
-        h2 { font-size: 18px; font-weight: 500; margin-bottom: 16px; margin-top: 24px; }
-        .item-card { padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; background: var(--surface-color); border: 0.5px solid var(--border); cursor: pointer; transition: 0.2s; }
-        .item-card:hover { background: var(--surface-hover); }
-        .item-info h4 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
-        .item-info p { font-size: 12px; color: var(--text-secondary); }
+        /* Avatar System */
+        .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; margin-right: 16px; flex-shrink: 0;}
+        
+        /* Grid Playlists */
+        .playlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
+        .pl-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; }
+        .pl-card:hover { transform: scale(1.03); }
+        .pl-cover { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        .pl-info { padding: 12px; }
+        .pl-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+        .pl-info p { font-size: 11px; color: var(--text-muted); }
 
-        #player-container { position: absolute; bottom: 85px; left: 20px; right: 20px; padding: 16px; z-index: 20; display: flex; flex-direction: column; gap: 12px; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        #visualizer-canvas { width: 100%; height: 60px; border-radius: 8px; margin-bottom: 8px; pointer-events: none; }
-        .player-controls { display: flex; justify-content: space-between; align-items: center; }
-        .main-controls { display: flex; gap: 16px; align-items: center; }
-        .play-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--text-primary); color: var(--bg-color); }
-        .progress-container { width: 100%; height: 6px; background: var(--surface-hover); border-radius: 3px; cursor: pointer; overflow: hidden; position: relative; }
-        .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.1s linear; pointer-events: none; }
+        /* The Ultimate Player */
+        #player-container { position: fixed; bottom: 85px; left: 20px; right: 20px; padding: 20px; z-index: 20; display: flex; flex-direction: column; gap: 16px; overflow: hidden; }
+        #visualizer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.8; transition: opacity 0.3s; }
+        .player-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .main-controls { display: flex; gap: 20px; align-items: center; }
+        .play-btn { width: 56px; height: 56px; border-radius: 50%; background: var(--text-main); color: var(--bg); box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
+        
+        .progress-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; font-weight: 600;}
+        .progress-container { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; cursor: pointer; position: relative; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--text-main); width: 0%; transition: width 0.1s linear; border-radius: 3px; }
+        
+        /* Navigation */
+        nav { position: fixed; bottom: 0; width: 100%; height: 75px; display: flex; justify-content: space-around; align-items: center; z-index: 30; background: var(--surface); backdrop-filter: var(--blur); border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); font-size: 10px; font-weight: 600; width: 64px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;}
+        .nav-item.active { color: var(--text-main); }
 
-        nav { position: absolute; bottom: 0; width: 100%; height: 70px; display: flex; justify-content: space-around; align-items: center; z-index: 30; background: var(--surface-color); backdrop-filter: var(--glass-blur); border-top: 0.5px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 11px; width: 60px; cursor: pointer; }
-        .nav-item.active { color: var(--text-primary); }
-
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        /* Modals */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .modal.active { opacity: 1; pointer-events: all; }
-        .modal-content { width: 100%; max-width: 500px; background: var(--bg-color); border-top: 0.5px solid var(--border); border-radius: 24px 24px 0 0; padding: 24px; transform: translateY(100%); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); max-height: 85vh; overflow-y: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+        .modal-content { width: 100%; max-width: 500px; background: var(--bg); border: 1px solid var(--border); border-radius: 32px 32px 0 0; padding: 32px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-height: 90vh; overflow-y: auto; padding-bottom: calc(32px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
         .modal.active .modal-content { transform: translateY(0); }
-        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 0.5px solid var(--border); }
-
-        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); padding: 12px 24px; border-radius: 20px; font-size: 13px; z-index: 200; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); background: var(--surface-hover); color: var(--text-primary); border: 1px solid var(--border); text-align: center; max-width: 90%; box-shadow: var(--shadow); font-weight: 500; pointer-events: none;}
-        #toast.show { transform: translateX(-50%) translateY(0); }
         
-        .guest-message { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 14px; }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border); font-weight: 500;}
+        .setting-row select { width: auto; padding: 8px 12px; font-size: 13px; }
+
+        /* Upload Staging List */
+        .stage-item { display: flex; flex-direction: column; gap: 8px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; }
+        .stage-prog-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .stage-prog-fill { height: 100%; background: var(--success); width: 0%; transition: 0.2s; }
+
+        #toast { position: fixed; top: env(safe-area-inset-top, 20px); left: 50%; transform: translateX(-50%) translateY(-100px); padding: 14px 28px; border-radius: 30px; font-size: 13px; z-index: 200; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); background: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border); text-align: center; max-width: 90%; box-shadow: var(--shadow); font-weight: 600; pointer-events: none; backdrop-filter: blur(10px);}
+        #toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
@@ -85,60 +121,71 @@
 
     <div id="app-screen">
         <header>
-            <h1 style="font-size: 20px; font-weight: 400; letter-spacing: 1px;">Miyu</h1>
+            <h1>Miyu</h1>
             <div class="flex gap-4 items-center">
-                <button type="button" onclick="App.ui.toggleFullscreen()" title="Fullscreen"><i class="ph ph-corners-out size-20" id="icon-fullscreen"></i></button>
-                <button id="upload-btn-header" class="btn-icon hidden" onclick="App.ui.toggleModal('upload-modal')" title="Upload"><i class="ph ph-upload-simple"></i></button>
-                <button class="btn-icon" onclick="App.ui.toggleModal('settings-modal')" title="Settings"><i class="ph ph-gear size-20"></i></button>
+                <button type="button" class="btn-icon" id="sync-btn-header" onclick="App.sync.toggleMenu()" title="Listen Together" style="display:none;"><i class="ph ph-broadcast size-20"></i></button>
+                <button type="button" onclick="App.ui.toggleFullscreen()" title="Fullscreen"><i class="ph ph-corners-out size-24" id="icon-fullscreen"></i></button>
+                <button type="button" id="upload-btn-header" class="btn-icon hidden" onclick="App.ui.toggleModal('upload-modal')" title="Upload"><i class="ph ph-plus size-20"></i></button>
+                <button type="button" class="btn-icon" onclick="App.ui.toggleModal('settings-modal')" title="Settings"><i class="ph ph-sliders-horizontal size-20"></i></button>
             </div>
         </header>
 
         <main id="main-content">
             <div id="tab-people" class="tab-content">
-                <h2>Exploration</h2>
+                <h2>Community</h2>
                 <div id="users-list">
-                    <p style="color:var(--text-secondary); font-size:12px;">Loading community...</p>
+                    <p style="color:var(--text-muted); font-size:13px; text-align:center;">Loading network...</p>
                 </div>
             </div>
 
             <div id="tab-library" class="tab-content hidden">
                 <div class="flex justify-between items-center">
-                    <h2>Your Library</h2>
+                    <h2>Library</h2>
                 </div>
                 
-                <div id="library-guest-msg" class="guest-message">
-                    <i class="ph ph-lock-key size-32" style="margin-bottom: 12px; opacity: 0.5;"></i>
-                    <p>Log in to upload music and manage your personal library.</p>
-                    <button type="button" class="btn-primary" style="margin-top: 20px;" onclick="App.ui.toggleModal('login-modal')">Log In</button>
+                <div id="library-guest-msg" class="flex-col items-center justify-center" style="padding: 60px 20px; text-align: center;">
+                    <i class="ph ph-lock-key size-48" style="margin-bottom: 20px; color: var(--text-muted);"></i>
+                    <p style="color: var(--text-muted); font-weight: 500; margin-bottom: 24px;">Log in to orchestrate your personal space.</p>
+                    <button type="button" class="btn-primary" style="max-width: 200px;" onclick="App.ui.toggleModal('login-modal')">Authenticate</button>
                 </div>
 
                 <div id="library-user-content" class="hidden">
-                    <h3>Playlists <button type="button" id="create-playlist-btn" onclick="App.library.createPlaylist()" style="display:inline; color:var(--text-secondary)"><i class="ph ph-plus-circle"></i></button></h3>
-                    <div id="playlists-list" class="flex-col gap-2"></div>
-                    <h3 style="margin-top:20px;">All Songs</h3>
-                    <div id="songs-list" class="flex-col gap-2"></div>
+                    <div class="flex justify-between items-center">
+                        <h3>Playlists</h3>
+                        <button type="button" onclick="App.ui.toggleModal('create-pl-modal')" style="color:var(--text-muted); font-size: 12px; font-weight: 600;"><i class="ph ph-plus" style="margin-right: 4px;"></i> NEW</button>
+                    </div>
+                    <div id="playlists-list" class="playlist-grid"></div>
+                    
+                    <h3>All Tracks</h3>
+                    <div id="songs-list" class="flex-col"></div>
                 </div>
             </div>
         </main>
 
         <div id="player-container" class="glass">
             <canvas id="visualizer-canvas"></canvas>
-            <div class="flex justify-between items-center" style="margin-bottom: 8px;">
-                <div class="item-info" style="max-width: 65%; overflow: hidden; white-space: nowrap;">
-                    <h4 id="player-title">No track selected</h4>
-                    <p id="player-artist">Miyu Space</p>
+            <div class="flex justify-between items-center" style="margin-bottom: 12px; z-index: 2;">
+                <div class="card-info" style="max-width: 70%;">
+                    <h4 id="player-title" style="font-size: 16px;">Miyu Space</h4>
+                    <p id="player-artist" style="font-size: 12px; opacity: 0.8;">Idle</p>
                 </div>
-                <div style="font-size: 11px; color: var(--text-secondary); font-variant-numeric: tabular-nums;"><span id="time-current">0:00</span> / <span id="time-total">0:00</span></div>
+                <button type="button" onclick="App.audio.toggleVolume()"><i class="ph ph-speaker-high size-20" id="icon-vol"></i></button>
             </div>
-            <div class="progress-container" onclick="App.audio.seek(event)">
-                <div class="progress-bar" id="player-progress"></div>
+            
+            <div class="progress-wrapper" style="z-index: 2;">
+                <span id="time-current">0:00</span>
+                <div class="progress-container" onclick="App.audio.seek(event)">
+                    <div class="progress-bar" id="player-progress"></div>
+                </div>
+                <span id="time-total">0:00</span>
             </div>
-            <div class="player-controls" style="margin-top: 12px;">
+
+            <div class="player-controls" style="margin-top: 12px; z-index: 2;">
                 <button type="button" onclick="App.audio.toggleShuffle()"><i class="ph ph-shuffle size-20" id="icon-shuffle"></i></button>
                 <div class="main-controls">
-                    <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back size-24"></i></button>
-                    <button type="button" class="play-btn" onclick="App.audio.togglePlay()"><i class="ph ph-play size-24" id="icon-play"></i></button>
-                    <button type="button" onclick="App.audio.next()"><i class="ph ph-skip-forward size-24"></i></button>
+                    <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back-fill size-24"></i></button>
+                    <button type="button" class="play-btn" onclick="App.audio.togglePlay()"><i class="ph ph-play-fill size-28" id="icon-play" style="margin-left: 4px;"></i></button>
+                    <button type="button" onclick="App.audio.next()"><i class="ph ph-skip-forward-fill size-24"></i></button>
                 </div>
                 <button type="button" onclick="App.audio.toggleLoop()"><i class="ph ph-repeat size-20" id="icon-loop"></i></button>
             </div>
@@ -146,97 +193,169 @@
 
         <nav>
             <div class="nav-item active" onclick="App.ui.switchTab('people')">
-                <i class="ph ph-users size-24"></i>
-                <span>People</span>
+                <i class="ph ph-globe size-24"></i>
+                <span>Explore</span>
             </div>
             <div class="nav-item" onclick="App.ui.switchTab('library')">
-                <i class="ph ph-music-notes size-24"></i>
+                <i class="ph ph-music-notes-simple size-24"></i>
                 <span>Library</span>
             </div>
         </nav>
 
         <div id="login-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('login-modal')">
             <div class="modal-content flex-col gap-4">
-                <h2 style="text-align: center; margin-top: 0;">Welcome Back</h2>
-                <input type="text" id="auth-handle" placeholder="Handle (e.g., alex)" autocomplete="off" autocapitalize="none">
-                <input type="password" id="auth-password" placeholder="Password">
-                <button type="button" id="login-btn" class="btn-primary" onclick="App.auth.login()">Enter</button>
+                <h2 style="margin-top: 0; text-align: center;">Identity</h2>
+                <input type="text" id="auth-handle" placeholder="Handle" autocomplete="off" autocapitalize="none">
+                <input type="password" id="auth-password" placeholder="Passkey">
+                <button type="button" id="login-btn" class="btn-primary" onclick="App.auth.login()">Access</button>
             </div>
         </div>
 
         <div id="settings-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('settings-modal')">
             <div class="modal-content">
-                <h2 style="margin-top: 0;">Settings</h2>
+                <h2 style="margin-top: 0;">Preferences</h2>
                 <div class="setting-row">
-                    <span>Dark Mode</span>
-                    <button type="button" onclick="App.settings.toggleTheme()"><i class="ph ph-moon size-20"></i></button>
+                    <span>Theme</span>
+                    <select id="theme-select" onchange="App.settings.setTheme(this.value)" style="background: var(--bg); border: none;">
+                        <option value="dark">AMOLED Dark</option>
+                        <option value="ips">IPS Premium</option>
+                        <option value="light">Crisp Light</option>
+                    </select>
                 </div>
-                <div id="auth-status-row" class="setting-row" style="border-bottom: none; padding-bottom: 0;"></div>
+                <div class="setting-row">
+                    <span>Offline Caching</span>
+                    <button type="button" id="cache-toggle" onclick="App.settings.toggleCache()" style="font-weight: 600; color: var(--text-muted);">OFF</button>
+                </div>
+                <div class="setting-row">
+                    <span>Seek Interval</span>
+                    <select id="seek-select" onchange="App.settings.seekStep = parseInt(this.value)" style="background: var(--bg); border: none;">
+                        <option value="5">5 Seconds</option>
+                        <option value="10" selected>10 Seconds</option>
+                        <option value="15">15 Seconds</option>
+                    </select>
+                </div>
+                <div class="setting-row flex-col items-start gap-2" style="border-bottom: none; padding-bottom: 0;">
+                    <div class="flex justify-between" style="width: 100%;">
+                        <span>Storage Allocation</span>
+                        <span id="storage-txt" style="font-size: 12px; color: var(--text-muted);">Calculating...</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                        <div id="storage-bar" style="height: 100%; width: 0%; background: var(--accent); transition: 0.5s;"></div>
+                    </div>
+                </div>
+                <div id="auth-status-row" class="setting-row" style="border-bottom: none; margin-top: 16px;"></div>
             </div>
         </div>
 
         <div id="upload-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('upload-modal')">
             <div class="modal-content flex-col gap-4">
-                <h2 style="margin-top: 0;">Upload Track</h2>
-                <input type="text" id="upload-title" placeholder="Song Title (optional)">
-                <input type="file" id="upload-file" accept="audio/*" style="padding: 10px 0; border: none; background: transparent;">
+                <h2 style="margin-top: 0;">Drop Tracks</h2>
+                <input type="file" id="upload-files" accept="audio/*" multiple style="padding: 16px; border: 1px dashed var(--text-muted); background: transparent; text-align: center;">
+                <p style="font-size: 11px; color: var(--text-muted); text-align: center;">Max 50 files. Rename below before uploading.</p>
                 
-                <div id="upload-progress-container" class="hidden" style="width: 100%; height: 6px; background: var(--surface-hover); border-radius: 3px; overflow: hidden; margin-top: 8px;">
-                    <div id="upload-progress-bar" style="height: 100%; background: var(--accent); width: 0%; transition: width 0.1s linear, background-color 0.3s;"></div>
-                </div>
+                <div id="upload-staging-area" class="flex-col gap-2" style="max-height: 250px; overflow-y: auto;"></div>
+                
+                <button type="button" id="upload-submit-btn" class="btn-primary" onclick="App.library.processUploads()" disabled>Upload 0 Tracks</button>
+            </div>
+        </div>
 
-                <button type="button" id="upload-submit-btn" class="btn-primary" onclick="App.library.uploadSong()">Upload to Miyu</button>
+        <div id="create-pl-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('create-pl-modal')">
+            <div class="modal-content flex-col gap-4">
+                <h2 style="margin-top: 0;">New Playlist</h2>
+                <input type="text" id="pl-name" placeholder="Name (Max 20 chars)" maxlength="20">
+                <textarea id="pl-desc" placeholder="Description (Max 100 chars)" maxlength="100" rows="2"></textarea>
+                <div id="pl-song-selector" class="flex-col gap-2" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); padding: 10px; border-radius: 12px;"></div>
+                <button type="button" class="btn-primary" onclick="App.library.savePlaylist()">Create Entity</button>
+            </div>
+        </div>
+
+        <div id="sync-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('sync-modal')">
+            <div class="modal-content flex-col gap-4" style="text-align: center;">
+                <h2 style="margin-top: 0;">Listen Together</h2>
+                <p style="font-size: 13px; color: var(--text-muted);">Sync playback globally with another device.</p>
+                
+                <div class="flex gap-4">
+                    <button type="button" class="btn-primary" onclick="App.sync.hostSession()">Host Session</button>
+                    <button type="button" class="btn-primary" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);" onclick="App.sync.joinPrompt()">Join Code</button>
+                </div>
+                
+                <div id="sync-status" style="margin-top: 16px; font-weight: 600; font-size: 18px; letter-spacing: 2px;"></div>
+                <button type="button" id="sync-leave-btn" class="hidden" style="color: var(--danger); font-size: 13px; margin-top: 10px;" onclick="App.sync.leave()">Leave Session</button>
             </div>
         </div>
     </div>
 
     <script>
-        window.onerror = function(message, source, lineno) { console.error("SYSTEM ERROR:", message, "Line:", lineno); return true; };
+        window.onerror = function(m, s, l) { console.error("ERR:", m, "L:", l); return true; };
 
+        // --- CORE CONFIG ---
         const MIYU_URL = 'https://vfkkoacakiaulcjviyfe.supabase.co';
         const MIYU_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZma2tvYWNha2lhdWxjanZpeWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTQxNjAsImV4cCI6MjA4OTY5MDE2MH0.qlXPSD-31q-UrTDja9wN2QXp8Fazm2zORKaFuzJ1vq4';
-        
-        const miyuDB = window.supabase.createClient(MIYU_URL, MIYU_KEY);
+        const miyuDB = window.supabase.createClient(MIYU_URL, MIYU_KEY, { realtime: { params: { eventsPerSecond: 10 } } });
 
         const App = {
             state: {
-                user: null, userHandle: '', theme: 'dark',
+                user: null, userHandle: '', theme: 'ips', caching: false,
                 songs: [], playlists: [], users: [], queue: [], currentIndex: -1,
-                isPlaying: false, loop: false, shuffle: false
+                isPlaying: false, loop: false, shuffle: false, volume: 1
             },
             audioElement: new Audio(),
+            stagedFiles: [],
 
             init() {
+                this.audioElement.crossOrigin = "anonymous"; // Mandatory for Visualizer
+                
+                this.settings.loadLocal();
                 this.ui.setupGuestMode();
+                
+                // Initialize MediaSession & Event Listeners
+                this.setupAudioBindings();
                 this.visualizer.init();
                 
-                this.audioElement.addEventListener('timeupdate', () => this.ui.updateProgress());
-                this.audioElement.addEventListener('ended', () => this.audio.handleEnd());
-                this.audioElement.addEventListener('play', () => { 
-                    this.state.isPlaying = true; 
-                    document.getElementById('icon-play').classList.replace('ph-play', 'ph-pause'); 
-                });
-                this.audioElement.addEventListener('pause', () => { 
-                    this.state.isPlaying = false; 
-                    document.getElementById('icon-play').classList.replace('ph-pause', 'ph-play'); 
-                });
+                // Input Listeners
+                document.getElementById('upload-files').addEventListener('change', (e) => this.library.stageUploads(e));
 
                 document.addEventListener('fullscreenchange', () => {
                     const icon = document.getElementById('icon-fullscreen');
-                    if (document.fullscreenElement) { icon.classList.replace('ph-corners-out', 'ph-corners-in'); } 
-                    else { icon.classList.replace('ph-corners-in', 'ph-corners-out'); }
+                    icon.classList.replace(document.fullscreenElement ? 'ph-corners-out' : 'ph-corners-in', document.fullscreenElement ? 'ph-corners-in' : 'ph-corners-out');
                 });
 
                 this.checkSession();
                 this.explore.loadUsers(); 
             },
 
+            setupAudioBindings() {
+                const aud = this.audioElement;
+                aud.addEventListener('timeupdate', () => this.ui.updateProgress());
+                aud.addEventListener('ended', () => this.audio.handleEnd());
+                aud.addEventListener('play', () => { 
+                    this.state.isPlaying = true; 
+                    document.getElementById('icon-play').classList.replace('ph-play-fill', 'ph-pause-fill'); 
+                    this.sync.broadcast('play', aud.currentTime);
+                    if(this.visualizer.audioCtx && this.visualizer.audioCtx.state === 'suspended') this.visualizer.audioCtx.resume();
+                });
+                aud.addEventListener('pause', () => { 
+                    this.state.isPlaying = false; 
+                    document.getElementById('icon-play').classList.replace('ph-pause-fill', 'ph-play-fill'); 
+                    this.sync.broadcast('pause', aud.currentTime);
+                });
+
+                // Media Session API for Background Playback OS Controls
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.setActionHandler('play', () => this.audio.togglePlay());
+                    navigator.mediaSession.setActionHandler('pause', () => this.audio.togglePlay());
+                    navigator.mediaSession.setActionHandler('previoustrack', () => this.audio.prev());
+                    navigator.mediaSession.setActionHandler('nexttrack', () => this.audio.next());
+                    navigator.mediaSession.setActionHandler('seekbackward', () => { aud.currentTime = Math.max(0, aud.currentTime - App.settings.seekStep); });
+                    navigator.mediaSession.setActionHandler('seekforward', () => { aud.currentTime = Math.min(aud.duration, aud.currentTime + App.settings.seekStep); });
+                }
+            },
+
             async checkSession() {
                 try {
                     const { data: { session }, error } = await miyuDB.auth.getSession();
-                    if (error) throw error;
-                    if (session) { await this.auth.handleSession(session.user); }
-                } catch (err) { console.warn("Session check skipped:", err.message); }
+                    if (session && !error) await this.auth.handleSession(session.user);
+                } catch (err) {}
             },
 
             auth: {
@@ -245,34 +364,26 @@
                     try {
                         let handle = document.getElementById('auth-handle').value.trim().toLowerCase();
                         const password = document.getElementById('auth-password').value;
-                        
-                        if(!handle || !password) { App.ui.toast("Please enter both handle and password."); return; }
+                        if(!handle || !password) return App.ui.toast("Credentials required");
                         
                         btn.innerText = "Authenticating...";
-                        
-                        const email = `${handle}@miyu.app`;
-                        const { data, error } = await miyuDB.auth.signInWithPassword({ email, password });
-                        
-                        if (error) { App.ui.toast("Login Failed: " + error.message); return; }
+                        const { data, error } = await miyuDB.auth.signInWithPassword({ email: `${handle}@miyu.app`, password });
+                        if (error) throw error;
                         
                         App.ui.toggleModal('login-modal');
-                        App.ui.toast("Success! Loading library...");
+                        App.ui.toast("Access Granted");
                         await this.handleSession(data.user);
-                    } catch (err) { App.ui.toast("Error: " + err.message); } 
-                    finally { btn.innerText = "Enter"; }
+                    } catch (err) { App.ui.toast(err.message); } 
+                    finally { btn.innerText = "Access"; }
                 },
                 
                 async handleSession(authUser) {
-                    try {
-                        const { data: userData } = await miyuDB.from('users').select('handle').eq('id', authUser.id).single();
-                        App.state.user = authUser;
-                        App.state.userHandle = userData ? userData.handle : authUser.email.split('@')[0];
-                        App.ui.setupUserMode();
-                        App.ui.toast(`Welcome back, @${App.state.userHandle}`);
-                        App.library.loadLibrary();
-                    } catch (err) { console.error("Session load error:", err); }
+                    const { data } = await miyuDB.from('users').select('handle').eq('id', authUser.id).single();
+                    App.state.user = authUser;
+                    App.state.userHandle = data ? data.handle : authUser.email.split('@')[0];
+                    App.ui.setupUserMode();
+                    App.library.loadLibrary();
                 },
-
                 async logout() { await miyuDB.auth.signOut(); window.location.reload(); }
             },
 
@@ -280,235 +391,375 @@
                 async loadLibrary() {
                     if (!App.state.user) return;
                     try {
-                        const { data: songs, error: sErr } = await miyuDB.from('songs').select('*').eq('user_id', App.state.user.id).order('created_at', { ascending: false });
-                        if (sErr) throw sErr;
+                        const { data: songs } = await miyuDB.from('songs').select('*').eq('user_id', App.state.user.id).order('created_at', { ascending: false });
                         App.state.songs = songs || [];
                         
-                        const { data: playlists, error: pErr } = await miyuDB.from('playlists').select('*').eq('user_id', App.state.user.id);
-                        if (pErr) throw pErr;
+                        const { data: playlists } = await miyuDB.from('playlists').select('*').eq('user_id', App.state.user.id);
                         App.state.playlists = playlists || [];
 
-                        this.renderSongs(App.state.songs, 'songs-list');
-                        
-                        const plContainer = document.getElementById('playlists-list');
-                        plContainer.innerHTML = App.state.playlists.map(pl => `
-                            <div class="item-card"><div class="item-info"><h4>${pl.name}</h4></div></div>
-                        `).join('');
-                    } catch (err) { App.ui.toast("Library Load Error: " + err.message); }
+                        this.renderSongs(App.state.songs, 'songs-list', true);
+                        this.renderPlaylists();
+                        App.settings.calculateStorage();
+                    } catch (err) { App.ui.toast("Library Error"); }
                 },
-                
-                renderSongs(songsArray, containerId) {
+
+                // --- UI RENDERING ---
+                renderSongs(songsArray, containerId, isOwner = false) {
                     const container = document.getElementById(containerId);
-                    if(songsArray.length === 0) { 
-                        container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; text-align:center; padding: 20px;">No tracks found.</p>'; return; 
-                    }
+                    if(!songsArray.length) { container.innerHTML = '<p style="color:var(--text-muted); font-size:13px; padding:20px; text-align:center;">Empty Space</p>'; return; }
+                    
                     const safeQueue = btoa(encodeURIComponent(JSON.stringify(songsArray)));
                     container.innerHTML = songsArray.map((song, i) => `
-                        <div class="item-card" onclick="App.audio.playQueue('${safeQueue}', ${i})">
-                            <div class="item-info">
-                                <h4>${song.title}</h4>
-                                <p>${(song.file_size / 1024 / 1024).toFixed(2)} MB</p>
+                        <div class="card">
+                            <div class="flex items-center gap-4" style="flex:1; overflow:hidden;" onclick="App.audio.playQueue('${safeQueue}', ${i})">
+                                <button class="btn-icon" style="width:36px; height:36px;"><i class="ph ph-play-fill"></i></button>
+                                <div class="card-info">
+                                    <h4>${song.title}</h4>
+                                    <p>${(song.file_size / 1024 / 1024).toFixed(2)} MB</p>
+                                </div>
                             </div>
-                            <button class="btn-icon" style="width:32px;height:32px;"><i class="ph ph-play"></i></button>
+                            ${isOwner ? `<button onclick="App.library.deleteSong('${song.id}', '${song.file_path}')" style="color:var(--danger); padding:8px;"><i class="ph ph-trash"></i></button>` : ''}
                         </div>
                     `).join('');
                 },
-                
-                // --- NATIVE REAL-TIME UPLOAD ---
-                async uploadSong() {
-                    const btn = document.getElementById('upload-submit-btn');
-                    const progressContainer = document.getElementById('upload-progress-container');
-                    const progressBar = document.getElementById('upload-progress-bar');
-                    const fileInput = document.getElementById('upload-file');
-                    const titleInput = document.getElementById('upload-title');
 
-                    try {
-                        if(!fileInput.files.length) { App.ui.toast("Select an audio file"); return; }
-                        
-                        const { data: { session }, error: sessionErr } = await miyuDB.auth.getSession();
-                        if (!session || sessionErr) { App.ui.toast("Authentication required to upload"); return; }
+                renderPlaylists() {
+                    const container = document.getElementById('playlists-list');
+                    container.innerHTML = App.state.playlists.map(pl => `
+                        <div class="pl-card" onclick="App.explore.viewPlaylist('${pl.id}', '${pl.name}')">
+                            <div class="pl-cover" style="background: ${this.generateGradient(pl.name)}">
+                                <i class="ph ph-vinyl-record" style="font-size: 48px; color: rgba(255,255,255,0.3);"></i>
+                            </div>
+                            <div class="pl-info">
+                                <h4>${pl.name}</h4>
+                                <p>${pl.description || 'Custom Collection'}</p>
+                            </div>
+                        </div>
+                    `).join('');
 
-                        const file = fileInput.files[0];
-                        if(!file.type.includes('audio')) { App.ui.toast("File must be audio format"); return; }
-
-                        const title = titleInput.value.trim() || file.name.replace(/\.[^/.]+$/, "");
-                        const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
-                        const filePath = `${App.state.user.id}/${Date.now()}_${safeFileName}`;
-                        
-                        // Setup UI
-                        btn.innerText = "Uploading...";
-                        btn.disabled = true;
-                        progressContainer.classList.remove('hidden');
-                        progressBar.style.backgroundColor = 'var(--accent)';
-                        progressBar.style.width = '0%';
-
-                        // Native XMLHttpRequest to track actual bytes uploaded
-                        const xhr = new XMLHttpRequest();
-                        
-                        // Storage Endpoint
-                        xhr.open('POST', `${MIYU_URL}/storage/v1/object/music/${filePath}`, true);
-                        xhr.setRequestHeader('Authorization', `Bearer ${session.access_token}`);
-                        xhr.setRequestHeader('apikey', MIYU_KEY);
-                        xhr.setRequestHeader('Content-Type', file.type || 'audio/mpeg');
-
-                        // Track Progress
-                        xhr.upload.onprogress = (e) => {
-                            if (e.lengthComputable) {
-                                const percent = (e.loaded / e.total) * 100;
-                                // We cap at 98% because we still need to wait for the Database Insert to finish
-                                progressBar.style.width = `${Math.min(percent, 98)}%`;
-                            }
-                        };
-
-                        // Handle Completion
-                        xhr.onload = async () => {
-                            if (xhr.status >= 200 && xhr.status < 300) {
-                                // Storage upload succeeded! Now save metadata to the Database.
-                                const { error: dbErr } = await miyuDB.from('songs').insert([
-                                    { user_id: App.state.user.id, title, file_path: filePath, file_size: file.size }
-                                ]);
-
-                                if (dbErr) {
-                                    progressBar.style.backgroundColor = '#ff3b30'; // Turn red
-                                    App.ui.toast("Database Error: " + dbErr.message);
-                                    btn.innerText = "Try Again";
-                                    btn.disabled = false;
-                                    return;
-                                }
-
-                                // 100% Success
-                                progressBar.style.width = '100%';
-                                
-                                setTimeout(() => {
-                                    App.ui.toast("Upload complete!");
-                                    App.ui.toggleModal('upload-modal');
-                                    fileInput.value = '';
-                                    titleInput.value = '';
-                                    progressBar.style.width = '0%';
-                                    progressContainer.classList.add('hidden');
-                                    btn.innerText = "Upload to Miyu";
-                                    btn.disabled = false;
-                                    this.loadLibrary();
-                                }, 600);
-
-                            } else {
-                                // Supabase returned an error code (e.g. 403 Forbidden because of RLS)
-                                let msg = "Storage rejected file";
-                                try { msg = JSON.parse(xhr.responseText).message; } catch(e){}
-                                progressBar.style.backgroundColor = '#ff3b30'; // Turn red
-                                App.ui.toast("Upload Error: " + msg);
-                                btn.innerText = "Try Again";
-                                btn.disabled = false;
-                            }
-                        };
-
-                        xhr.onerror = () => {
-                            progressBar.style.backgroundColor = '#ff3b30'; // Turn red
-                            App.ui.toast("Network Connection Lost");
-                            btn.innerText = "Try Again";
-                            btn.disabled = false;
-                        };
-
-                        // Send the actual file bytes
-                        xhr.send(file);
-
-                    } catch (err) {
-                        App.ui.toast("Upload failed: " + err.message);
-                        btn.innerText = "Try Again";
-                        btn.disabled = false;
-                    }
+                    // Populate playlist song selector
+                    const sel = document.getElementById('pl-song-selector');
+                    sel.innerHTML = App.state.songs.map(s => `
+                        <label class="flex items-center gap-2" style="font-size: 13px; padding: 6px 0;">
+                            <input type="checkbox" value="${s.id}" class="pl-song-cb"> ${s.title}
+                        </label>
+                    `).join('');
                 },
 
-                async createPlaylist() {
-                    if (App.state.playlists.length >= 10) { App.ui.toast("Max 10 playlists allowed."); return; }
-                    const name = prompt("Playlist Name:");
-                    if (!name) return;
-                    try {
-                        await miyuDB.from('playlists').insert([{ user_id: App.state.user.id, name }]);
+                generateGradient(str) {
+                    let hash = 0; for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+                    const c1 = `hsl(${hash % 360}, 70%, 40%)`;
+                    const c2 = `hsl(${(hash * 2) % 360}, 70%, 20%)`;
+                    return `linear-gradient(135deg, ${c1}, ${c2})`;
+                },
+
+                // --- MASS UPLOAD ENGINE ---
+                stageUploads(e) {
+                    const files = Array.from(e.target.files).slice(0, 50);
+                    App.stagedFiles = files.map(f => ({ file: f, title: f.name.replace(/\.[^/.]+$/, "") }));
+                    
+                    const btn = document.getElementById('upload-submit-btn');
+                    btn.innerText = `Upload ${App.stagedFiles.length} Tracks`;
+                    btn.disabled = App.stagedFiles.length === 0;
+
+                    const container = document.getElementById('upload-staging-area');
+                    container.innerHTML = App.stagedFiles.map((sf, i) => `
+                        <div class="stage-item" id="stage-${i}">
+                            <div class="flex gap-2">
+                                <input type="text" value="${sf.title}" onchange="App.stagedFiles[${i}].title = this.value" style="padding:8px; font-size:12px;">
+                                <button onclick="App.library.removeStage(${i})" style="color:var(--danger);"><i class="ph ph-x-circle size-20"></i></button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="stage-prog-bg"><div class="stage-prog-fill" id="prog-${i}"></div></div>
+                                <span style="font-size:10px; width:30px;" id="perc-${i}">0%</span>
+                            </div>
+                        </div>
+                    `).join('');
+                },
+
+                removeStage(i) {
+                    App.stagedFiles.splice(i, 1);
+                    document.getElementById('upload-files').dispatchEvent(new Event('change', {bubbles: true})); // re-render hack
+                    this.stageUploads({target: {files: App.stagedFiles.map(s=>s.file)}}); // rebuild
+                },
+
+                async processUploads() {
+                    const btn = document.getElementById('upload-submit-btn');
+                    btn.disabled = true;
+                    btn.innerText = "Processing...";
+
+                    const { data: { session } } = await miyuDB.auth.getSession();
+                    if (!session) return App.ui.toast("Auth lost");
+
+                    let successCount = 0;
+
+                    for (let i = 0; i < App.stagedFiles.length; i++) {
+                        const { file, title } = App.stagedFiles[i];
+                        const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+                        const filePath = `${App.state.user.id}/${Date.now()}_${i}_${safeFileName}`;
+                        const bar = document.getElementById(`prog-${i}`);
+                        const perc = document.getElementById(`perc-${i}`);
+
+                        try {
+                            await new Promise((resolve, reject) => {
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', `${MIYU_URL}/storage/v1/object/music/${filePath}`, true);
+                                xhr.setRequestHeader('Authorization', `Bearer ${session.access_token}`);
+                                xhr.setRequestHeader('apikey', MIYU_KEY);
+                                xhr.setRequestHeader('Content-Type', file.type || 'audio/mpeg');
+
+                                xhr.upload.onprogress = (e) => {
+                                    if(e.lengthComputable) {
+                                        const p = Math.floor((e.loaded / e.total) * 95);
+                                        bar.style.width = p + '%'; perc.innerText = p + '%';
+                                    }
+                                };
+                                xhr.onload = async () => {
+                                    if (xhr.status >= 200 && xhr.status < 300) {
+                                        await miyuDB.from('songs').insert([{ user_id: App.state.user.id, title, file_path: filePath, file_size: file.size }]);
+                                        bar.style.width = '100%'; perc.innerText = '100%'; successCount++;
+                                        resolve();
+                                    } else reject(new Error("Storage block"));
+                                };
+                                xhr.onerror = () => reject(new Error("Network err"));
+                                xhr.send(file);
+                            });
+                        } catch (err) {
+                            bar.style.background = 'var(--danger)'; perc.innerText = 'Err';
+                        }
+                    }
+
+                    App.ui.toast(`Uploaded ${successCount}/${App.stagedFiles.length} tracks`);
+                    setTimeout(() => {
+                        App.ui.toggleModal('upload-modal');
+                        document.getElementById('upload-files').value = '';
+                        document.getElementById('upload-staging-area').innerHTML = '';
+                        btn.innerText = "Upload 0 Tracks";
                         this.loadLibrary();
-                    } catch (err) { App.ui.toast("Error creating playlist: " + err.message); }
+                    }, 1000);
+                },
+
+                // --- DELETIONS ---
+                async deleteSong(id, path) {
+                    if(!confirm("Delete this track forever?")) return;
+                    await miyuDB.storage.from('music').remove([path]);
+                    await miyuDB.from('songs').delete().eq('id', id);
+                    App.ui.toast("Track eradicated");
+                    this.loadLibrary();
+                },
+                async deletePlaylist(id) {
+                    if(!confirm("Delete playlist?")) return;
+                    await miyuDB.from('playlists').delete().eq('id', id);
+                    App.ui.switchTab('library');
+                    App.ui.toast("Playlist deleted");
+                    this.loadLibrary();
+                },
+
+                // --- PLAYLIST CREATION ---
+                async savePlaylist() {
+                    const name = document.getElementById('pl-name').value.trim() || 'Untitled';
+                    const desc = document.getElementById('pl-desc').value.trim();
+                    const cbs = document.querySelectorAll('.pl-song-cb:checked');
+                    const songIds = Array.from(cbs).map(cb => cb.value);
+
+                    if(App.state.playlists.length >= 15) return App.ui.toast("Limit reached");
+
+                    const { data: pl } = await miyuDB.from('playlists').insert([{ user_id: App.state.user.id, name, description: desc }]).select().single();
+                    
+                    if (songIds.length > 0 && pl) {
+                        const inserts = songIds.map(sid => ({ playlist_id: pl.id, song_id: sid }));
+                        await miyuDB.from('playlist_songs').insert(inserts);
+                    }
+
+                    App.ui.toggleModal('create-pl-modal');
+                    App.ui.toast("Playlist Forged");
+                    document.getElementById('pl-name').value = ''; document.getElementById('pl-desc').value = '';
+                    cbs.forEach(c => c.checked = false);
+                    this.loadLibrary();
                 }
             },
 
             explore: {
                 async loadUsers() {
-                    try {
-                        const { data, error } = await miyuDB.from('users').select('id, handle');
-                        if (error) throw error;
-                        
-                        App.state.users = data || [];
-                        const container = document.getElementById('users-list');
-                        if(App.state.users.length === 0) {
-                             container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; text-align:center;">No users found yet.</p>';
-                        } else {
-                            container.innerHTML = App.state.users.map(u => `
-                                <div class="item-card" onclick="App.explore.viewUserSongs('${u.id}', '${u.handle}')">
-                                    <div class="item-info"><h4>@${u.handle}</h4></div>
-                                    <i class="ph ph-caret-right" style="color:var(--text-secondary)"></i>
-                                </div>
-                            `).join('');
-                        }
-                    } catch (err) { console.error("Could not load users", err); }
+                    const { data } = await miyuDB.from('users').select('id, handle');
+                    const container = document.getElementById('users-list');
+                    if(!data || !data.length) return container.innerHTML = '<p>No network activity.</p>';
+                    
+                    container.innerHTML = data.map(u => `
+                        <div class="card" onclick="App.explore.viewUserSongs('${u.id}', '${u.handle}')" style="padding: 16px;">
+                            <div class="flex items-center">
+                                <div class="avatar" style="background: ${App.library.generateGradient(u.handle)}">${u.handle.charAt(0).toUpperCase()}</div>
+                                <h4 style="font-size: 16px; font-weight: 600; text-transform: capitalize;">${u.handle}</h4>
+                            </div>
+                            <i class="ph ph-caret-right size-20" style="color:var(--text-muted)"></i>
+                        </div>
+                    `).join('');
                 },
                 
                 async viewUserSongs(userId, handle) {
-                    try {
-                        const { data: songs, error } = await miyuDB.from('songs').select('*').eq('user_id', userId);
-                        if (error) throw error;
+                    const { data: songs } = await miyuDB.from('songs').select('*').eq('user_id', userId);
+                    const container = document.getElementById('users-list');
+                    container.innerHTML = `
+                        <button class="btn-primary" style="background:var(--surface); color:var(--text-main); border:1px solid var(--border); width:auto; margin-bottom:20px;" onclick="App.explore.loadUsers()">
+                            <i class="ph ph-arrow-left" style="margin-right:8px;"></i> Back
+                        </button>
+                        <h2 style="margin-top:0; text-transform: capitalize;">${handle}'s Vault</h2>
+                        <div id="explore-songs-list" class="flex-col"></div>
+                    `;
+                    App.library.renderSongs(songs || [], 'explore-songs-list');
+                },
 
-                        const container = document.getElementById('users-list');
-                        container.innerHTML = `
-                            <button type="button" onclick="App.explore.loadUsers()" style="margin-bottom:16px; color:var(--text-secondary); font-size: 14px;">
-                                <i class="ph ph-arrow-left" style="margin-right:6px;"></i> Back to Community
-                            </button>
-                            <h3 style="margin-bottom:12px;">@${handle}'s Tracks</h3>
-                            <div id="explore-songs-list" class="flex-col gap-2"></div>
-                        `;
-                        App.library.renderSongs(songs || [], 'explore-songs-list');
-                    } catch (err) { App.ui.toast("Could not load tracks: " + err.message); }
+                async viewPlaylist(plId, plName) {
+                    const { data: joins } = await miyuDB.from('playlist_songs').select('song_id').eq('playlist_id', plId);
+                    const sIds = joins ? joins.map(j => j.song_id) : [];
+                    let songs = [];
+                    if (sIds.length > 0) {
+                        const { data } = await miyuDB.from('songs').select('*').in('id', sIds);
+                        songs = data || [];
+                    }
+                    
+                    const container = document.getElementById('library-user-content');
+                    container.innerHTML = `
+                        <div class="flex justify-between items-center" style="margin-bottom: 24px;">
+                            <button onclick="App.ui.switchTab('library'); App.library.loadLibrary();" style="color:var(--text-muted); font-weight:600;"><i class="ph ph-arrow-left size-20"></i></button>
+                            <button onclick="App.library.deletePlaylist('${plId}')" style="color:var(--danger); font-size:12px; font-weight:600;"><i class="ph ph-trash"></i> DELETE</button>
+                        </div>
+                        <h2 style="margin-top:0; font-size:28px;">${plName}</h2>
+                        <div id="pl-view-songs" class="flex-col"></div>
+                    `;
+                    App.library.renderSongs(songs, 'pl-view-songs');
                 }
             },
 
-            audio: {
-                async playQueue(encodedQueue, index) {
-                    try {
-                        App.state.queue = JSON.parse(decodeURIComponent(atob(encodedQueue)));
-                        App.state.currentIndex = index;
-                        this.loadAndPlay(App.state.queue[index]);
-                    } catch (err) { App.ui.toast("Error parsing track data."); }
+            // --- LISTEN TOGETHER (SYNC ENGINE) ---
+            sync: {
+                room: null,
+                isHost: false,
+                toggleMenu() { App.ui.toggleModal('sync-modal'); },
+                
+                hostSession() {
+                    const code = Math.floor(10000 + Math.random() * 90000).toString();
+                    this.isHost = true;
+                    this.joinRoom(code);
+                    document.getElementById('sync-status').innerText = `Share Code: ${code}`;
+                    document.getElementById('sync-status').style.color = 'var(--success)';
+                    document.getElementById('sync-leave-btn').classList.remove('hidden');
                 },
-                loadAndPlay(song) {
-                    document.getElementById('player-title').innerText = song.title;
-                    document.getElementById('player-artist').innerText = "Loading Audio...";
+
+                joinPrompt() {
+                    const code = prompt("Enter 5-digit Sync Code:");
+                    if(code && code.length === 5) {
+                        this.isHost = false;
+                        this.joinRoom(code);
+                        document.getElementById('sync-status').innerText = `Connected to: ${code}`;
+                        document.getElementById('sync-status').style.color = 'var(--accent)';
+                        document.getElementById('sync-leave-btn').classList.remove('hidden');
+                    }
+                },
+
+                joinRoom(code) {
+                    if(this.room) this.room.unsubscribe();
+                    this.room = miyuDB.channel(`sync-${code}`);
                     
-                    const { data } = miyuDB.storage.from('music').getPublicUrl(song.file_path);
-                    
-                    App.audioElement.src = data.publicUrl;
-                    document.getElementById('player-artist').innerText = "Streaming HQ";
-                    
-                    App.audioElement.play().catch(e => {
-                        console.warn("Autoplay prevented:", e);
-                        App.ui.toast("Tap play to start audio");
+                    this.room.on('broadcast', { event: 'playback' }, ({ payload }) => {
+                        if(this.isHost) return; // Host controls, doesn't listen
+                        const aud = App.audioElement;
+                        if(payload.action === 'play') {
+                            if(Math.abs(aud.currentTime - payload.time) > 1) aud.currentTime = payload.time;
+                            if(!App.state.isPlaying) App.audio.togglePlay(true);
+                        }
+                        if(payload.action === 'pause') {
+                            aud.currentTime = payload.time;
+                            if(App.state.isPlaying) App.audio.togglePlay(true);
+                        }
+                        if(payload.action === 'load') {
+                            App.audio.playQueue(payload.queue, payload.index, true);
+                        }
+                    }).subscribe((status) => {
+                        if(status === 'SUBSCRIBED') App.ui.toast("Sync Link Established");
                     });
                 },
-                togglePlay() {
+
+                broadcast(action, time) {
+                    if(!this.room || !this.isHost) return;
+                    this.room.send({ type: 'broadcast', event: 'playback', payload: { action, time }});
+                },
+                
+                broadcastLoad(queueEncoded, index) {
+                    if(!this.room || !this.isHost) return;
+                    this.room.send({ type: 'broadcast', event: 'playback', payload: { action: 'load', queue: queueEncoded, index }});
+                },
+
+                leave() {
+                    if(this.room) this.room.unsubscribe();
+                    this.room = null; this.isHost = false;
+                    document.getElementById('sync-status').innerText = '';
+                    document.getElementById('sync-leave-btn').classList.add('hidden');
+                    App.ui.toast("Sync Link Severed");
+                }
+            },
+
+            // --- AUDIO & CACHE ---
+            audio: {
+                async playQueue(encodedQueue, index, isRemote = false) {
+                    App.state.queue = JSON.parse(decodeURIComponent(atob(encodedQueue)));
+                    App.state.currentIndex = index;
+                    
+                    if(!isRemote) App.sync.broadcastLoad(encodedQueue, index);
+                    await this.loadAndPlay(App.state.queue[index]);
+                },
+
+                async loadAndPlay(song) {
+                    document.getElementById('player-title').innerText = song.title;
+                    document.getElementById('player-artist').innerText = "Establishing stream...";
+                    
+                    const { data } = miyuDB.storage.from('music').getPublicUrl(song.file_path);
+                    let url = data.publicUrl;
+
+                    if ('mediaSession' in navigator) {
+                        navigator.mediaSession.metadata = new MediaMetadata({ title: song.title, artist: 'Miyu Space' });
+                    }
+
+                    // Native Cache API for Offline
+                    if (App.state.caching && 'caches' in window) {
+                        try {
+                            const cache = await caches.open('miyu-cache-v1');
+                            const res = await cache.match(url);
+                            if (res) {
+                                const blob = await res.blob();
+                                url = URL.createObjectURL(blob);
+                                document.getElementById('player-artist').innerText = "Offline Cached";
+                            } else {
+                                document.getElementById('player-artist').innerText = "Caching to device...";
+                                fetch(url).then(r => cache.put(url, r.clone()));
+                                document.getElementById('player-artist').innerText = "Streaming HQ";
+                            }
+                        } catch(e) { document.getElementById('player-artist').innerText = "Streaming HQ"; }
+                    } else {
+                        document.getElementById('player-artist').innerText = "Streaming HQ";
+                    }
+                    
+                    App.audioElement.src = url;
+                    App.audioElement.play().catch(e => { App.ui.toast("Tap play to initiate AudioContext"); });
+                    App.visualizer.connectContext();
+                },
+
+                togglePlay(forceNative = false) {
                     if(!App.audioElement.src) return;
                     if(App.state.isPlaying) App.audioElement.pause();
                     else App.audioElement.play();
                 },
                 next() {
-                    if (App.state.queue.length === 0) return;
+                    if (!App.state.queue.length) return;
                     let nextIdx = App.state.shuffle ? Math.floor(Math.random() * App.state.queue.length) : App.state.currentIndex + 1;
                     if (nextIdx >= App.state.queue.length) nextIdx = 0;
-                    App.state.currentIndex = nextIdx;
-                    this.loadAndPlay(App.state.queue[nextIdx]);
+                    this.playQueue(btoa(encodeURIComponent(JSON.stringify(App.state.queue))), nextIdx);
                 },
                 prev() {
                     if (App.audioElement.currentTime > 3) { App.audioElement.currentTime = 0; return; }
                     let prevIdx = App.state.currentIndex - 1;
                     if (prevIdx < 0) prevIdx = App.state.queue.length - 1;
-                    App.state.currentIndex = prevIdx;
-                    this.loadAndPlay(App.state.queue[prevIdx]);
+                    this.playQueue(btoa(encodeURIComponent(JSON.stringify(App.state.queue))), prevIdx);
                 },
                 handleEnd() {
                     if (App.state.loop) App.audioElement.play();
@@ -519,6 +770,7 @@
                     const rect = e.currentTarget.getBoundingClientRect();
                     const percent = (e.clientX - rect.left) / rect.width;
                     App.audioElement.currentTime = percent * App.audioElement.duration;
+                    App.sync.broadcast('play', App.audioElement.currentTime);
                 },
                 toggleShuffle() {
                     App.state.shuffle = !App.state.shuffle;
@@ -527,21 +779,28 @@
                 toggleLoop() {
                     App.state.loop = !App.state.loop;
                     document.getElementById('icon-loop').style.color = App.state.loop ? 'var(--accent)' : 'inherit';
+                },
+                toggleVolume() {
+                    App.state.volume = App.state.volume === 1 ? 0 : 1;
+                    App.audioElement.volume = App.state.volume;
+                    document.getElementById('icon-vol').classList.replace(App.state.volume ? 'ph-speaker-x' : 'ph-speaker-high', App.state.volume ? 'ph-speaker-high' : 'ph-speaker-x');
                 }
             },
 
             ui: {
                 setupGuestMode() {
                     document.getElementById('upload-btn-header').classList.add('hidden');
+                    document.getElementById('sync-btn-header').style.display = 'none';
                     document.getElementById('library-guest-msg').classList.remove('hidden');
                     document.getElementById('library-user-content').classList.add('hidden');
-                    document.getElementById('auth-status-row').innerHTML = `<button class="btn-primary" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">Log In to Upload</button>`;
+                    document.getElementById('auth-status-row').innerHTML = `<button class="btn-primary" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">Authenticate</button>`;
                 },
                 setupUserMode() {
                     document.getElementById('upload-btn-header').classList.remove('hidden');
+                    document.getElementById('sync-btn-header').style.display = 'flex';
                     document.getElementById('library-guest-msg').classList.add('hidden');
                     document.getElementById('library-user-content').classList.remove('hidden');
-                    document.getElementById('auth-status-row').innerHTML = `<button class="btn-primary" style="background: #ff3b30;" onclick="App.auth.logout()">Log Out (@${App.state.userHandle})</button>`;
+                    document.getElementById('auth-status-row').innerHTML = `<button class="btn-primary" style="background: var(--surface); color: var(--danger); border: 1px solid var(--border);" onclick="App.auth.logout()">Log Out (@${App.state.userHandle})</button>`;
                 },
                 switchTab(tab) {
                     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -551,9 +810,8 @@
                 },
                 toggleModal(id) { document.getElementById(id).classList.toggle('active'); },
                 toggleFullscreen() {
-                    if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(err => { App.ui.toast(`Fullscreen unavailable: ${err.message}`); });
-                    } else { if (document.exitFullscreen) { document.exitFullscreen(); } }
+                    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+                    else if (document.exitFullscreen) document.exitFullscreen();
                 },
                 toast(msg) {
                     const el = document.getElementById('toast');
@@ -562,13 +820,11 @@
                 },
                 formatTime(sec) {
                     if(isNaN(sec) || sec === Infinity) return "0:00";
-                    const m = Math.floor(sec / 60);
-                    const s = Math.floor(sec % 60).toString().padStart(2, '0');
+                    const m = Math.floor(sec / 60), s = Math.floor(sec % 60).toString().padStart(2, '0');
                     return `${m}:${s}`;
                 },
                 updateProgress() {
-                    const curr = App.audioElement.currentTime;
-                    const tot = App.audioElement.duration;
+                    const curr = App.audioElement.currentTime, tot = App.audioElement.duration;
                     if(isNaN(tot) || tot === Infinity) return;
                     document.getElementById('time-current').innerText = this.formatTime(curr);
                     document.getElementById('time-total').innerText = this.formatTime(tot);
@@ -577,52 +833,119 @@
             },
 
             settings: {
-                toggleTheme() {
-                    App.state.theme = App.state.theme === 'dark' ? 'light' : 'dark';
-                    document.body.setAttribute('data-theme', App.state.theme);
+                seekStep: 10,
+                loadLocal() {
+                    const t = localStorage.getItem('miyu_theme') || 'ips';
+                    const c = localStorage.getItem('miyu_cache') === 'true';
+                    this.setTheme(t);
+                    document.getElementById('theme-select').value = t;
+                    if(c) this.toggleCache(); // init UI
+                },
+                setTheme(val) {
+                    App.state.theme = val;
+                    document.body.setAttribute('data-theme', val);
+                    localStorage.setItem('miyu_theme', val);
+                },
+                toggleCache() {
+                    App.state.caching = !App.state.caching;
+                    localStorage.setItem('miyu_cache', App.state.caching);
+                    const btn = document.getElementById('cache-toggle');
+                    btn.innerText = App.state.caching ? 'ON' : 'OFF';
+                    btn.style.color = App.state.caching ? 'var(--success)' : 'var(--text-muted)';
+                },
+                calculateStorage() {
+                    const totalBytes = App.state.songs.reduce((a, b) => a + Number(b.file_size), 0);
+                    const mb = (totalBytes / 1024 / 1024).toFixed(1);
+                    const pct = Math.min((mb / 1000) * 100, 100);
+                    document.getElementById('storage-txt').innerText = `${mb} MB / 1GB`;
+                    document.getElementById('storage-bar').style.width = `${pct}%`;
+                    if(pct > 90) document.getElementById('storage-bar').style.background = 'var(--danger)';
                 }
             },
 
+            // --- ADVANCED AUDIO VISUALIZER (BEAT REACTIVE) ---
             visualizer: {
-                canvas: null, ctx: null, particles: [], offset: 0,
+                canvas: null, ctx: null, audioCtx: null, analyser: null, source: null,
+                dataArray: null, blobs: [],
+                
                 init() {
                     this.canvas = document.getElementById('visualizer-canvas');
                     this.ctx = this.canvas.getContext('2d');
-                    this.resize();
-                    for(let i=0; i<35; i++) this.particles.push({x: Math.random(), y: Math.random(), speed: Math.random()*0.015 + 0.005});
-                    window.addEventListener('resize', () => this.resize());
+                    this.resize(); window.addEventListener('resize', () => this.resize());
+                    
+                    // Create floating blobs
+                    for(let i=0; i<5; i++) {
+                        this.blobs.push({
+                            x: Math.random() * this.canvas.width, y: Math.random() * this.canvas.height,
+                            vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+                            r: Math.random() * 100 + 50
+                        });
+                    }
                     requestAnimationFrame(() => this.draw());
+                },
+                connectContext() {
+                    if (this.audioCtx) return; // Only init once
+                    try {
+                        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                        this.analyser = this.audioCtx.createAnalyser();
+                        this.analyser.fftSize = 128; // Lower size for performance/smoothness
+                        this.source = this.audioCtx.createMediaElementSource(App.audioElement);
+                        this.source.connect(this.analyser);
+                        this.analyser.connect(this.audioCtx.destination);
+                        this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+                    } catch(e) { console.log("Audio API restricted by browser", e); }
                 },
                 resize() {
                     if(!this.canvas.parentElement) return;
                     this.canvas.width = this.canvas.parentElement.clientWidth;
-                    this.canvas.height = 60;
+                    this.canvas.height = this.canvas.parentElement.clientHeight;
                 },
                 draw() {
                     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                    const isDark = App.state.theme === 'dark';
-                    this.ctx.fillStyle = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.25)';
                     
-                    if(App.state.isPlaying) {
-                        this.particles.forEach(p => {
-                            p.x += p.speed;
-                            if(p.x > 1) p.x = 0;
-                            this.ctx.beginPath();
-                            this.ctx.arc(p.x * this.canvas.width, p.y * this.canvas.height, Math.random() > 0.8 ? 2 : 1.2, 0, Math.PI*2);
-                            this.ctx.fill();
-                        });
-                        this.offset += 0.06;
+                    let intensity = 0;
+                    if (this.analyser && App.state.isPlaying) {
+                        this.analyser.getByteFrequencyData(this.dataArray);
+                        intensity = this.dataArray.reduce((a,b)=>a+b, 0) / this.dataArray.length; // Average vol (0-255)
                     }
 
-                    this.ctx.beginPath();
-                    this.ctx.strokeStyle = isDark ? '#ffffff' : '#000000';
-                    this.ctx.lineWidth = 1.5;
-                    const amplitude = App.state.isPlaying ? 14 : 1.5;
-                    for(let i=0; i<this.canvas.width; i++) {
-                        const y = Math.sin(i * 0.025 + this.offset) * amplitude + (this.canvas.height/2);
-                        if(i===0) this.ctx.moveTo(i, y); else this.ctx.lineTo(i, y);
+                    // Map intensity to Color (Low = Blue/Cyan, High = Red/Orange)
+                    // HSL: 220 (Blue) to 0 (Red). 
+                    const targetHue = App.state.isPlaying ? Math.max(0, 240 - (intensity * 1.5)) : 220;
+                    
+                    this.ctx.globalCompositeOperation = 'screen';
+                    this.ctx.filter = 'blur(40px)'; // Heavy blur for ambient look
+
+                    this.blobs.forEach((b, i) => {
+                        b.x += b.vx + (intensity * 0.01 * (i%2==0?1:-1));
+                        b.y += b.vy + (intensity * 0.01 * (i%3==0?1:-1));
+                        
+                        // Bounce bounds
+                        if(b.x < -100 || b.x > this.canvas.width + 100) b.vx *= -1;
+                        if(b.y < -100 || b.y > this.canvas.height + 100) b.vy *= -1;
+
+                        const pulse = App.state.isPlaying ? (intensity / 255) * 50 : 0;
+                        
+                        this.ctx.beginPath();
+                        this.ctx.arc(b.x, b.y, b.r + pulse, 0, Math.PI * 2);
+                        // Shift colors slightly per blob for gradient effect
+                        this.ctx.fillStyle = `hsla(${targetHue + (i*15)}, 80%, ${App.state.theme === 'light' ? '60%' : '40%'}, 0.4)`;
+                        this.ctx.fill();
+                    });
+
+                    this.ctx.filter = 'none'; // Reset filter
+                    
+                    // Draw Bars if active
+                    if (intensity > 5) {
+                        this.ctx.fillStyle = `rgba(255,255,255,0.15)`;
+                        const barW = (this.canvas.width / this.dataArray.length) * 2;
+                        let x = 0;
+                        for(let i = 0; i < this.dataArray.length; i++) {
+                            const barH = (this.dataArray[i] / 255) * (this.canvas.height * 0.4);
+                            this.ctx.fillRect(x, this.canvas.height - barH, barW - 1, barH);
+                            x += barW;
+                        }
                     }
-                    this.ctx.stroke();
 
                     requestAnimationFrame(() => this.draw());
                 }
