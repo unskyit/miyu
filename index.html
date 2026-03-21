@@ -61,8 +61,8 @@
         .custom-cb:checked { background: var(--text-main); border-color: var(--text-main); }
         .custom-cb:checked::after { content: ''; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; border: solid var(--accent-invert); border-width: 0 2px 2px 0; transform: rotate(45deg); }
 
-        /* ADDED PADDING TOP FOR HEADER */
         header { padding: calc(env(safe-area-inset-top, 20px) + 20px) 24px 20px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; flex-shrink: 0;}
+        .header-logo { width: 32px; height: 32px; border-radius: 8px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
         h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
         h2 { font-size: 20px; font-weight: 700; margin: 24px 0 16px 0; letter-spacing: -0.3px; }
         h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-top: 24px; margin-bottom: 12px; }
@@ -85,6 +85,7 @@
         .pl-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
         .pl-info p { font-size: 11px; color: var(--text-muted); }
 
+        /* Dynamic Island Player */
         #player-container { position: fixed; bottom: 85px; left: 16px; right: 16px; padding: 20px; z-index: 20; display: flex; flex-direction: column; gap: 16px; overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         #player-container.minimized { padding: 12px 20px; gap: 0; height: 72px; cursor: pointer; border-radius: 36px; }
         #player-container.minimized .expanded-only { display: none !important; opacity: 0; }
@@ -114,6 +115,7 @@
         .modal-content { width: 100%; max-width: 500px; background: var(--bg); border: 1px solid var(--border); border-radius: 32px 32px 0 0; padding: 40px 24px calc(40px + env(safe-area-inset-bottom)) 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
         .modal.active .modal-content { transform: translateY(0); }
         
+        /* Custom Dialog UI */
         #custom-dialog.modal { align-items: center; }
         #custom-dialog .modal-content { border-radius: 24px; padding: 32px 24px; max-height: 80vh; transform: scale(0.9); opacity: 0; margin: 20px; }
         #custom-dialog.active .modal-content { transform: scale(1); opacity: 1; }
@@ -147,7 +149,10 @@
 
     <div id="app-screen">
         <header>
-            <h1>Miyu</h1>
+            <div class="flex items-center gap-3">
+                <img src="logo.jpg" class="header-logo" alt="Logo" onerror="this.style.display='none'">
+                <h1>Miyu</h1>
+            </div>
             <div class="flex gap-4 items-center">
                 <button type="button" class="btn-icon" id="sync-btn-header" onclick="App.sync.toggleMenu()" title="Listen Together"><i class="ph ph-broadcast size-20"></i></button>
                 <button type="button" onclick="App.ui.toggleFullscreen()" title="Fullscreen"><i class="ph ph-corners-out size-24" id="icon-fullscreen"></i></button>
@@ -636,6 +641,7 @@
                     this.loadLibrary();
                 },
 
+                // EXPLICIT BUG FIX FOR PLAYLIST SAVING FALLBACK
                 async savePlaylist() {
                     const name = document.getElementById('pl-name').value.trim();
                     if(!name) { App.ui.toast("Name required"); return; }
@@ -645,11 +651,20 @@
 
                     if(App.state.playlists.length >= 15) return App.ui.toast("Storage limit reached");
 
-                    // EXPLICIT ERROR CATCHING FOR PLAYLIST INSERTION
-                    const { data, error } = await miyuDB.from('playlists').insert([{ user_id: App.state.user.id, name, description: desc }]).select();
+                    // Safe insert payload
+                    let insertPayload = { user_id: App.state.user.id, name };
+                    if(desc) insertPayload.description = desc;
+
+                    let { data, error } = await miyuDB.from('playlists').insert([insertPayload]).select();
                     
+                    // Fallback if the database hasn't updated its schema cache for the 'description' column
+                    if (error && error.message.includes('description')) {
+                        const { data: fbData, error: fbErr } = await miyuDB.from('playlists').insert([{ user_id: App.state.user.id, name }]).select();
+                        data = fbData; error = fbErr;
+                    }
+
                     if (error) {
-                        App.ui.toast("Error creating playlist: " + error.message);
+                        App.ui.toast("Error: " + error.message);
                         return;
                     }
 
@@ -1082,14 +1097,13 @@
                     this.ctx = this.canvas.getContext('2d');
                     this.resize(); window.addEventListener('resize', () => this.resize());
                     
-                    this.smoothBars = new Float32Array(64); // Thinner bars
+                    this.smoothBars = new Float32Array(64);
 
                     for(let i=0; i<6; i++) {
                         this.blobs.push({
                             baseX: Math.random() * this.canvas.width, baseY: Math.random() * this.canvas.height,
                             speedX: (Math.random() - 0.5) * 0.002, speedY: (Math.random() - 0.5) * 0.002,
                             r: Math.random() * 120 + 80, 
-                            // Strictly mapping hue offsets to keep them in Blue/Purple range without drifting into Yellow
                             hueOffset: i * 10, offset: Math.random() * 100
                         });
                     }
@@ -1125,9 +1139,9 @@
                     }
 
                     // Strict Cool to Warm Mapping without Yellow
-                    let targetHue = 230; // Deep Blue
-                    if (intensity > 130) targetHue = 350; // Red/Pink
-                    else if (intensity > 80) targetHue = 280; // Purple
+                    let targetHue = 230; 
+                    if (intensity > 130) targetHue = 350; 
+                    else if (intensity > 80) targetHue = 280; 
                     
                     // ULTRA-SLOW Transition for calm aesthetics
                     this.currentHue += (targetHue - this.currentHue) * 0.008;
@@ -1151,7 +1165,7 @@
 
                     if (!document.getElementById('player-container').classList.contains('minimized')) {
                         this.ctx.fillStyle = `rgba(255,255,255,0.3)`; // Locked at 30% opacity
-                        const barCount = 64; // Thinner bars
+                        const barCount = 64; 
                         const gap = 2;
                         const barW = (this.canvas.width / barCount) - gap;
                         
