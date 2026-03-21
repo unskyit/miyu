@@ -67,7 +67,8 @@
         h2 { font-size: 20px; font-weight: 700; margin: 24px 0 16px 0; letter-spacing: -0.3px; }
         h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-top: 24px; margin-bottom: 12px; }
         
-        main { flex: 1; overflow-y: auto; padding: 0 24px calc(env(safe-area-inset-bottom) + 260px) 24px; scroll-behavior: smooth; } 
+        /* Padding increased to allow easy scrolling past the dynamic island player */
+        main { flex: 1; overflow-y: auto; padding: 0 24px calc(env(safe-area-inset-bottom) + 160px) 24px; scroll-behavior: smooth; } 
         main::-webkit-scrollbar { display: none; }
 
         .card { padding: 12px 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
@@ -169,12 +170,21 @@
                         <p style="color:var(--text-muted); font-size:13px; text-align:center;">Loading network...</p>
                     </div>
                 </div>
-                <div id="explore-detail" class="hidden">
-                    <button class="btn-primary" style="background:var(--surface); color:var(--text-main); border:1px solid var(--border); width:auto; margin-bottom:20px; font-weight:700;" onclick="App.ui.navigateExplore('back')">
-                        <i class="ph ph-arrow-left size-20" style="margin-right:8px;"></i> BACK TO NETWORK
-                    </button>
-                    <h2 id="explore-detail-title" style="margin-top:0; text-transform: capitalize; font-size:28px;">Vault</h2>
-                    <div id="explore-songs-list" class="flex-col"></div>
+                
+                <div id="explore-user-profile" class="hidden">
+                    <div class="flex justify-between items-center" style="margin-bottom: 24px;">
+                        <button onclick="App.ui.navigateExplore('home')" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
+                    </div>
+                    <h2 id="explore-profile-title" style="margin-top:0; font-size:28px; font-weight:800; letter-spacing:-1px;">Collections</h2>
+                    <div id="explore-playlists-list" class="playlist-grid" style="margin-top:20px; padding-bottom: 40px;"></div>
+                </div>
+
+                <div id="explore-playlist-detail" class="hidden">
+                    <div class="flex justify-between items-center" style="margin-bottom: 24px;">
+                        <button onclick="App.ui.navigateExplore('profile')" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
+                    </div>
+                    <h2 id="explore-pl-title" style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px;">Playlist</h2>
+                    <div id="explore-pl-songs" class="flex-col" style="margin-top:20px; padding-bottom: 40px;"></div>
                 </div>
             </div>
 
@@ -198,17 +208,17 @@
                         <div id="playlists-list" class="playlist-grid"></div>
                         
                         <h3>All Tracks</h3>
-                        <div id="songs-list" class="flex-col"></div>
+                        <div id="songs-list" class="flex-col" style="padding-bottom: 40px;"></div>
                     </div>
                 </div>
                 
                 <div id="library-detail" class="hidden">
                     <div class="flex justify-between items-center" style="margin-bottom: 24px;">
-                        <button onclick="App.ui.navigateLibrary('back')" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
+                        <button onclick="App.ui.navigateLibrary('home')" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
                         <button id="btn-delete-pl" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:10px 18px; border-radius:24px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE</button>
                     </div>
                     <h2 id="library-detail-title" style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px;">Collection</h2>
-                    <div id="pl-view-songs" class="flex-col" style="margin-top:20px;"></div>
+                    <div id="pl-view-songs" class="flex-col" style="margin-top:20px; padding-bottom: 40px;"></div>
                 </div>
             </div>
         </main>
@@ -512,9 +522,9 @@
                 renderPlaylists() {
                     const container = document.getElementById('playlists-list');
                     container.innerHTML = App.state.playlists.map(pl => `
-                        <div class="pl-card" onclick="App.explore.viewPlaylist('${pl.id}', '${pl.name}')">
-                            <div class="pl-cover" style="background: ${this.generateGradient(pl.name)}">
-                                <i class="ph ph-vinyl-record" style="font-size: 54px; color: rgba(255,255,255,0.25);"></i>
+                        <div class="pl-card" onclick="App.library.viewPlaylist('${pl.id}', '${pl.name}')">
+                            <div class="pl-cover" style="background: ${App.library.generateGradient(pl.name)}">
+                                <span style="font-size: 48px; font-weight: 800; color: rgba(255,255,255,0.3);">${pl.name.charAt(0).toUpperCase()}</span>
                             </div>
                             <div class="pl-info">
                                 <h4>${pl.name}</h4>
@@ -636,12 +646,11 @@
                     const confirm = await App.ui.confirm("Destroy Playlist", "Are you sure you want to delete this playlist?");
                     if(!confirm) return;
                     await miyuDB.from('playlists').delete().eq('id', id);
-                    App.ui.navigateLibrary('back');
+                    App.ui.navigateLibrary('home');
                     App.ui.toast("Playlist destroyed");
                     this.loadLibrary();
                 },
 
-                // EXPLICIT BUG FIX FOR PLAYLIST SAVING FALLBACK
                 async savePlaylist() {
                     const name = document.getElementById('pl-name').value.trim();
                     if(!name) { App.ui.toast("Name required"); return; }
@@ -651,23 +660,17 @@
 
                     if(App.state.playlists.length >= 15) return App.ui.toast("Storage limit reached");
 
-                    // Safe insert payload
                     let insertPayload = { user_id: App.state.user.id, name };
                     if(desc) insertPayload.description = desc;
 
                     let { data, error } = await miyuDB.from('playlists').insert([insertPayload]).select();
                     
-                    // Fallback if the database hasn't updated its schema cache for the 'description' column
                     if (error && error.message.includes('description')) {
                         const { data: fbData, error: fbErr } = await miyuDB.from('playlists').insert([{ user_id: App.state.user.id, name }]).select();
                         data = fbData; error = fbErr;
                     }
 
-                    if (error) {
-                        App.ui.toast("Error: " + error.message);
-                        return;
-                    }
-
+                    if (error) { App.ui.toast("Error: " + error.message); return; }
                     const pl = data ? data[0] : null;
 
                     if (songIds.length > 0 && pl) {
@@ -680,6 +683,21 @@
                     document.getElementById('pl-name').value = ''; document.getElementById('pl-desc').value = '';
                     cbs.forEach(c => c.checked = false);
                     this.loadLibrary();
+                },
+
+                async viewPlaylist(plId, plName) {
+                    const { data: joins } = await miyuDB.from('playlist_songs').select('song_id').eq('playlist_id', plId);
+                    const sIds = joins ? joins.map(j => j.song_id) : [];
+                    let songs = [];
+                    if (sIds.length > 0) {
+                        const { data } = await miyuDB.from('songs').select('*').in('id', sIds);
+                        songs = data || [];
+                    }
+                    
+                    document.getElementById('library-detail-title').innerText = plName;
+                    document.getElementById('btn-delete-pl').onclick = () => App.library.deletePlaylist(plId);
+                    App.library.renderSongs(songs, 'pl-view-songs', false); 
+                    App.ui.navigateLibrary('detail');
                 }
             },
 
@@ -696,7 +714,7 @@
                         if(u.playlists && u.playlists.length > 2) plNames += '...';
                         
                         return `
-                        <div class="card" onclick="App.explore.viewUserSongs('${u.id}', '${u.handle}')" style="padding: 16px;">
+                        <div class="card" onclick="App.explore.viewUserProfile('${u.id}', '${u.handle}')" style="padding: 16px;">
                             <div class="flex items-center" style="width: 100%;">
                                 <div class="avatar" style="background: ${App.library.generateGradient(u.handle)}">${u.handle.charAt(0).toUpperCase()}</div>
                                 <div class="card-info" style="flex:1;">
@@ -710,14 +728,30 @@
                     }).join('');
                 },
                 
-                async viewUserSongs(userId, handle) {
-                    const { data: songs } = await miyuDB.from('songs').select('*').eq('user_id', userId);
-                    document.getElementById('explore-detail-title').innerText = `${handle}'s Vault`;
-                    App.library.renderSongs(songs || [], 'explore-songs-list');
-                    App.ui.navigateExplore('detail');
+                async viewUserProfile(userId, handle) {
+                    const { data: playlists } = await miyuDB.from('playlists').select('*').eq('user_id', userId);
+                    document.getElementById('explore-profile-title').innerText = `${handle}'s Collections`;
+                    
+                    const container = document.getElementById('explore-playlists-list');
+                    if(!playlists || !playlists.length) {
+                        container.innerHTML = '<p style="color:var(--text-muted); font-size:13px; grid-column: 1 / -1;">No public collections yet.</p>';
+                    } else {
+                        container.innerHTML = playlists.map(pl => `
+                            <div class="pl-card" onclick="App.explore.viewExplorePlaylist('${pl.id}', '${pl.name}')">
+                                <div class="pl-cover" style="background: ${App.library.generateGradient(pl.name)}">
+                                    <span style="font-size: 48px; font-weight: 800; color: rgba(255,255,255,0.3);">${pl.name.charAt(0).toUpperCase()}</span>
+                                </div>
+                                <div class="pl-info">
+                                    <h4>${pl.name}</h4>
+                                    <p>${pl.description || 'Collection'}</p>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                    App.ui.navigateExplore('profile');
                 },
 
-                async viewPlaylist(plId, plName) {
+                async viewExplorePlaylist(plId, plName) {
                     const { data: joins } = await miyuDB.from('playlist_songs').select('song_id').eq('playlist_id', plId);
                     const sIds = joins ? joins.map(j => j.song_id) : [];
                     let songs = [];
@@ -726,10 +760,9 @@
                         songs = data || [];
                     }
                     
-                    document.getElementById('library-detail-title').innerText = plName;
-                    document.getElementById('btn-delete-pl').onclick = () => App.library.deletePlaylist(plId);
-                    App.library.renderSongs(songs, 'pl-view-songs');
-                    App.ui.navigateLibrary('detail');
+                    document.getElementById('explore-pl-title').innerText = plName;
+                    App.library.renderSongs(songs, 'explore-pl-songs', false);
+                    App.ui.navigateExplore('playlist');
                 }
             },
 
@@ -835,10 +868,15 @@
                     document.getElementById('mini-artist').innerText = "Loading...";
                     
                     const bgHash = App.library.generateGradient(song.title);
-                    document.getElementById('mini-cover').style.background = bgHash;
-                    document.getElementById('mini-cover').innerHTML = '';
-                    document.getElementById('expanded-cover').style.background = bgHash;
-                    document.getElementById('expanded-cover').innerHTML = '';
+                    const firstLetter = song.title.charAt(0).toUpperCase();
+
+                    const miniCover = document.getElementById('mini-cover');
+                    miniCover.style.background = bgHash;
+                    miniCover.innerHTML = `<span style="font-size: 20px; font-weight: 800; color: rgba(255,255,255,0.8);">${firstLetter}</span>`;
+                    
+                    const expCover = document.getElementById('expanded-cover');
+                    expCover.style.background = bgHash;
+                    expCover.innerHTML = `<span style="font-size: 36px; font-weight: 800; color: rgba(255,255,255,0.8);">${firstLetter}</span>`;
 
                     const { data } = miyuDB.storage.from('music').getPublicUrl(song.file_path);
                     let url = data.publicUrl;
@@ -962,22 +1000,18 @@
                     event.currentTarget.classList.add('active');
                 },
                 navigateExplore(view) {
-                    if (view === 'detail') {
-                        document.getElementById('explore-home').classList.add('hidden');
-                        document.getElementById('explore-detail').classList.remove('hidden');
-                    } else {
-                        document.getElementById('explore-detail').classList.add('hidden');
-                        document.getElementById('explore-home').classList.remove('hidden');
-                    }
+                    document.getElementById('explore-home').classList.add('hidden');
+                    document.getElementById('explore-user-profile').classList.add('hidden');
+                    document.getElementById('explore-playlist-detail').classList.add('hidden');
+                    if (view === 'home') document.getElementById('explore-home').classList.remove('hidden');
+                    if (view === 'profile') document.getElementById('explore-user-profile').classList.remove('hidden');
+                    if (view === 'playlist') document.getElementById('explore-playlist-detail').classList.remove('hidden');
                 },
                 navigateLibrary(view) {
-                    if (view === 'detail') {
-                        document.getElementById('library-home').classList.add('hidden');
-                        document.getElementById('library-detail').classList.remove('hidden');
-                    } else {
-                        document.getElementById('library-detail').classList.add('hidden');
-                        document.getElementById('library-home').classList.remove('hidden');
-                    }
+                    document.getElementById('library-home').classList.add('hidden');
+                    document.getElementById('library-detail').classList.add('hidden');
+                    if (view === 'home') document.getElementById('library-home').classList.remove('hidden');
+                    if (view === 'detail') document.getElementById('library-detail').classList.remove('hidden');
                 },
                 toggleModal(id) { document.getElementById(id).classList.toggle('active'); },
                 togglePlayerExpand(e) {
@@ -1087,7 +1121,6 @@
                 }
             },
 
-            // --- REFINED AUDIO VISUALIZER ---
             visualizer: {
                 canvas: null, ctx: null, audioCtx: null, analyser: null, source: null,
                 dataArray: null, smoothBars: null, blobs: [], time: 0, currentHue: 240,
@@ -1143,7 +1176,6 @@
                     if (intensity > 130) targetHue = 350; 
                     else if (intensity > 80) targetHue = 280; 
                     
-                    // ULTRA-SLOW Transition for calm aesthetics
                     this.currentHue += (targetHue - this.currentHue) * 0.008;
 
                     this.ctx.globalCompositeOperation = 'screen';
@@ -1164,7 +1196,7 @@
                     this.ctx.filter = 'none';
 
                     if (!document.getElementById('player-container').classList.contains('minimized')) {
-                        this.ctx.fillStyle = `rgba(255,255,255,0.3)`; // Locked at 30% opacity
+                        this.ctx.fillStyle = `rgba(255,255,255,0.3)`; 
                         const barCount = 64; 
                         const gap = 2;
                         const barW = (this.canvas.width / barCount) - gap;
@@ -1175,7 +1207,6 @@
                             
                             const barH = (this.smoothBars[i] / 255) * (this.canvas.height * 0.35);
                             if(barH > 1) {
-                                // Strictly flat, no rounded corners
                                 this.ctx.fillRect(i * (barW + gap) + (gap/2), this.canvas.height - barH, barW, barH);
                             }
                         }
