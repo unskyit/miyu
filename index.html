@@ -62,7 +62,6 @@
         .custom-cb:checked { background: var(--text-main); border-color: var(--text-main); }
         .custom-cb:checked::after { content: ''; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; border: solid var(--accent-invert); border-width: 0 2px 2px 0; transform: rotate(45deg); }
 
-        /* Typography & Layout */
         header { padding: env(safe-area-inset-top, 20px) 24px 20px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; flex-shrink: 0;}
         h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
         h2 { font-size: 20px; font-weight: 700; margin: 24px 0 16px 0; letter-spacing: -0.3px; }
@@ -71,7 +70,6 @@
         main { flex: 1; overflow-y: auto; padding: 0 24px calc(env(safe-area-inset-bottom) + 260px) 24px; scroll-behavior: smooth; } 
         main::-webkit-scrollbar { display: none; }
 
-        /* Component Cards */
         .card { padding: 12px 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
         .card:hover { background: var(--surface-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .card-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 220px;}
@@ -95,7 +93,7 @@
         
         .mini-controls { display: none; align-items: center; justify-content: space-between; width: 100%; z-index: 2; opacity: 0; transition: 0.3s; }
         .song-cover { width: 44px; height: 44px; border-radius: 10px; background: var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .song-cover-large { width: 80px; height: 80px; border-radius: 16px; margin: 0 auto 10px auto; background: var(--border); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .song-cover-large { width: 80px; height: 80px; border-radius: 16px; margin: 0 auto 10px auto; background: var(--border); box-shadow: 0 8px 20px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;}
 
         #visualizer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.9; transition: opacity 0.3s; border-radius: inherit;}
         .player-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; }
@@ -106,27 +104,25 @@
         
         .progress-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 11px; color: var(--text-main); font-variant-numeric: tabular-nums; font-weight: 600;}
         .progress-container { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; cursor: pointer; position: relative; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--text-main); width: 0%; transition: width 0.1s linear; border-radius: 3px; }
+        .progress-bar { height: 100%; background: var(--text-main); width: 0%; transition: width 0.1s linear; border-radius: 3px; pointer-events: none;}
         
         nav { position: fixed; bottom: 0; width: 100%; height: 75px; display: flex; justify-content: space-around; align-items: center; z-index: 30; background: var(--surface); backdrop-filter: var(--blur); border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); font-size: 10px; font-weight: 700; width: 64px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;}
         .nav-item.active { color: var(--text-main); }
 
-        /* Modals & Dialogs */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .modal.active { opacity: 1; pointer-events: all; }
         .modal-content { width: 100%; max-width: 500px; background: var(--bg); border: 1px solid var(--border); border-radius: 32px 32px 0 0; padding: 40px 24px calc(40px + env(safe-area-inset-bottom)) 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
         .modal.active .modal-content { transform: translateY(0); }
         
-        /* Specialized UI Dialog */
+        /* Custom Dialog UI */
         #custom-dialog.modal { align-items: center; }
         #custom-dialog .modal-content { border-radius: 24px; padding: 32px 24px; max-height: 80vh; transform: scale(0.9); opacity: 0; margin: 20px; }
         #custom-dialog.active .modal-content { transform: scale(1); opacity: 1; }
 
         .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border); font-weight: 600;}
-        
         .sync-code-box { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; background: var(--text-main); color: var(--accent-invert); border-radius: 16px; padding: 16px 24px; text-align: center; margin: 20px auto; display: inline-block; box-shadow: 0 4px 20px rgba(255,255,255,0.15); }
-
+        
         .stage-item { display: flex; flex-direction: column; gap: 8px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; }
         .stage-prog-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
         .stage-prog-fill { height: 100%; background: var(--success); width: 0%; transition: 0.2s; }
@@ -164,32 +160,52 @@
 
         <main id="main-content">
             <div id="tab-people" class="tab-content">
-                <h2>Community</h2>
-                <div id="users-list">
-                    <p style="color:var(--text-muted); font-size:13px; text-align:center;">Loading network...</p>
+                <div id="explore-home">
+                    <h2>Community</h2>
+                    <div id="users-list">
+                        <p style="color:var(--text-muted); font-size:13px; text-align:center;">Loading network...</p>
+                    </div>
+                </div>
+                <div id="explore-detail" class="hidden">
+                    <button class="btn-primary" style="background:var(--surface); color:var(--text-main); border:1px solid var(--border); width:auto; margin-bottom:20px; font-weight:700;" onclick="App.ui.navigateExplore('back')">
+                        <i class="ph ph-arrow-left size-20" style="margin-right:8px;"></i> BACK TO NETWORK
+                    </button>
+                    <h2 id="explore-detail-title" style="margin-top:0; text-transform: capitalize; font-size:28px;">Vault</h2>
+                    <div id="explore-songs-list" class="flex-col"></div>
                 </div>
             </div>
 
             <div id="tab-library" class="tab-content hidden">
-                <div class="flex justify-between items-center">
-                    <h2>Library</h2>
+                <div id="library-home">
+                    <div class="flex justify-between items-center">
+                        <h2>Library</h2>
+                    </div>
+                    
+                    <div id="library-guest-msg" class="flex-col items-center justify-center" style="padding: 60px 20px; text-align: center;">
+                        <i class="ph ph-lock-key size-48" style="margin-bottom: 20px; color: var(--text-muted);"></i>
+                        <p style="color: var(--text-muted); font-weight: 500; margin-bottom: 24px;">Log in to orchestrate your personal space.</p>
+                        <button type="button" class="btn-primary" style="max-width: 200px;" onclick="App.ui.toggleModal('login-modal')">Authenticate</button>
+                    </div>
+
+                    <div id="library-user-content" class="hidden">
+                        <div class="flex justify-between items-center">
+                            <h3>Playlists</h3>
+                            <button type="button" onclick="App.ui.toggleModal('create-pl-modal')" style="color:var(--text-muted); font-size: 12px; font-weight: 700;"><i class="ph ph-plus" style="margin-right: 4px;"></i> NEW</button>
+                        </div>
+                        <div id="playlists-list" class="playlist-grid"></div>
+                        
+                        <h3>All Tracks</h3>
+                        <div id="songs-list" class="flex-col"></div>
+                    </div>
                 </div>
                 
-                <div id="library-guest-msg" class="flex-col items-center justify-center" style="padding: 60px 20px; text-align: center;">
-                    <i class="ph ph-lock-key size-48" style="margin-bottom: 20px; color: var(--text-muted);"></i>
-                    <p style="color: var(--text-muted); font-weight: 500; margin-bottom: 24px;">Log in to orchestrate your personal space.</p>
-                    <button type="button" class="btn-primary" style="max-width: 200px;" onclick="App.ui.toggleModal('login-modal')">Authenticate</button>
-                </div>
-
-                <div id="library-user-content" class="hidden">
-                    <div class="flex justify-between items-center">
-                        <h3>Playlists</h3>
-                        <button type="button" onclick="App.ui.toggleModal('create-pl-modal')" style="color:var(--text-muted); font-size: 12px; font-weight: 700;"><i class="ph ph-plus" style="margin-right: 4px;"></i> NEW</button>
+                <div id="library-detail" class="hidden">
+                    <div class="flex justify-between items-center" style="margin-bottom: 24px;">
+                        <button onclick="App.ui.navigateLibrary('back')" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
+                        <button id="btn-delete-pl" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:10px 18px; border-radius:24px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE</button>
                     </div>
-                    <div id="playlists-list" class="playlist-grid"></div>
-                    
-                    <h3>All Tracks</h3>
-                    <div id="songs-list" class="flex-col"></div>
+                    <h2 id="library-detail-title" style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px;">Collection</h2>
+                    <div id="pl-view-songs" class="flex-col" style="margin-top:20px;"></div>
                 </div>
             </div>
         </main>
@@ -216,7 +232,7 @@
                 <button type="button" onclick="App.audio.toggleVolume()"><i class="ph ph-speaker-high size-24" id="icon-vol"></i></button>
             </div>
             
-            <div class="expanded-only song-cover-large" id="expanded-cover"></div>
+            <div class="expanded-only song-cover-large" id="expanded-cover"><i class="ph ph-music-notes size-32" style="color: rgba(255,255,255,0.4);"></i></div>
 
             <div class="expanded-only card-info" style="text-align: center; margin-bottom: 20px; z-index: 2;">
                 <h4 id="player-title" style="font-size: 20px; font-weight: 800; white-space: normal;">MYR Space</h4>
@@ -232,7 +248,7 @@
             </div>
 
             <div class="expanded-only player-controls" style="margin-top: 16px; z-index: 2; padding: 0 10px;">
-                <button type="button" onclick="App.audio.toggleShuffle()"><i class="ph ph-shuffle size-24" id="icon-shuffle"></i></button>
+                <button type="button" onclick="App.audio.toggleShuffle()"><i class="ph ph-shuffle size-24" id="icon-shuffle" style="color:var(--text-muted);"></i></button>
                 <div class="main-controls">
                     <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back-fill size-28"></i></button>
                     <button type="button" onclick="App.audio.seekBy(-10)"><i class="ph ph-rewind size-24" style="color:var(--text-muted);"></i></button>
@@ -240,7 +256,7 @@
                     <button type="button" onclick="App.audio.seekBy(10)"><i class="ph ph-fast-forward size-24" style="color:var(--text-muted);"></i></button>
                     <button type="button" onclick="App.audio.next()"><i class="ph ph-skip-forward-fill size-28"></i></button>
                 </div>
-                <button type="button" onclick="App.audio.toggleLoop()"><i class="ph ph-repeat size-24" id="icon-loop"></i><span id="loop-indicator" style="font-size:10px; font-weight:800; margin-left:2px; display:none;">1</span></button>
+                <button type="button" onclick="App.audio.toggleLoop()"><i class="ph ph-repeat size-24" id="icon-loop" style="color:var(--text-muted);"></i><span id="loop-indicator" style="font-size:10px; font-weight:800; margin-left:2px; display:none;">1</span></button>
             </div>
         </div>
 
@@ -312,7 +328,7 @@
                 <h2 style="margin-top: 0;">Drop Tracks</h2>
                 <input type="file" id="upload-files" accept="audio/*" multiple style="padding: 16px; border: 1px dashed var(--text-muted); background: transparent; text-align: center; cursor:pointer;">
                 <p style="font-size: 12px; color: var(--text-muted); text-align: center; font-weight:500;">Max 50 files. Rename below before uploading.</p>
-                <div id="upload-staging-area" class="flex-col gap-2" style="max-height: 250px; overflow-y: auto;"></div>
+                <div id="upload-staging-area" class="flex-col gap-2" style="max-height: 250px; overflow-y: auto; padding:4px;"></div>
                 <button type="button" id="upload-submit-btn" class="btn-primary" onclick="App.library.processUploads()" disabled>Upload 0 Tracks</button>
             </div>
         </div>
@@ -356,7 +372,7 @@
             state: {
                 user: null, userHandle: '', theme: 'ips', caching: false, visEnabled: true,
                 songs: [], playlists: [], users: [], queue: [], currentIndex: -1,
-                isPlaying: false, loopMode: 0, shuffle: false, volume: 1 // loopMode: 0=Off, 1=All, 2=One
+                isPlaying: false, loopMode: 0, shuffle: false, volume: 1 // 0=Off, 1=Playlist, 2=Track
             },
             audioElement: new Audio(),
             stagedFiles: [],
@@ -370,7 +386,6 @@
                 this.visualizer.init();
                 
                 document.getElementById('upload-files').addEventListener('change', (e) => this.library.stageUploads(e));
-
                 document.addEventListener('fullscreenchange', () => {
                     document.getElementById('icon-fullscreen').classList.replace(document.fullscreenElement ? 'ph-corners-out' : 'ph-corners-in', document.fullscreenElement ? 'ph-corners-in' : 'ph-corners-out');
                 });
@@ -618,7 +633,7 @@
                     const confirm = await App.ui.confirm("Destroy Playlist", "Are you sure you want to delete this playlist?");
                     if(!confirm) return;
                     await miyuDB.from('playlists').delete().eq('id', id);
-                    App.ui.switchTab('library');
+                    App.ui.navigateLibrary('back');
                     App.ui.toast("Playlist destroyed");
                     this.loadLibrary();
                 },
@@ -676,15 +691,9 @@
                 
                 async viewUserSongs(userId, handle) {
                     const { data: songs } = await miyuDB.from('songs').select('*').eq('user_id', userId);
-                    const container = document.getElementById('users-list');
-                    container.innerHTML = `
-                        <button class="btn-primary" style="background:var(--surface); color:var(--text-main); border:1px solid var(--border); width:auto; margin-bottom:20px; font-weight:700;" onclick="App.explore.loadUsers()">
-                            <i class="ph ph-arrow-left size-20" style="margin-right:8px;"></i> BACK TO NETWORK
-                        </button>
-                        <h2 style="margin-top:0; text-transform: capitalize; font-size:28px;">${handle}'s Vault</h2>
-                        <div id="explore-songs-list" class="flex-col"></div>
-                    `;
+                    document.getElementById('explore-detail-title').innerText = `${handle}'s Vault`;
                     App.library.renderSongs(songs || [], 'explore-songs-list');
+                    App.ui.navigateExplore('detail');
                 },
 
                 async viewPlaylist(plId, plName) {
@@ -696,16 +705,10 @@
                         songs = data || [];
                     }
                     
-                    const container = document.getElementById('library-user-content');
-                    container.innerHTML = `
-                        <div class="flex justify-between items-center" style="margin-bottom: 24px;">
-                            <button onclick="App.ui.switchTab('library'); App.library.loadLibrary();" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
-                            <button onclick="App.library.deletePlaylist('${plId}')" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:10px 18px; border-radius:24px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE</button>
-                        </div>
-                        <h2 style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px;">${plName}</h2>
-                        <div id="pl-view-songs" class="flex-col" style="margin-top:20px;"></div>
-                    `;
+                    document.getElementById('library-detail-title').innerText = plName;
+                    document.getElementById('btn-delete-pl').onclick = () => App.library.deletePlaylist(plId);
                     App.library.renderSongs(songs, 'pl-view-songs');
+                    App.ui.navigateLibrary('detail');
                 }
             },
 
@@ -812,7 +815,9 @@
                     
                     const bgHash = App.library.generateGradient(song.title);
                     document.getElementById('mini-cover').style.background = bgHash;
+                    document.getElementById('mini-cover').innerHTML = ''; // Clear default icon
                     document.getElementById('expanded-cover').style.background = bgHash;
+                    document.getElementById('expanded-cover').innerHTML = '';
 
                     const { data } = miyuDB.storage.from('music').getPublicUrl(song.file_path);
                     let url = data.publicUrl;
@@ -822,7 +827,6 @@
                         canvas.width = 512; canvas.height = 512;
                         const ctx = canvas.getContext('2d');
                         ctx.fillStyle = '#111'; ctx.fillRect(0,0,512,512);
-                        // Very rough gradient rep for MediaSession
                         const grd = ctx.createLinearGradient(0,0,512,512);
                         grd.addColorStop(0, '#555'); grd.addColorStop(1, '#000');
                         ctx.fillStyle = grd; ctx.fillRect(0,0,512,512);
@@ -882,12 +886,8 @@
                     this.playQueue(btoa(encodeURIComponent(JSON.stringify(App.state.queue))), prevIdx);
                 },
                 handleEnd() {
-                    // loopMode: 0=Off, 1=All, 2=One
-                    if (App.state.loopMode === 2) {
-                        App.audioElement.play();
-                    } else if (App.state.loopMode === 1 || App.state.currentIndex < App.state.queue.length - 1 || App.state.shuffle) {
-                        this.next();
-                    }
+                    if (App.state.loopMode === 2) { App.audioElement.play(); } // Loop Track
+                    else if (App.state.loopMode === 1 || App.state.currentIndex < App.state.queue.length - 1 || App.state.shuffle) { this.next(); }
                 },
                 seek(e) {
                     if(!App.audioElement.src || !App.audioElement.duration) return;
@@ -903,14 +903,14 @@
                 },
                 toggleShuffle() {
                     App.state.shuffle = !App.state.shuffle;
-                    document.getElementById('icon-shuffle').style.color = App.state.shuffle ? 'var(--text-main)' : 'inherit';
+                    document.getElementById('icon-shuffle').style.color = App.state.shuffle ? 'var(--text-main)' : 'var(--text-muted)';
                     App.ui.toast(`Shuffle: ${App.state.shuffle ? 'ON' : 'OFF'}`);
                 },
                 toggleLoop() {
                     App.state.loopMode = (App.state.loopMode + 1) % 3;
                     const icon = document.getElementById('icon-loop');
                     const ind = document.getElementById('loop-indicator');
-                    if(App.state.loopMode === 0) { icon.style.color = 'inherit'; ind.style.display = 'none'; App.ui.toast("Loop: OFF"); }
+                    if(App.state.loopMode === 0) { icon.style.color = 'var(--text-muted)'; ind.style.display = 'none'; App.ui.toast("Loop: OFF"); }
                     if(App.state.loopMode === 1) { icon.style.color = 'var(--text-main)'; ind.style.display = 'none'; App.ui.toast("Loop: PLAYLIST"); }
                     if(App.state.loopMode === 2) { icon.style.color = 'var(--text-main)'; ind.style.display = 'inline-block'; App.ui.toast("Loop: TRACK"); }
                 },
@@ -939,6 +939,24 @@
                     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                     document.getElementById(`tab-${tab}`).classList.remove('hidden');
                     event.currentTarget.classList.add('active');
+                },
+                navigateExplore(view) {
+                    if (view === 'detail') {
+                        document.getElementById('explore-home').classList.add('hidden');
+                        document.getElementById('explore-detail').classList.remove('hidden');
+                    } else {
+                        document.getElementById('explore-detail').classList.add('hidden');
+                        document.getElementById('explore-home').classList.remove('hidden');
+                    }
+                },
+                navigateLibrary(view) {
+                    if (view === 'detail') {
+                        document.getElementById('library-home').classList.add('hidden');
+                        document.getElementById('library-detail').classList.remove('hidden');
+                    } else {
+                        document.getElementById('library-detail').classList.add('hidden');
+                        document.getElementById('library-home').classList.remove('hidden');
+                    }
                 },
                 toggleModal(id) { document.getElementById(id).classList.toggle('active'); },
                 togglePlayerExpand(e) {
@@ -1051,20 +1069,23 @@
                 }
             },
 
+            // --- SMOOTH LERP VISUALIZER ---
             visualizer: {
                 canvas: null, ctx: null, audioCtx: null, analyser: null, source: null,
-                dataArray: null, blobs: [],
+                dataArray: null, smoothBars: null, blobs: [], time: 0, currentHue: 240,
                 
                 init() {
                     this.canvas = document.getElementById('visualizer-canvas');
                     this.ctx = this.canvas.getContext('2d');
                     this.resize(); window.addEventListener('resize', () => this.resize());
                     
+                    this.smoothBars = new Float32Array(32); // 32 bars
+
                     for(let i=0; i<6; i++) {
                         this.blobs.push({
-                            x: Math.random() * this.canvas.width, y: Math.random() * this.canvas.height,
-                            vx: (Math.random() - 0.5) * 0.8, vy: (Math.random() - 0.5) * 0.8,
-                            r: Math.random() * 120 + 60, hueOffset: i * 20
+                            baseX: Math.random() * this.canvas.width, baseY: Math.random() * this.canvas.height,
+                            speedX: (Math.random() - 0.5) * 0.002, speedY: (Math.random() - 0.5) * 0.002,
+                            r: Math.random() * 100 + 60, hueOffset: i * 20, offset: Math.random() * 100
                         });
                     }
                     requestAnimationFrame(() => this.draw());
@@ -1089,6 +1110,7 @@
                 draw() {
                     if (!App.state.visEnabled) { requestAnimationFrame(() => this.draw()); return; }
 
+                    this.time += 1;
                     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                     
                     let intensity = 0;
@@ -1097,49 +1119,47 @@
                         intensity = this.dataArray.reduce((a,b)=>a+b, 0) / this.dataArray.length; 
                     }
 
-                    // Dynamic Hue based on Intensity
-                    let baseHue = 240; // Calm Blue
-                    if (intensity > 120) baseHue = 10; // Phonk Red
-                    else if (intensity > 80) baseHue = 300; // Energetic Pink
-                    
+                    // Smooth Color Lerping
+                    let targetHue = 240; 
+                    if (intensity > 120) targetHue = 370; // Map red forward for smooth rotation
+                    else if (intensity > 80) targetHue = 280;
+                    this.currentHue += (targetHue - this.currentHue) * 0.03;
+
                     this.ctx.globalCompositeOperation = 'screen';
                     this.ctx.filter = 'blur(60px)'; 
 
-                    // Persistent Orbs Engine
+                    // Smooth Sine Wave Orbs
                     this.blobs.forEach((b, i) => {
-                        const beatPush = (intensity * 0.025);
-                        b.x += b.vx + (beatPush * (i%2==0?1:-1));
-                        b.y += b.vy + (beatPush * (i%3==0?1:-1));
+                        // Natural wandering using trig
+                        b.x = b.baseX + Math.sin(this.time * b.speedX + b.offset) * 200;
+                        b.y = b.baseY + Math.cos(this.time * b.speedY + b.offset) * 200;
                         
-                        // Flawless boundary bounce
-                        if(b.x < 0) { b.x = 0; b.vx *= -1; }
-                        if(b.x > this.canvas.width) { b.x = this.canvas.width; b.vx *= -1; }
-                        if(b.y < 0) { b.y = 0; b.vy *= -1; }
-                        if(b.y > this.canvas.height) { b.y = this.canvas.height; b.vy *= -1; }
-
                         const pulse = App.state.isPlaying ? (intensity / 255) * 80 : 0;
                         
                         this.ctx.beginPath();
                         this.ctx.arc(b.x, b.y, b.r + pulse, 0, Math.PI * 2);
-                        this.ctx.fillStyle = `hsla(${baseHue + b.hueOffset}, 85%, ${App.state.theme === 'light' ? '65%' : '40%'}, 0.5)`;
+                        this.ctx.fillStyle = `hsla(${(this.currentHue + b.hueOffset)%360}, 85%, ${App.state.theme === 'light' ? '65%' : '40%'}, 0.4)`;
                         this.ctx.fill();
                     });
 
                     this.ctx.filter = 'none';
 
-                    // Audio Reactive Curved Bars at bottom
-                    if (intensity > 5 && !document.getElementById('player-container').classList.contains('minimized')) {
-                        this.ctx.fillStyle = `rgba(255,255,255,0.2)`;
+                    // Smooth Curved Audio Bars
+                    if (!document.getElementById('player-container').classList.contains('minimized')) {
+                        this.ctx.fillStyle = `rgba(255,255,255,0.08)`;
                         const barCount = 32;
                         const gap = 4;
                         const barW = (this.canvas.width / barCount) - gap;
                         
                         for(let i=0; i<barCount; i++) {
-                            const val = this.dataArray ? this.dataArray[i] : 0;
-                            const barH = (val / 255) * (this.canvas.height * 0.4);
-                            if(barH > 0) {
+                            const targetVal = this.dataArray ? this.dataArray[i] : 0;
+                            // Lerp the bar height
+                            this.smoothBars[i] += (targetVal - this.smoothBars[i]) * 0.15; 
+                            
+                            const barH = (this.smoothBars[i] / 255) * (this.canvas.height * 0.4);
+                            if(barH > 1) {
                                 this.ctx.beginPath();
-                                this.ctx.roundRect(i * (barW + gap) + (gap/2), this.canvas.height - barH, barW, barH, 4);
+                                this.ctx.roundRect(i * (barW + gap) + (gap/2), this.canvas.height - barH, barW, barH, 6);
                                 this.ctx.fill();
                             }
                         }
