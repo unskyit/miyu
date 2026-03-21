@@ -55,14 +55,14 @@
         input:focus, textarea:focus, select:focus { border-color: var(--text-muted); }
         select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23888888%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 16px auto; padding-right: 40px; }
 
-        /* Custom Checkbox */
         .custom-cb-wrapper { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; transition: 0.2s; cursor: pointer; border: 1px solid transparent;}
         .custom-cb-wrapper:hover { background: rgba(255,255,255,0.05); }
         .custom-cb { appearance: none; width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 6px; background: transparent; cursor: pointer; transition: 0.2s; position: relative; flex-shrink: 0;}
         .custom-cb:checked { background: var(--text-main); border-color: var(--text-main); }
         .custom-cb:checked::after { content: ''; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; border: solid var(--accent-invert); border-width: 0 2px 2px 0; transform: rotate(45deg); }
 
-        header { padding: env(safe-area-inset-top, 20px) 24px 20px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; flex-shrink: 0;}
+        /* ADDED PADDING TOP FOR HEADER */
+        header { padding: calc(env(safe-area-inset-top, 20px) + 20px) 24px 20px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; flex-shrink: 0;}
         h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
         h2 { font-size: 20px; font-weight: 700; margin: 24px 0 16px 0; letter-spacing: -0.3px; }
         h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-top: 24px; margin-bottom: 12px; }
@@ -85,7 +85,6 @@
         .pl-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
         .pl-info p { font-size: 11px; color: var(--text-muted); }
 
-        /* Dynamic Island Player */
         #player-container { position: fixed; bottom: 85px; left: 16px; right: 16px; padding: 20px; z-index: 20; display: flex; flex-direction: column; gap: 16px; overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         #player-container.minimized { padding: 12px 20px; gap: 0; height: 72px; cursor: pointer; border-radius: 36px; }
         #player-container.minimized .expanded-only { display: none !important; opacity: 0; }
@@ -115,7 +114,6 @@
         .modal-content { width: 100%; max-width: 500px; background: var(--bg); border: 1px solid var(--border); border-radius: 32px 32px 0 0; padding: 40px 24px calc(40px + env(safe-area-inset-bottom)) 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
         .modal.active .modal-content { transform: translateY(0); }
         
-        /* Custom Dialog UI */
         #custom-dialog.modal { align-items: center; }
         #custom-dialog .modal-content { border-radius: 24px; padding: 32px 24px; max-height: 80vh; transform: scale(0.9); opacity: 0; margin: 20px; }
         #custom-dialog.active .modal-content { transform: scale(1); opacity: 1; }
@@ -127,7 +125,7 @@
         .stage-prog-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
         .stage-prog-fill { height: 100%; background: var(--success); width: 0%; transition: 0.2s; }
 
-        #toast { position: fixed; top: env(safe-area-inset-top, 20px); left: 50%; transform: translateX(-50%) translateY(-100px); padding: 14px 28px; border-radius: 30px; font-size: 13px; z-index: 200; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); background: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border); text-align: center; max-width: 90%; box-shadow: var(--shadow); font-weight: 600; pointer-events: none; backdrop-filter: blur(10px);}
+        #toast { position: fixed; top: calc(env(safe-area-inset-top, 20px) + 20px); left: 50%; transform: translateX(-50%) translateY(-150px); padding: 14px 28px; border-radius: 30px; font-size: 13px; z-index: 200; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); background: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border); text-align: center; max-width: 90%; box-shadow: var(--shadow); font-weight: 600; pointer-events: none; backdrop-filter: blur(10px);}
         #toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
@@ -372,7 +370,7 @@
             state: {
                 user: null, userHandle: '', theme: 'ips', caching: false, visEnabled: true,
                 songs: [], playlists: [], users: [], queue: [], currentIndex: -1,
-                isPlaying: false, loopMode: 0, shuffle: false, volume: 1 // 0=Off, 1=Playlist, 2=Track
+                isPlaying: false, loopMode: 0, shuffle: false, volume: 1
             },
             audioElement: new Audio(),
             stagedFiles: [],
@@ -647,8 +645,16 @@
 
                     if(App.state.playlists.length >= 15) return App.ui.toast("Storage limit reached");
 
-                    const { data: pl } = await miyuDB.from('playlists').insert([{ user_id: App.state.user.id, name, description: desc }]).select().single();
+                    // EXPLICIT ERROR CATCHING FOR PLAYLIST INSERTION
+                    const { data, error } = await miyuDB.from('playlists').insert([{ user_id: App.state.user.id, name, description: desc }]).select();
                     
+                    if (error) {
+                        App.ui.toast("Error creating playlist: " + error.message);
+                        return;
+                    }
+
+                    const pl = data ? data[0] : null;
+
                     if (songIds.length > 0 && pl) {
                         const inserts = songIds.map(sid => ({ playlist_id: pl.id, song_id: sid }));
                         await miyuDB.from('playlist_songs').insert(inserts);
@@ -815,7 +821,7 @@
                     
                     const bgHash = App.library.generateGradient(song.title);
                     document.getElementById('mini-cover').style.background = bgHash;
-                    document.getElementById('mini-cover').innerHTML = ''; // Clear default icon
+                    document.getElementById('mini-cover').innerHTML = '';
                     document.getElementById('expanded-cover').style.background = bgHash;
                     document.getElementById('expanded-cover').innerHTML = '';
 
@@ -886,7 +892,7 @@
                     this.playQueue(btoa(encodeURIComponent(JSON.stringify(App.state.queue))), prevIdx);
                 },
                 handleEnd() {
-                    if (App.state.loopMode === 2) { App.audioElement.play(); } // Loop Track
+                    if (App.state.loopMode === 2) { App.audioElement.play(); } 
                     else if (App.state.loopMode === 1 || App.state.currentIndex < App.state.queue.length - 1 || App.state.shuffle) { this.next(); }
                 },
                 seek(e) {
@@ -973,8 +979,6 @@
                     el.innerText = msg; el.classList.add('show');
                     setTimeout(() => el.classList.remove('show'), 3500);
                 },
-                
-                // --- CUSTOM UI DIALOGS ---
                 confirm(title, message) {
                     return new Promise(resolve => {
                         const m = document.getElementById('custom-dialog');
@@ -1013,7 +1017,6 @@
                         inp.focus();
                     });
                 },
-
                 formatTime(sec) {
                     if(isNaN(sec) || sec === Infinity) return "0:00";
                     const m = Math.floor(sec / 60), s = Math.floor(sec % 60).toString().padStart(2, '0');
@@ -1069,7 +1072,7 @@
                 }
             },
 
-            // --- SMOOTH LERP VISUALIZER ---
+            // --- REFINED AUDIO VISUALIZER ---
             visualizer: {
                 canvas: null, ctx: null, audioCtx: null, analyser: null, source: null,
                 dataArray: null, smoothBars: null, blobs: [], time: 0, currentHue: 240,
@@ -1079,13 +1082,15 @@
                     this.ctx = this.canvas.getContext('2d');
                     this.resize(); window.addEventListener('resize', () => this.resize());
                     
-                    this.smoothBars = new Float32Array(32); // 32 bars
+                    this.smoothBars = new Float32Array(64); // Thinner bars
 
                     for(let i=0; i<6; i++) {
                         this.blobs.push({
                             baseX: Math.random() * this.canvas.width, baseY: Math.random() * this.canvas.height,
                             speedX: (Math.random() - 0.5) * 0.002, speedY: (Math.random() - 0.5) * 0.002,
-                            r: Math.random() * 100 + 60, hueOffset: i * 20, offset: Math.random() * 100
+                            r: Math.random() * 120 + 80, 
+                            // Strictly mapping hue offsets to keep them in Blue/Purple range without drifting into Yellow
+                            hueOffset: i * 10, offset: Math.random() * 100
                         });
                     }
                     requestAnimationFrame(() => this.draw());
@@ -1095,7 +1100,7 @@
                     try {
                         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                         this.analyser = this.audioCtx.createAnalyser();
-                        this.analyser.fftSize = 64; 
+                        this.analyser.fftSize = 128; 
                         this.source = this.audioCtx.createMediaElementSource(App.audioElement);
                         this.source.connect(this.analyser);
                         this.analyser.connect(this.audioCtx.destination);
@@ -1119,18 +1124,18 @@
                         intensity = this.dataArray.reduce((a,b)=>a+b, 0) / this.dataArray.length; 
                     }
 
-                    // Smooth Color Lerping
-                    let targetHue = 240; 
-                    if (intensity > 120) targetHue = 370; // Map red forward for smooth rotation
-                    else if (intensity > 80) targetHue = 280;
-                    this.currentHue += (targetHue - this.currentHue) * 0.03;
+                    // Strict Cool to Warm Mapping without Yellow
+                    let targetHue = 230; // Deep Blue
+                    if (intensity > 130) targetHue = 350; // Red/Pink
+                    else if (intensity > 80) targetHue = 280; // Purple
+                    
+                    // ULTRA-SLOW Transition for calm aesthetics
+                    this.currentHue += (targetHue - this.currentHue) * 0.008;
 
                     this.ctx.globalCompositeOperation = 'screen';
                     this.ctx.filter = 'blur(60px)'; 
 
-                    // Smooth Sine Wave Orbs
-                    this.blobs.forEach((b, i) => {
-                        // Natural wandering using trig
+                    this.blobs.forEach((b) => {
                         b.x = b.baseX + Math.sin(this.time * b.speedX + b.offset) * 200;
                         b.y = b.baseY + Math.cos(this.time * b.speedY + b.offset) * 200;
                         
@@ -1138,29 +1143,26 @@
                         
                         this.ctx.beginPath();
                         this.ctx.arc(b.x, b.y, b.r + pulse, 0, Math.PI * 2);
-                        this.ctx.fillStyle = `hsla(${(this.currentHue + b.hueOffset)%360}, 85%, ${App.state.theme === 'light' ? '65%' : '40%'}, 0.4)`;
+                        this.ctx.fillStyle = `hsla(${(this.currentHue + b.hueOffset)%360}, 80%, ${App.state.theme === 'light' ? '65%' : '40%'}, 0.4)`;
                         this.ctx.fill();
                     });
 
                     this.ctx.filter = 'none';
 
-                    // Smooth Curved Audio Bars
                     if (!document.getElementById('player-container').classList.contains('minimized')) {
-                        this.ctx.fillStyle = `rgba(255,255,255,0.08)`;
-                        const barCount = 32;
-                        const gap = 4;
+                        this.ctx.fillStyle = `rgba(255,255,255,0.3)`; // Locked at 30% opacity
+                        const barCount = 64; // Thinner bars
+                        const gap = 2;
                         const barW = (this.canvas.width / barCount) - gap;
                         
                         for(let i=0; i<barCount; i++) {
                             const targetVal = this.dataArray ? this.dataArray[i] : 0;
-                            // Lerp the bar height
                             this.smoothBars[i] += (targetVal - this.smoothBars[i]) * 0.15; 
                             
-                            const barH = (this.smoothBars[i] / 255) * (this.canvas.height * 0.4);
+                            const barH = (this.smoothBars[i] / 255) * (this.canvas.height * 0.35);
                             if(barH > 1) {
-                                this.ctx.beginPath();
-                                this.ctx.roundRect(i * (barW + gap) + (gap/2), this.canvas.height - barH, barW, barH, 6);
-                                this.ctx.fill();
+                                // Strictly flat, no rounded corners
+                                this.ctx.fillRect(i * (barW + gap) + (gap/2), this.canvas.height - barH, barW, barH);
                             }
                         }
                     }
