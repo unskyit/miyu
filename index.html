@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Miyu</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23000%22/></svg>">
+    
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -20,8 +22,12 @@
             --border: rgba(0, 0, 0, 0.05); --shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
         }
 
+        /* Fullscreen resets */
+        ::backdrop { background-color: var(--bg-color); }
+        :fullscreen { background-color: var(--bg-color); display: flex; flex-direction: column; width: 100vw; height: 100vh; }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lexend', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color); color: var(--text-primary); min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
+        body { background-color: var(--bg-color); color: var(--text-primary); min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; transition: background-color 0.3s, color 0.3s; }
         .glass { background: var(--surface-color); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 0.5px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); }
         
         .hidden { display: none !important; }
@@ -29,40 +35,45 @@
         .items-center { align-items: center; } .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
         .gap-2 { gap: 8px; } .gap-4 { gap: 16px; }
 
-        button { background: none; border: none; color: inherit; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        button:hover { opacity: 0.7; }
+        button { background: none; border: none; color: inherit; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; outline: none; }
+        button:hover { opacity: 0.7; transform: scale(0.98); }
+        button:active { transform: scale(0.95); }
+        
         .btn-primary { background: var(--text-primary); color: var(--bg-color); padding: 12px 20px; border-radius: 20px; font-weight: 500; font-size: 14px; width: 100%; }
         .btn-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-color); border: 0.5px solid var(--border); }
-        input { background: var(--surface-color); border: 0.5px solid var(--border); color: var(--text-primary); padding: 12px 16px; border-radius: 12px; outline: none; width: 100%; }
+        input { background: var(--surface-color); border: 0.5px solid var(--border); color: var(--text-primary); padding: 12px 16px; border-radius: 12px; outline: none; width: 100%; transition: 0.2s; }
+        input:focus { border-color: var(--text-secondary); }
         
-        #app-screen { flex: 1; display: flex; flex-direction: column; height: 100vh; position: relative; }
+        #app-screen { flex: 1; display: flex; flex-direction: column; height: 100%; width: 100%; position: relative; }
         header { padding: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        main { flex: 1; overflow-y: auto; padding: 0 20px 120px 20px; } main::-webkit-scrollbar { display: none; }
+        main { flex: 1; overflow-y: auto; padding: 0 20px 140px 20px; scroll-behavior: smooth; } 
+        main::-webkit-scrollbar { display: none; }
         
         h2 { font-size: 18px; font-weight: 500; margin-bottom: 16px; margin-top: 24px; }
-        .item-card { padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; background: var(--surface-color); border: 0.5px solid var(--border); cursor: pointer; }
+        .item-card { padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; background: var(--surface-color); border: 0.5px solid var(--border); cursor: pointer; transition: 0.2s; }
+        .item-card:hover { background: var(--surface-hover); }
         .item-info h4 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
         .item-info p { font-size: 12px; color: var(--text-secondary); }
 
-        #player-container { position: absolute; bottom: 80px; left: 20px; right: 20px; padding: 16px; z-index: 20; display: flex; flex-direction: column; gap: 12px; }
+        #player-container { position: absolute; bottom: 85px; left: 20px; right: 20px; padding: 16px; z-index: 20; display: flex; flex-direction: column; gap: 12px; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         #visualizer-canvas { width: 100%; height: 60px; border-radius: 8px; margin-bottom: 8px; pointer-events: none; }
         .player-controls { display: flex; justify-content: space-between; align-items: center; }
         .main-controls { display: flex; gap: 16px; align-items: center; }
         .play-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--text-primary); color: var(--bg-color); }
-        .progress-container { width: 100%; height: 4px; background: var(--surface-color); border-radius: 2px; cursor: pointer; overflow: hidden; position: relative; }
+        .progress-container { width: 100%; height: 6px; background: var(--surface-hover); border-radius: 3px; cursor: pointer; overflow: hidden; position: relative; }
         .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.1s linear; }
 
-        nav { position: absolute; bottom: 0; width: 100%; height: 70px; display: flex; justify-content: space-around; align-items: center; z-index: 30; background: var(--surface-color); backdrop-filter: var(--glass-blur); border-top: 0.5px solid var(--border); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 11px; }
+        nav { position: absolute; bottom: 0; width: 100%; height: 70px; display: flex; justify-content: space-around; align-items: center; z-index: 30; background: var(--surface-color); backdrop-filter: var(--glass-blur); border-top: 0.5px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 11px; width: 60px; }
         .nav-item.active { color: var(--text-primary); }
 
         .modal { position: absolute; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 50; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal.active { opacity: 1; pointer-events: all; }
-        .modal-content { width: 100%; max-width: 500px; background: var(--bg-color); border-top: 0.5px solid var(--border); border-radius: 24px 24px 0 0; padding: 24px; transform: translateY(100%); transition: 0.3s; max-height: 80vh; overflow-y: auto; }
+        .modal-content { width: 100%; max-width: 500px; background: var(--bg-color); border-top: 0.5px solid var(--border); border-radius: 24px 24px 0 0; padding: 24px; transform: translateY(100%); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); max-height: 85vh; overflow-y: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
         .modal.active .modal-content { transform: translateY(0); }
         .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 0.5px solid var(--border); }
 
-        #toast { position: absolute; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); padding: 12px 24px; border-radius: 20px; font-size: 13px; z-index: 100; transition: 0.3s; background: var(--surface-hover); color: var(--text-primary); border: 1px solid var(--border); text-align: center; max-width: 90%; word-wrap: break-word;}
+        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); padding: 12px 24px; border-radius: 20px; font-size: 13px; z-index: 100; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); background: var(--surface-hover); color: var(--text-primary); border: 1px solid var(--border); text-align: center; max-width: 90%; box-shadow: var(--shadow); font-weight: 500; pointer-events: none;}
         #toast.show { transform: translateX(-50%) translateY(0); }
         
         .guest-message { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 14px; }
@@ -75,9 +86,10 @@
     <div id="app-screen">
         <header>
             <h1 style="font-size: 20px; font-weight: 400; letter-spacing: 1px;">Miyu</h1>
-            <div class="flex gap-2">
-                <button id="upload-btn-header" class="btn-icon hidden" onclick="App.ui.toggleModal('upload-modal')"><i class="ph ph-upload-simple"></i></button>
-                <button class="btn-icon" onclick="App.ui.toggleModal('settings-modal')"><i class="ph ph-gear size-20"></i></button>
+            <div class="flex gap-4 items-center">
+                <button type="button" onclick="App.ui.toggleFullscreen()" title="Fullscreen"><i class="ph ph-corners-out size-20" id="icon-fullscreen"></i></button>
+                <button id="upload-btn-header" class="btn-icon hidden" onclick="App.ui.toggleModal('upload-modal')" title="Upload"><i class="ph ph-upload-simple"></i></button>
+                <button class="btn-icon" onclick="App.ui.toggleModal('settings-modal')" title="Settings"><i class="ph ph-gear size-20"></i></button>
             </div>
         </header>
 
@@ -85,7 +97,8 @@
             <div id="tab-people" class="tab-content">
                 <h2>Exploration</h2>
                 <div id="users-list">
-                    <p style="color:var(--text-secondary); font-size:12px;">Loading community...</p>
+                    <div class="skeleton" style="height: 60px; width: 100%; margin-bottom: 8px; border-radius: 12px;"></div>
+                    <div class="skeleton" style="height: 60px; width: 100%; margin-bottom: 8px; border-radius: 12px;"></div>
                 </div>
             </div>
 
@@ -112,23 +125,23 @@
         <div id="player-container" class="glass">
             <canvas id="visualizer-canvas"></canvas>
             <div class="flex justify-between items-center" style="margin-bottom: 8px;">
-                <div class="item-info" style="max-width: 60%; overflow: hidden; white-space: nowrap;">
+                <div class="item-info" style="max-width: 65%; overflow: hidden; white-space: nowrap;">
                     <h4 id="player-title">No track selected</h4>
-                    <p id="player-artist">Miyu</p>
+                    <p id="player-artist">Miyu Space</p>
                 </div>
-                <div style="font-size: 11px; color: var(--text-secondary);"><span id="time-current">0:00</span> / <span id="time-total">0:00</span></div>
+                <div style="font-size: 11px; color: var(--text-secondary); font-variant-numeric: tabular-nums;"><span id="time-current">0:00</span> / <span id="time-total">0:00</span></div>
             </div>
             <div class="progress-container" onclick="App.audio.seek(event)">
                 <div class="progress-bar" id="player-progress"></div>
             </div>
-            <div class="player-controls" style="margin-top: 8px;">
-                <button type="button" onclick="App.audio.toggleShuffle()"><i class="ph ph-shuffle" id="icon-shuffle"></i></button>
+            <div class="player-controls" style="margin-top: 12px;">
+                <button type="button" onclick="App.audio.toggleShuffle()"><i class="ph ph-shuffle size-20" id="icon-shuffle"></i></button>
                 <div class="main-controls">
                     <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back size-24"></i></button>
                     <button type="button" class="play-btn" onclick="App.audio.togglePlay()"><i class="ph ph-play size-24" id="icon-play"></i></button>
                     <button type="button" onclick="App.audio.next()"><i class="ph ph-skip-forward size-24"></i></button>
                 </div>
-                <button type="button" onclick="App.audio.toggleLoop()"><i class="ph ph-repeat" id="icon-loop"></i></button>
+                <button type="button" onclick="App.audio.toggleLoop()"><i class="ph ph-repeat size-20" id="icon-loop"></i></button>
             </div>
         </div>
 
@@ -145,7 +158,7 @@
 
         <div id="login-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('login-modal')">
             <div class="modal-content flex-col gap-4">
-                <h2 style="text-align: center;">Welcome Back</h2>
+                <h2 style="text-align: center; margin-top: 0;">Welcome Back</h2>
                 <input type="text" id="auth-handle" placeholder="Handle (e.g., alex)" autocomplete="off" autocapitalize="none">
                 <input type="password" id="auth-password" placeholder="Password">
                 <button type="button" id="login-btn" class="btn-primary" onclick="App.auth.login()">Enter</button>
@@ -154,19 +167,19 @@
 
         <div id="settings-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('settings-modal')">
             <div class="modal-content">
-                <h2>Settings</h2>
+                <h2 style="margin-top: 0;">Settings</h2>
                 <div class="setting-row">
                     <span>Dark Mode</span>
                     <button type="button" onclick="App.settings.toggleTheme()"><i class="ph ph-moon size-20"></i></button>
                 </div>
-                <div id="auth-status-row" class="setting-row">
+                <div id="auth-status-row" class="setting-row" style="border-bottom: none; padding-bottom: 0;">
                     </div>
             </div>
         </div>
 
         <div id="upload-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('upload-modal')">
             <div class="modal-content flex-col gap-4">
-                <h2>Upload Track</h2>
+                <h2 style="margin-top: 0;">Upload Track</h2>
                 <input type="text" id="upload-title" placeholder="Song Title (optional)">
                 <input type="file" id="upload-file" accept="audio/mp3, audio/mpeg" style="padding: 10px 0; border: none; background: transparent;">
                 <button type="button" class="btn-primary" onclick="App.library.uploadSong()">Upload to Miyu</button>
@@ -175,20 +188,18 @@
     </div>
 
     <script>
-        // GLOBAL MOBILE ERROR CATCHER - This ensures you ALWAYS see if something breaks
-        window.onerror = function(message, source, lineno, colno, error) {
-            alert("SYSTEM ERROR:\n" + message + "\nLine: " + lineno);
+        // Global Error Catcher
+        window.onerror = function(message, source, lineno) {
+            console.error("SYSTEM ERROR:", message, "Line:", lineno);
             return true;
         };
-        window.onunhandledrejection = function(event) {
-            alert("ASYNC ERROR:\n" + event.reason);
-        };
 
-        // INTEGRATED KEYS
+        // Configuration
         const SUPABASE_URL = 'https://vfkkoacakiaulcjviyfe.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZma2tvYWNha2lhdWxjanZpeWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTQxNjAsImV4cCI6MjA4OTY5MDE2MH0.qlXPSD-31q-UrTDja9wN2QXp8Fazm2zORKaFuzJ1vq4';
         
-        let supabase;
+        // Securely initialize Supabase to avoid global namespace collisions with the CDN script
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const App = {
             state: {
@@ -199,35 +210,43 @@
             audioElement: new Audio(),
 
             init() {
-                // 1. Instantly set up UI for guests so the screen is never blank
                 this.ui.setupGuestMode();
                 this.visualizer.init();
                 
-                // 2. Set up Audio Listeners
                 this.audioElement.addEventListener('timeupdate', () => this.ui.updateProgress());
                 this.audioElement.addEventListener('ended', () => this.audio.handleEnd());
-                this.audioElement.addEventListener('play', () => { this.state.isPlaying = true; document.getElementById('icon-play').classList.replace('ph-play', 'ph-pause'); });
-                this.audioElement.addEventListener('pause', () => { this.state.isPlaying = false; document.getElementById('icon-play').classList.replace('ph-pause', 'ph-play'); });
+                this.audioElement.addEventListener('play', () => { 
+                    this.state.isPlaying = true; 
+                    document.getElementById('icon-play').classList.replace('ph-play', 'ph-pause'); 
+                });
+                this.audioElement.addEventListener('pause', () => { 
+                    this.state.isPlaying = false; 
+                    document.getElementById('icon-play').classList.replace('ph-pause', 'ph-play'); 
+                });
 
-                // 3. Initialize Supabase safely
-                try {
-                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                    this.checkSession();
-                    this.explore.loadUsers(); // Load the people tab data immediately
-                } catch (err) {
-                    alert("Failed to connect to Database: " + err.message);
-                }
+                // Listen for fullscreen changes to update the icon
+                document.addEventListener('fullscreenchange', () => {
+                    const icon = document.getElementById('icon-fullscreen');
+                    if (document.fullscreenElement) {
+                        icon.classList.replace('ph-corners-out', 'ph-corners-in');
+                    } else {
+                        icon.classList.replace('ph-corners-in', 'ph-corners-out');
+                    }
+                });
+
+                this.checkSession();
+                this.explore.loadUsers(); 
             },
 
             async checkSession() {
                 try {
-                    const { data: { session }, error } = await supabase.auth.getSession();
+                    const { data: { session }, error } = await supabaseClient.auth.getSession();
                     if (error) throw error;
                     if (session) {
                         await this.auth.handleSession(session.user);
                     }
                 } catch (err) {
-                    console.log("No active session or error checking session", err);
+                    console.warn("Session check skipped or failed:", err.message);
                 }
             },
 
@@ -235,22 +254,21 @@
                 async login() {
                     const btn = document.getElementById('login-btn');
                     try {
-                        let handle = document.getElementById('auth-handle').value.trim().toLowerCase(); // Forced lowercase
+                        let handle = document.getElementById('auth-handle').value.trim().toLowerCase();
                         const password = document.getElementById('auth-password').value;
                         
                         if(!handle || !password) {
-                            alert("Please enter both handle and password.");
+                            App.ui.toast("Please enter both handle and password.");
                             return;
                         }
                         
                         btn.innerText = "Authenticating...";
                         
                         const email = `${handle}@miyu.app`;
-                        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
                         
                         if (error) {
-                            alert("LOGIN FAILED:\n" + error.message);
-                            btn.innerText = "Enter";
+                            App.ui.toast("Login Failed: " + error.message);
                             return;
                         }
                         
@@ -259,7 +277,7 @@
                         await this.handleSession(data.user);
                         
                     } catch (err) {
-                        alert("UNEXPECTED LOGIN ERROR:\n" + err.message);
+                        App.ui.toast("Error: " + err.message);
                     } finally {
                         btn.innerText = "Enter";
                     }
@@ -267,21 +285,21 @@
                 
                 async handleSession(authUser) {
                     try {
-                        const { data: userData, error } = await supabase.from('users').select('handle').eq('id', authUser.id).single();
+                        const { data: userData } = await supabaseClient.from('users').select('handle').eq('id', authUser.id).single();
                         
                         App.state.user = authUser;
                         App.state.userHandle = userData ? userData.handle : authUser.email.split('@')[0];
                         
                         App.ui.setupUserMode();
-                        App.ui.toast(`Welcome back, ${App.state.userHandle}`);
+                        App.ui.toast(`Welcome back, @${App.state.userHandle}`);
                         App.library.loadLibrary();
                     } catch (err) {
-                        alert("Session loading error:\n" + err.message);
+                        console.error("Session load error:", err);
                     }
                 },
 
                 async logout() {
-                    await supabase.auth.signOut();
+                    await supabaseClient.auth.signOut();
                     window.location.reload();
                 }
             },
@@ -290,11 +308,11 @@
                 async loadLibrary() {
                     if (!App.state.user) return;
                     try {
-                        const { data: songs, error: sErr } = await supabase.from('songs').select('*').eq('user_id', App.state.user.id).order('created_at', { ascending: false });
+                        const { data: songs, error: sErr } = await supabaseClient.from('songs').select('*').eq('user_id', App.state.user.id).order('created_at', { ascending: false });
                         if (sErr) throw sErr;
                         App.state.songs = songs || [];
                         
-                        const { data: playlists, error: pErr } = await supabase.from('playlists').select('*').eq('user_id', App.state.user.id);
+                        const { data: playlists, error: pErr } = await supabaseClient.from('playlists').select('*').eq('user_id', App.state.user.id);
                         if (pErr) throw pErr;
                         App.state.playlists = playlists || [];
 
@@ -305,23 +323,27 @@
                             <div class="item-card"><div class="item-info"><h4>${pl.name}</h4></div></div>
                         `).join('');
                     } catch (err) {
-                        alert("Library Load Error: " + err.message);
+                        App.ui.toast("Library Load Error: " + err.message);
                     }
                 },
                 
                 renderSongs(songsArray, containerId) {
                     const container = document.getElementById(containerId);
                     if(songsArray.length === 0) { 
-                        container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">No tracks found.</p>'; 
+                        container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; text-align:center; padding: 20px;">No tracks found.</p>'; 
                         return; 
                     }
+                    
+                    // Secure base64 encoding for song queues containing special chars or emojis
+                    const safeQueue = btoa(encodeURIComponent(JSON.stringify(songsArray)));
+                    
                     container.innerHTML = songsArray.map((song, i) => `
-                        <div class="item-card" onclick="App.audio.playQueue('${btoa(unescape(encodeURIComponent(JSON.stringify(songsArray))))}', ${i})">
+                        <div class="item-card" onclick="App.audio.playQueue('${safeQueue}', ${i})">
                             <div class="item-info">
                                 <h4>${song.title}</h4>
                                 <p>${(song.file_size / 1024 / 1024).toFixed(2)} MB</p>
                             </div>
-                            <button class="btn-icon" style="width:30px;height:30px;"><i class="ph ph-play"></i></button>
+                            <button class="btn-icon" style="width:32px;height:32px;"><i class="ph ph-play"></i></button>
                         </div>
                     `).join('');
                 },
@@ -330,19 +352,20 @@
                     try {
                         const fileInput = document.getElementById('upload-file');
                         const titleInput = document.getElementById('upload-title');
-                        if(!fileInput.files.length) { alert("Select an MP3 file"); return; }
+                        if(!fileInput.files.length) { App.ui.toast("Select an MP3 file"); return; }
                         
                         const file = fileInput.files[0];
                         const title = titleInput.value.trim() || file.name.replace('.mp3', '');
-                        const filePath = `${App.state.user.id}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
+                        const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+                        const filePath = `${App.state.user.id}/${Date.now()}_${safeFileName}`;
                         
                         App.ui.toast("Uploading...");
                         App.ui.toggleModal('upload-modal');
 
-                        const { error: uploadErr } = await supabase.storage.from('music').upload(filePath, file);
+                        const { error: uploadErr } = await supabaseClient.storage.from('music').upload(filePath, file);
                         if (uploadErr) throw uploadErr;
 
-                        const { error: dbErr } = await supabase.from('songs').insert([
+                        const { error: dbErr } = await supabaseClient.from('songs').insert([
                             { user_id: App.state.user.id, title, file_path: filePath, file_size: file.size }
                         ]);
                         if (dbErr) throw dbErr;
@@ -352,19 +375,19 @@
                         document.getElementById('upload-title').value = '';
                         this.loadLibrary();
                     } catch (err) {
-                        alert("Upload failed:\n" + err.message);
+                        App.ui.toast("Upload failed: " + err.message);
                     }
                 },
 
                 async createPlaylist() {
-                    if (App.state.playlists.length >= 10) { alert("Max 10 playlists allowed."); return; }
+                    if (App.state.playlists.length >= 10) { App.ui.toast("Max 10 playlists allowed."); return; }
                     const name = prompt("Playlist Name:");
                     if (!name) return;
                     try {
-                        await supabase.from('playlists').insert([{ user_id: App.state.user.id, name }]);
+                        await supabaseClient.from('playlists').insert([{ user_id: App.state.user.id, name }]);
                         this.loadLibrary();
                     } catch (err) {
-                        alert("Error creating playlist: " + err.message);
+                        App.ui.toast("Error creating playlist: " + err.message);
                     }
                 }
             },
@@ -372,13 +395,13 @@
             explore: {
                 async loadUsers() {
                     try {
-                        const { data, error } = await supabase.from('users').select('id, handle');
+                        const { data, error } = await supabaseClient.from('users').select('id, handle');
                         if (error) throw error;
                         
                         App.state.users = data || [];
                         const container = document.getElementById('users-list');
                         if(App.state.users.length === 0) {
-                             container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">No users found yet.</p>';
+                             container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; text-align:center;">No users found yet.</p>';
                         } else {
                             container.innerHTML = App.state.users.map(u => `
                                 <div class="item-card" onclick="App.explore.viewUserSongs('${u.id}', '${u.handle}')">
@@ -388,22 +411,26 @@
                             `).join('');
                         }
                     } catch (err) {
-                        console.log("Could not load users", err);
+                        console.error("Could not load users", err);
                     }
                 },
                 
                 async viewUserSongs(userId, handle) {
                     try {
-                        const { data: songs, error } = await supabase.from('songs').select('*').eq('user_id', userId);
+                        const { data: songs, error } = await supabaseClient.from('songs').select('*').eq('user_id', userId);
                         if (error) throw error;
 
                         const container = document.getElementById('users-list');
-                        container.innerHTML = `<button onclick="App.explore.loadUsers()" style="margin-bottom:16px; color:var(--text-secondary);"><i class="ph ph-arrow-left" style="margin-right:4px;"></i> Back</button>
-                                               <h3 style="margin-bottom:12px;">@${handle}'s Tracks</h3>
-                                               <div id="explore-songs-list" class="flex-col gap-2"></div>`;
+                        container.innerHTML = `
+                            <button type="button" onclick="App.explore.loadUsers()" style="margin-bottom:16px; color:var(--text-secondary); font-size: 14px;">
+                                <i class="ph ph-arrow-left" style="margin-right:6px;"></i> Back to Community
+                            </button>
+                            <h3 style="margin-bottom:12px;">@${handle}'s Tracks</h3>
+                            <div id="explore-songs-list" class="flex-col gap-2"></div>
+                        `;
                         App.library.renderSongs(songs || [], 'explore-songs-list');
                     } catch (err) {
-                        alert("Could not load tracks: " + err.message);
+                        App.ui.toast("Could not load tracks: " + err.message);
                     }
                 }
             },
@@ -411,24 +438,25 @@
             audio: {
                 async playQueue(encodedQueue, index) {
                     try {
-                        App.state.queue = JSON.parse(decodeURIComponent(escape(atob(encodedQueue))));
+                        App.state.queue = JSON.parse(decodeURIComponent(atob(encodedQueue)));
                         App.state.currentIndex = index;
                         this.loadAndPlay(App.state.queue[index]);
                     } catch (err) {
-                        alert("Error playing track.");
+                        App.ui.toast("Error parsing track data.");
                     }
                 },
                 loadAndPlay(song) {
                     document.getElementById('player-title').innerText = song.title;
-                    document.getElementById('player-artist').innerText = "Loading URL...";
+                    document.getElementById('player-artist').innerText = "Loading Audio...";
                     
-                    const { data } = supabase.storage.from('music').getPublicUrl(song.file_path);
+                    const { data } = supabaseClient.storage.from('music').getPublicUrl(song.file_path);
                     
                     App.audioElement.src = data.publicUrl;
-                    document.getElementById('player-artist').innerText = "Streaming";
+                    document.getElementById('player-artist').innerText = "Streaming HQ";
                     
                     App.audioElement.play().catch(e => {
-                        console.log("Browser prevented autoplay", e);
+                        console.warn("Autoplay prevented:", e);
+                        App.ui.toast("Tap play to start audio");
                     });
                 },
                 togglePlay() {
@@ -493,13 +521,24 @@
                     const modal = document.getElementById(id);
                     modal.classList.toggle('active');
                 },
+                toggleFullscreen() {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(err => {
+                            App.ui.toast(`Fullscreen unavailable: ${err.message}`);
+                        });
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        }
+                    }
+                },
                 toast(msg) {
                     const el = document.getElementById('toast');
                     el.innerText = msg; el.classList.add('show');
                     setTimeout(() => el.classList.remove('show'), 3500);
                 },
                 formatTime(sec) {
-                    if(isNaN(sec)) return "0:00";
+                    if(isNaN(sec) || sec === Infinity) return "0:00";
                     const m = Math.floor(sec / 60);
                     const s = Math.floor(sec % 60).toString().padStart(2, '0');
                     return `${m}:${s}`;
@@ -507,7 +546,7 @@
                 updateProgress() {
                     const curr = App.audioElement.currentTime;
                     const tot = App.audioElement.duration;
-                    if(isNaN(tot)) return;
+                    if(isNaN(tot) || tot === Infinity) return;
                     document.getElementById('time-current').innerText = this.formatTime(curr);
                     document.getElementById('time-total').innerText = this.formatTime(tot);
                     document.getElementById('player-progress').style.width = `${(curr / tot) * 100}%`;
@@ -527,7 +566,7 @@
                     this.canvas = document.getElementById('visualizer-canvas');
                     this.ctx = this.canvas.getContext('2d');
                     this.resize();
-                    for(let i=0; i<30; i++) this.particles.push({x: Math.random(), y: Math.random(), speed: Math.random()*0.02 + 0.005});
+                    for(let i=0; i<35; i++) this.particles.push({x: Math.random(), y: Math.random(), speed: Math.random()*0.015 + 0.005});
                     window.addEventListener('resize', () => this.resize());
                     requestAnimationFrame(() => this.draw());
                 },
@@ -539,25 +578,25 @@
                 draw() {
                     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                     const isDark = App.state.theme === 'dark';
-                    this.ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.3)';
+                    this.ctx.fillStyle = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.25)';
                     
                     if(App.state.isPlaying) {
                         this.particles.forEach(p => {
                             p.x += p.speed;
                             if(p.x > 1) p.x = 0;
                             this.ctx.beginPath();
-                            this.ctx.arc(p.x * this.canvas.width, p.y * this.canvas.height, 1.5, 0, Math.PI*2);
+                            this.ctx.arc(p.x * this.canvas.width, p.y * this.canvas.height, Math.random() > 0.8 ? 2 : 1.2, 0, Math.PI*2);
                             this.ctx.fill();
                         });
-                        this.offset += 0.05;
+                        this.offset += 0.06;
                     }
 
                     this.ctx.beginPath();
                     this.ctx.strokeStyle = isDark ? '#ffffff' : '#000000';
-                    this.ctx.lineWidth = 2;
-                    const amplitude = App.state.isPlaying ? 15 : 2;
+                    this.ctx.lineWidth = 1.5;
+                    const amplitude = App.state.isPlaying ? 14 : 1.5;
                     for(let i=0; i<this.canvas.width; i++) {
-                        const y = Math.sin(i * 0.02 + this.offset) * amplitude + (this.canvas.height/2);
+                        const y = Math.sin(i * 0.025 + this.offset) * amplitude + (this.canvas.height/2);
                         if(i===0) this.ctx.moveTo(i, y); else this.ctx.lineTo(i, y);
                     }
                     this.ctx.stroke();
@@ -567,7 +606,6 @@
             }
         };
 
-        // Initialize immediately when the DOM is ready
         window.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
