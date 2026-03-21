@@ -61,19 +61,20 @@
         .main-controls { display: flex; gap: 16px; align-items: center; }
         .play-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--text-primary); color: var(--bg-color); }
         .progress-container { width: 100%; height: 6px; background: var(--surface-hover); border-radius: 3px; cursor: pointer; overflow: hidden; position: relative; }
-        .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.1s linear; }
+        .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.1s linear; pointer-events: none; }
 
         nav { position: absolute; bottom: 0; width: 100%; height: 70px; display: flex; justify-content: space-around; align-items: center; z-index: 30; background: var(--surface-color); backdrop-filter: var(--glass-blur); border-top: 0.5px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 11px; width: 60px; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 11px; width: 60px; cursor: pointer; }
         .nav-item.active { color: var(--text-primary); }
 
-        .modal { position: absolute; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 50; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        /* Z-index increased to ensure Modals overlay absolutely everything */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal.active { opacity: 1; pointer-events: all; }
         .modal-content { width: 100%; max-width: 500px; background: var(--bg-color); border-top: 0.5px solid var(--border); border-radius: 24px 24px 0 0; padding: 24px; transform: translateY(100%); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); max-height: 85vh; overflow-y: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
         .modal.active .modal-content { transform: translateY(0); }
         .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 0.5px solid var(--border); }
 
-        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); padding: 12px 24px; border-radius: 20px; font-size: 13px; z-index: 100; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); background: var(--surface-hover); color: var(--text-primary); border: 1px solid var(--border); text-align: center; max-width: 90%; box-shadow: var(--shadow); font-weight: 500; pointer-events: none;}
+        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); padding: 12px 24px; border-radius: 20px; font-size: 13px; z-index: 200; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); background: var(--surface-hover); color: var(--text-primary); border: 1px solid var(--border); text-align: center; max-width: 90%; box-shadow: var(--shadow); font-weight: 500; pointer-events: none;}
         #toast.show { transform: translateX(-50%) translateY(0); }
         
         .guest-message { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 14px; }
@@ -97,8 +98,7 @@
             <div id="tab-people" class="tab-content">
                 <h2>Exploration</h2>
                 <div id="users-list">
-                    <div class="skeleton" style="height: 60px; width: 100%; margin-bottom: 8px; border-radius: 12px;"></div>
-                    <div class="skeleton" style="height: 60px; width: 100%; margin-bottom: 8px; border-radius: 12px;"></div>
+                    <p style="color:var(--text-secondary); font-size:12px;">Loading community...</p>
                 </div>
             </div>
 
@@ -188,19 +188,24 @@
     </div>
 
     <script>
-        // Global Error Catcher
+        // GLOBAL ERROR CATCHER (Helps if anything else breaks)
         window.onerror = function(message, source, lineno) {
             console.error("SYSTEM ERROR:", message, "Line:", lineno);
             return true;
         };
 
-        // Configuration
-        const SUPABASE_URL = 'https://vfkkoacakiaulcjviyfe.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZma2tvYWNha2lhdWxjanZpeWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTQxNjAsImV4cCI6MjA4OTY5MDE2MH0.qlXPSD-31q-UrTDja9wN2QXp8Fazm2zORKaFuzJ1vq4';
+        // ==========================================
+        // SECURE INITIALIZATION (NO NAMESPACE COLLISIONS)
+        // ==========================================
+        const MIYU_URL = 'https://vfkkoacakiaulcjviyfe.supabase.co';
+        const MIYU_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZma2tvYWNha2lhdWxjanZpeWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTQxNjAsImV4cCI6MjA4OTY5MDE2MH0.qlXPSD-31q-UrTDja9wN2QXp8Fazm2zORKaFuzJ1vq4';
         
-        // Securely initialize Supabase to avoid global namespace collisions with the CDN script
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // We call it `miyuDB` to ensure it NEVER conflicts with the window.supabase CDN object
+        const miyuDB = window.supabase.createClient(MIYU_URL, MIYU_KEY);
 
+        // ==========================================
+        // MAIN APPLICATION LOGIC
+        // ==========================================
         const App = {
             state: {
                 user: null, userHandle: '', theme: 'dark',
@@ -210,9 +215,11 @@
             audioElement: new Audio(),
 
             init() {
+                // UI Setup
                 this.ui.setupGuestMode();
                 this.visualizer.init();
                 
+                // Audio Event Listeners
                 this.audioElement.addEventListener('timeupdate', () => this.ui.updateProgress());
                 this.audioElement.addEventListener('ended', () => this.audio.handleEnd());
                 this.audioElement.addEventListener('play', () => { 
@@ -224,7 +231,7 @@
                     document.getElementById('icon-play').classList.replace('ph-pause', 'ph-play'); 
                 });
 
-                // Listen for fullscreen changes to update the icon
+                // Fullscreen Listener (to update the icon automatically)
                 document.addEventListener('fullscreenchange', () => {
                     const icon = document.getElementById('icon-fullscreen');
                     if (document.fullscreenElement) {
@@ -234,13 +241,14 @@
                     }
                 });
 
+                // Database Calls
                 this.checkSession();
                 this.explore.loadUsers(); 
             },
 
             async checkSession() {
                 try {
-                    const { data: { session }, error } = await supabaseClient.auth.getSession();
+                    const { data: { session }, error } = await miyuDB.auth.getSession();
                     if (error) throw error;
                     if (session) {
                         await this.auth.handleSession(session.user);
@@ -265,7 +273,7 @@
                         btn.innerText = "Authenticating...";
                         
                         const email = `${handle}@miyu.app`;
-                        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                        const { data, error } = await miyuDB.auth.signInWithPassword({ email, password });
                         
                         if (error) {
                             App.ui.toast("Login Failed: " + error.message);
@@ -285,7 +293,7 @@
                 
                 async handleSession(authUser) {
                     try {
-                        const { data: userData } = await supabaseClient.from('users').select('handle').eq('id', authUser.id).single();
+                        const { data: userData } = await miyuDB.from('users').select('handle').eq('id', authUser.id).single();
                         
                         App.state.user = authUser;
                         App.state.userHandle = userData ? userData.handle : authUser.email.split('@')[0];
@@ -299,7 +307,7 @@
                 },
 
                 async logout() {
-                    await supabaseClient.auth.signOut();
+                    await miyuDB.auth.signOut();
                     window.location.reload();
                 }
             },
@@ -308,11 +316,11 @@
                 async loadLibrary() {
                     if (!App.state.user) return;
                     try {
-                        const { data: songs, error: sErr } = await supabaseClient.from('songs').select('*').eq('user_id', App.state.user.id).order('created_at', { ascending: false });
+                        const { data: songs, error: sErr } = await miyuDB.from('songs').select('*').eq('user_id', App.state.user.id).order('created_at', { ascending: false });
                         if (sErr) throw sErr;
                         App.state.songs = songs || [];
                         
-                        const { data: playlists, error: pErr } = await supabaseClient.from('playlists').select('*').eq('user_id', App.state.user.id);
+                        const { data: playlists, error: pErr } = await miyuDB.from('playlists').select('*').eq('user_id', App.state.user.id);
                         if (pErr) throw pErr;
                         App.state.playlists = playlists || [];
 
@@ -334,7 +342,7 @@
                         return; 
                     }
                     
-                    // Secure base64 encoding for song queues containing special chars or emojis
+                    // Secure base64 encoding for song queues containing spaces or special chars
                     const safeQueue = btoa(encodeURIComponent(JSON.stringify(songsArray)));
                     
                     container.innerHTML = songsArray.map((song, i) => `
@@ -362,10 +370,10 @@
                         App.ui.toast("Uploading...");
                         App.ui.toggleModal('upload-modal');
 
-                        const { error: uploadErr } = await supabaseClient.storage.from('music').upload(filePath, file);
+                        const { error: uploadErr } = await miyuDB.storage.from('music').upload(filePath, file);
                         if (uploadErr) throw uploadErr;
 
-                        const { error: dbErr } = await supabaseClient.from('songs').insert([
+                        const { error: dbErr } = await miyuDB.from('songs').insert([
                             { user_id: App.state.user.id, title, file_path: filePath, file_size: file.size }
                         ]);
                         if (dbErr) throw dbErr;
@@ -384,7 +392,7 @@
                     const name = prompt("Playlist Name:");
                     if (!name) return;
                     try {
-                        await supabaseClient.from('playlists').insert([{ user_id: App.state.user.id, name }]);
+                        await miyuDB.from('playlists').insert([{ user_id: App.state.user.id, name }]);
                         this.loadLibrary();
                     } catch (err) {
                         App.ui.toast("Error creating playlist: " + err.message);
@@ -395,7 +403,7 @@
             explore: {
                 async loadUsers() {
                     try {
-                        const { data, error } = await supabaseClient.from('users').select('id, handle');
+                        const { data, error } = await miyuDB.from('users').select('id, handle');
                         if (error) throw error;
                         
                         App.state.users = data || [];
@@ -417,7 +425,7 @@
                 
                 async viewUserSongs(userId, handle) {
                     try {
-                        const { data: songs, error } = await supabaseClient.from('songs').select('*').eq('user_id', userId);
+                        const { data: songs, error } = await miyuDB.from('songs').select('*').eq('user_id', userId);
                         if (error) throw error;
 
                         const container = document.getElementById('users-list');
@@ -449,7 +457,7 @@
                     document.getElementById('player-title').innerText = song.title;
                     document.getElementById('player-artist').innerText = "Loading Audio...";
                     
-                    const { data } = supabaseClient.storage.from('music').getPublicUrl(song.file_path);
+                    const { data } = miyuDB.storage.from('music').getPublicUrl(song.file_path);
                     
                     App.audioElement.src = data.publicUrl;
                     document.getElementById('player-artist').innerText = "Streaming HQ";
@@ -519,6 +527,7 @@
                 },
                 toggleModal(id) {
                     const modal = document.getElementById(id);
+                    // Force the click event to NOT bubble up if clicked inside
                     modal.classList.toggle('active');
                 },
                 toggleFullscreen() {
@@ -606,6 +615,7 @@
             }
         };
 
+        // Initialize the app cleanly once the DOM is ready
         window.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
