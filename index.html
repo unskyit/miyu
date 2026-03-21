@@ -10,82 +10,40 @@
 
     <style>
         :root {
-            /* AMOLED Dark (Default) */
-            --bg-color: #000000;
-            --surface-color: rgba(20, 20, 20, 0.6);
-            --surface-hover: rgba(40, 40, 40, 0.8);
-            --text-primary: #ffffff;
-            --text-secondary: #888888;
-            --accent: #ffffff;
-            --border: rgba(255, 255, 255, 0.1);
-            --glass-blur: blur(20px);
-            --shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            --bg-color: #000000; --surface-color: rgba(20, 20, 20, 0.6); --surface-hover: rgba(40, 40, 40, 0.8);
+            --text-primary: #ffffff; --text-secondary: #888888; --accent: #ffffff;
+            --border: rgba(255, 255, 255, 0.1); --glass-blur: blur(20px); --shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
-
         [data-theme="light"] {
-            --bg-color: #f5f5f7;
-            --surface-color: rgba(255, 255, 255, 0.7);
-            --surface-hover: rgba(240, 240, 240, 0.9);
-            --text-primary: #000000;
-            --text-secondary: #666666;
-            --accent: #000000;
-            --border: rgba(0, 0, 0, 0.05);
-            --shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            --bg-color: #f5f5f7; --surface-color: rgba(255, 255, 255, 0.7); --surface-hover: rgba(240, 240, 240, 0.9);
+            --text-primary: #000000; --text-secondary: #666666; --accent: #000000;
+            --border: rgba(0, 0, 0, 0.05); --shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lexend', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            background-color: var(--bg-color); color: var(--text-primary);
-            min-height: 100vh; overflow: hidden; display: flex; flex-direction: column;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        /* Utility / Glassmorphism */
-        .glass {
-            background: var(--surface-color); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border: 0.5px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
-        }
+        body { background-color: var(--bg-color); color: var(--text-primary); min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
+        .glass { background: var(--surface-color); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 0.5px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); }
         
         .hidden { display: none !important; }
-        .flex { display: flex; }
-        .flex-col { display: flex; flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .justify-center { justify-content: center; }
+        .flex { display: flex; } .flex-col { display: flex; flex-direction: column; }
+        .items-center { align-items: center; } .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
         .gap-2 { gap: 8px; } .gap-4 { gap: 16px; }
 
-        button { background: none; border: none; color: inherit; cursor: pointer; transition: 0.2s ease; display: flex; align-items: center; justify-content: center; }
+        button { background: none; border: none; color: inherit; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         button:hover { opacity: 0.7; }
-        
-        .btn-primary { background: var(--text-primary); color: var(--bg-color); padding: 10px 20px; border-radius: 20px; font-weight: 500; font-size: 14px; }
-        .btn-primary:hover { transform: scale(0.98); opacity: 0.9; }
+        .btn-primary { background: var(--text-primary); color: var(--bg-color); padding: 12px 20px; border-radius: 20px; font-weight: 500; font-size: 14px; width: 100%; }
         .btn-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-color); border: 0.5px solid var(--border); }
+        input { background: var(--surface-color); border: 0.5px solid var(--border); color: var(--text-primary); padding: 12px 16px; border-radius: 12px; outline: none; width: 100%; }
         
-        input { background: var(--surface-color); border: 0.5px solid var(--border); color: var(--text-primary); padding: 12px 16px; border-radius: 12px; outline: none; transition: border 0.2s; width: 100%; }
-        input:focus { border-color: var(--accent); }
-
-        /* Auth Screen */
-        #auth-screen { height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .auth-box { width: 100%; max-width: 320px; padding: 32px; display: flex; flex-direction: column; gap: 20px; text-align: center; }
-        .auth-box h1 { font-size: 24px; font-weight: 300; letter-spacing: 2px; }
-
-        /* App Layout */
         #app-screen { flex: 1; display: flex; flex-direction: column; height: 100vh; position: relative; }
         header { padding: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        header h1 { font-size: 20px; font-weight: 400; letter-spacing: 1px; }
-
-        main { flex: 1; overflow-y: auto; padding: 0 20px 120px 20px; scroll-behavior: smooth; }
-        main::-webkit-scrollbar { display: none; }
-
-        /* Typography & Lists */
+        main { flex: 1; overflow-y: auto; padding: 0 20px 120px 20px; } main::-webkit-scrollbar { display: none; }
+        
         h2 { font-size: 18px; font-weight: 500; margin-bottom: 16px; margin-top: 24px; }
-        .item-card { padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; background: var(--surface-color); border: 0.5px solid var(--border); transition: 0.2s; cursor: pointer; }
-        .item-card:hover { background: var(--surface-hover); }
+        .item-card { padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; background: var(--surface-color); border: 0.5px solid var(--border); cursor: pointer; }
         .item-info h4 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
         .item-info p { font-size: 12px; color: var(--text-secondary); }
 
-        /* Player & Visualizer */
         #player-container { position: absolute; bottom: 80px; left: 20px; right: 20px; padding: 16px; z-index: 20; display: flex; flex-direction: column; gap: 12px; }
         #visualizer-canvas { width: 100%; height: 60px; border-radius: 8px; margin-bottom: 8px; pointer-events: none; }
         .player-controls { display: flex; justify-content: space-between; align-items: center; }
@@ -94,62 +52,60 @@
         .progress-container { width: 100%; height: 4px; background: var(--surface-color); border-radius: 2px; cursor: pointer; overflow: hidden; position: relative; }
         .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.1s linear; }
 
-        /* Bottom Nav */
         nav { position: absolute; bottom: 0; width: 100%; height: 70px; display: flex; justify-content: space-around; align-items: center; z-index: 30; background: var(--surface-color); backdrop-filter: var(--glass-blur); border-top: 0.5px solid var(--border); }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 11px; }
         .nav-item.active { color: var(--text-primary); }
 
-        /* Modals */
         .modal { position: absolute; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 50; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal.active { opacity: 1; pointer-events: all; }
-        .modal-content { width: 100%; max-width: 500px; background: var(--bg-color); border-top: 0.5px solid var(--border); border-radius: 24px 24px 0 0; padding: 24px; transform: translateY(100%); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); max-height: 80vh; overflow-y: auto; }
+        .modal-content { width: 100%; max-width: 500px; background: var(--bg-color); border-top: 0.5px solid var(--border); border-radius: 24px 24px 0 0; padding: 24px; transform: translateY(100%); transition: 0.3s; max-height: 80vh; overflow-y: auto; }
         .modal.active .modal-content { transform: translateY(0); }
         .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 0.5px solid var(--border); }
 
-        /* Toast */
-        #toast { position: absolute; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); padding: 12px 24px; border-radius: 20px; font-size: 13px; z-index: 100; transition: 0.3s; }
+        #toast { position: absolute; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); padding: 12px 24px; border-radius: 20px; font-size: 13px; z-index: 100; transition: 0.3s; background: var(--surface-hover); color: var(--text-primary); border: 1px solid var(--border); text-align: center; max-width: 90%; word-wrap: break-word;}
         #toast.show { transform: translateX(-50%) translateY(0); }
-
-        /* Skeleton */
-        .skeleton { background: linear-gradient(90deg, var(--surface-color) 25%, var(--surface-hover) 50%, var(--surface-color) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; }
-        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        .guest-message { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div id="toast" class="glass">Message</div>
+    <div id="toast">Message</div>
 
-    <div id="auth-screen">
-        <div class="auth-box glass">
-            <h1>Miyu</h1>
-            <p style="font-size: 12px; color: var(--text-secondary);">Minimal audio space</p>
-            <input type="text" id="auth-handle" placeholder="Handle" autocomplete="off">
-            <input type="password" id="auth-password" placeholder="Password">
-            <button class="btn-primary" onclick="App.auth.login()">Enter</button>
-        </div>
-    </div>
-
-    <div id="app-screen" class="hidden">
+    <div id="app-screen">
         <header>
-            <h1>Miyu</h1>
-            <button class="btn-icon" onclick="App.ui.toggleModal('settings-modal')"><i class="ph ph-gear size-20"></i></button>
+            <h1 style="font-size: 20px; font-weight: 400; letter-spacing: 1px;">Miyu</h1>
+            <div class="flex gap-2">
+                <button id="upload-btn-header" class="btn-icon hidden" onclick="App.ui.toggleModal('upload-modal')"><i class="ph ph-upload-simple"></i></button>
+                <button class="btn-icon" onclick="App.ui.toggleModal('settings-modal')"><i class="ph ph-gear size-20"></i></button>
+            </div>
         </header>
 
         <main id="main-content">
-            <div id="tab-people" class="tab-content hidden">
+            <div id="tab-people" class="tab-content">
                 <h2>Exploration</h2>
-                <div id="users-list"></div>
+                <div id="users-list">
+                    <p style="color:var(--text-secondary); font-size:12px;">Loading community...</p>
+                </div>
             </div>
 
-            <div id="tab-library" class="tab-content">
+            <div id="tab-library" class="tab-content hidden">
                 <div class="flex justify-between items-center">
                     <h2>Your Library</h2>
-                    <button class="btn-icon" onclick="App.ui.toggleModal('upload-modal')"><i class="ph ph-upload-simple"></i></button>
                 </div>
-                <h3>Playlists <button onclick="App.library.createPlaylist()" style="display:inline; color:var(--text-secondary)"><i class="ph ph-plus-circle"></i></button></h3>
-                <div id="playlists-list" class="flex-col gap-2"></div>
-                <h3 style="margin-top:20px;">All Songs</h3>
-                <div id="songs-list" class="flex-col gap-2"></div>
+                
+                <div id="library-guest-msg" class="guest-message">
+                    <i class="ph ph-lock-key size-32" style="margin-bottom: 12px; opacity: 0.5;"></i>
+                    <p>Log in to upload music and manage your personal library.</p>
+                    <button class="btn-primary" style="margin-top: 20px;" onclick="App.ui.toggleModal('login-modal')">Log In</button>
+                </div>
+
+                <div id="library-user-content" class="hidden">
+                    <h3>Playlists <button id="create-playlist-btn" onclick="App.library.createPlaylist()" style="display:inline; color:var(--text-secondary)"><i class="ph ph-plus-circle"></i></button></h3>
+                    <div id="playlists-list" class="flex-col gap-2"></div>
+                    <h3 style="margin-top:20px;">All Songs</h3>
+                    <div id="songs-list" class="flex-col gap-2"></div>
+                </div>
             </div>
         </main>
 
@@ -177,15 +133,24 @@
         </div>
 
         <nav>
-            <div class="nav-item" onclick="App.ui.switchTab('people')">
+            <div class="nav-item active" onclick="App.ui.switchTab('people')">
                 <i class="ph ph-users size-24"></i>
                 <span>People</span>
             </div>
-            <div class="nav-item active" onclick="App.ui.switchTab('library')">
+            <div class="nav-item" onclick="App.ui.switchTab('library')">
                 <i class="ph ph-music-notes size-24"></i>
                 <span>Library</span>
             </div>
         </nav>
+
+        <div id="login-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('login-modal')">
+            <div class="modal-content flex-col gap-4">
+                <h2 style="text-align: center;">Welcome Back</h2>
+                <input type="text" id="auth-handle" placeholder="Handle (e.g., alex)" autocomplete="off">
+                <input type="password" id="auth-password" placeholder="Password">
+                <button class="btn-primary" onclick="App.auth.login()">Enter</button>
+            </div>
+        </div>
 
         <div id="settings-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('settings-modal')">
             <div class="modal-content">
@@ -194,17 +159,8 @@
                     <span>Dark Mode</span>
                     <button onclick="App.settings.toggleTheme()"><i class="ph ph-moon size-20"></i></button>
                 </div>
-                <div class="setting-row">
-                    <span>Offline Caching</span>
-                    <button id="cache-toggle" onclick="App.settings.toggleCache()">OFF</button>
-                </div>
-                <div class="setting-row">
-                    <span>Storage Used</span>
-                    <span id="storage-info" style="font-size: 12px; color: var(--text-secondary);">Calculating...</span>
-                </div>
-                <div class="setting-row">
-                    <button class="btn-primary" style="width: 100%; background: #ff3b30;" onclick="App.auth.logout()">Log Out</button>
-                </div>
+                <div id="auth-status-row" class="setting-row">
+                    </div>
             </div>
         </div>
 
@@ -219,128 +175,124 @@
     </div>
 
     <script>
-        // ==========================================
-        // CONFIGURATION (PASTE YOUR KEYS HERE)
-        // ==========================================
-        const SUPABASE_URL = https://vfkkoacakiaulcjviyfe.supabase.co;
-        const SUPABASE_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZma2tvYWNha2lhdWxjanZpeWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTQxNjAsImV4cCI6MjA4OTY5MDE2MH0.qlXPSD-31q-UrTDja9wN2QXp8Fazm2zORKaFuzJ1vq4;
+        // INTEGRATED KEYS
+        const SUPABASE_URL = 'https://vfkkoacakiaulcjviyfe.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZma2tvYWNha2lhdWxjanZpeWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTQxNjAsImV4cCI6MjA4OTY5MDE2MH0.qlXPSD-31q-UrTDja9wN2QXp8Fazm2zORKaFuzJ1vq4';
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // ==========================================
-        // INDEXED DB CACHE WRAPPER
-        // ==========================================
-        const IDB = {
-            db: null,
-            init() {
-                return new Promise((resolve) => {
-                    const req = indexedDB.open('MiyuCache', 1);
-                    req.onupgradeneeded = (e) => e.target.result.createObjectStore('songs');
-                    req.onsuccess = (e) => { this.db = e.target.result; resolve(); };
-                });
-            },
-            async get(key) {
-                return new Promise(res => {
-                    const tx = this.db.transaction('songs', 'readonly');
-                    const req = tx.objectStore('songs').get(key);
-                    req.onsuccess = () => res(req.result);
-                    req.onerror = () => res(null);
-                });
-            },
-            async set(key, blob) {
-                const tx = this.db.transaction('songs', 'readwrite');
-                tx.objectStore('songs').put(blob, key);
-            }
-        };
-
-        // ==========================================
-        // APPLICATION CORE
-        // ==========================================
         const App = {
             state: {
-                user: null, userHandle: '',
-                theme: 'dark', cachingEnabled: false,
-                songs: [], playlists: [], users: [],
-                queue: [], currentIndex: -1,
+                user: null, userHandle: '', theme: 'dark',
+                songs: [], playlists: [], users: [], queue: [], currentIndex: -1,
                 isPlaying: false, loop: false, shuffle: false
             },
             audioElement: new Audio(),
 
             async init() {
-                await IDB.init();
-                
-                // Audio Event Listeners
                 this.audioElement.addEventListener('timeupdate', () => this.ui.updateProgress());
                 this.audioElement.addEventListener('ended', () => this.audio.handleEnd());
                 this.audioElement.addEventListener('play', () => { this.state.isPlaying = true; document.getElementById('icon-play').classList.replace('ph-play', 'ph-pause'); });
                 this.audioElement.addEventListener('pause', () => { this.state.isPlaying = false; document.getElementById('icon-play').classList.replace('ph-pause', 'ph-play'); });
 
-                // Check session
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
-                    await this.auth.handleSession(session.user);
-                } else {
-                    document.getElementById('auth-screen').classList.remove('hidden');
+                this.visualizer.init();
+
+                try {
+                    const { data: { session }, error } = await supabase.auth.getSession();
+                    if (error) throw error;
+
+                    if (session) {
+                        await this.auth.handleSession(session.user);
+                    } else {
+                        this.ui.setupGuestMode();
+                    }
+                } catch (err) {
+                    App.ui.toast("Session check failed: " + err.message);
+                    this.ui.setupGuestMode();
                 }
 
-                this.visualizer.init();
+                // Everyone loads the explore tab immediately
+                this.explore.loadUsers();
             },
 
-            // --- AUTHENTICATION ---
             auth: {
                 async login() {
-                    const handle = document.getElementById('auth-handle').value.trim();
-                    const password = document.getElementById('auth-password').value;
-                    if(!handle || !password) return App.ui.toast("Enter handle and password");
-                    
-                    const email = `${handle}@miyu.app`; // Routing trick
-                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                    
-                    if (error) {
-                        App.ui.toast(error.message);
-                    } else {
+                    try {
+                        const handle = document.getElementById('auth-handle').value.trim();
+                        const password = document.getElementById('auth-password').value;
+                        
+                        if(!handle || !password) return App.ui.toast("Please enter handle and password");
+                        
+                        App.ui.toast("Logging in...");
+                        
+                        const email = `${handle}@miyu.app`;
+                        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                        
+                        if (error) throw error;
+                        
+                        App.ui.toggleModal('login-modal');
                         await this.handleSession(data.user);
+                        
+                    } catch (err) {
+                        App.ui.toast("Login Error: " + err.message);
                     }
                 },
+                
                 async handleSession(authUser) {
-                    const { data: userData } = await supabase.from('users').select('handle').eq('id', authUser.id).single();
-                    App.state.user = authUser;
-                    App.state.userHandle = userData ? userData.handle : authUser.email.split('@')[0];
-                    
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('app-screen').classList.remove('hidden');
-                    
-                    App.ui.toast(`Welcome back, ${App.state.userHandle}`);
-                    App.library.loadLibrary();
-                    App.explore.loadUsers();
+                    try {
+                        const { data: userData, error } = await supabase.from('users').select('handle').eq('id', authUser.id).single();
+                        
+                        // If user doesn't exist in the users table, we still let them in, but fallback to email prefix
+                        App.state.user = authUser;
+                        App.state.userHandle = userData ? userData.handle : authUser.email.split('@')[0];
+                        
+                        App.ui.setupUserMode();
+                        App.ui.toast(`Welcome back, ${App.state.userHandle}`);
+                        App.library.loadLibrary();
+                    } catch (err) {
+                        App.ui.toast("Session Error: " + err.message);
+                    }
                 },
+
                 async logout() {
                     await supabase.auth.signOut();
                     window.location.reload();
                 }
             },
 
-            // --- DATA / LIBRARY ---
             library: {
                 async loadLibrary() {
-                    // Load Songs
-                    const { data: songs } = await supabase.from('songs').select('*').eq('user_id', App.state.user.id).order('created_at', { ascending: false });
-                    App.state.songs = songs || [];
+                    if (!App.state.user) return; // Guests have no library
                     
-                    // Load Playlists
-                    const { data: playlists } = await supabase.from('playlists').select('*').eq('user_id', App.state.user.id);
-                    App.state.playlists = playlists || [];
+                    try {
+                        const { data: songs, error: sErr } = await supabase.from('songs').select('*').eq('user_id', App.state.user.id).order('created_at', { ascending: false });
+                        if (sErr) throw sErr;
+                        App.state.songs = songs || [];
+                        
+                        const { data: playlists, error: pErr } = await supabase.from('playlists').select('*').eq('user_id', App.state.user.id);
+                        if (pErr) throw pErr;
+                        App.state.playlists = playlists || [];
 
-                    this.renderSongs(App.state.songs, 'songs-list');
-                    this.renderPlaylists();
-                    App.settings.calculateStorage();
+                        this.renderSongs(App.state.songs, 'songs-list');
+                        
+                        const plContainer = document.getElementById('playlists-list');
+                        plContainer.innerHTML = App.state.playlists.map(pl => `
+                            <div class="item-card"><div class="item-info"><h4>${pl.name}</h4></div></div>
+                        `).join('');
+                    } catch (err) {
+                        App.ui.toast("Failed to load library: " + err.message);
+                    }
                 },
+                
                 renderSongs(songsArray, containerId) {
                     const container = document.getElementById(containerId);
-                    if(songsArray.length === 0) { container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">No tracks found.</p>'; return; }
+                    if(songsArray.length === 0) { 
+                        container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">No tracks found.</p>'; 
+                        return; 
+                    }
                     
                     container.innerHTML = songsArray.map((song, i) => `
-                        <div class="item-card" onclick="App.audio.playQueue('${btoa(JSON.stringify(songsArray))}', ${i})">
+                        <div class="item-card" onclick="App.audio.playQueue('${btoa(unescape(encodeURIComponent(JSON.stringify(songsArray))))}', ${i})">
                             <div class="item-info">
                                 <h4>${song.title}</h4>
                                 <p>${(song.file_size / 1024 / 1024).toFixed(2)} MB</p>
@@ -349,100 +301,108 @@
                         </div>
                     `).join('');
                 },
-                renderPlaylists() {
-                    const container = document.getElementById('playlists-list');
-                    container.innerHTML = App.state.playlists.map(pl => `
-                        <div class="item-card">
-                            <div class="item-info"><h4>${pl.name}</h4></div>
-                        </div>
-                    `).join('');
-                },
+                
                 async uploadSong() {
-                    const fileInput = document.getElementById('upload-file');
-                    const titleInput = document.getElementById('upload-title');
-                    if(!fileInput.files.length) return App.ui.toast("Select an MP3 file");
-                    
-                    const file = fileInput.files[0];
-                    const title = titleInput.value.trim() || file.name.replace('.mp3', '');
-                    const filePath = `${App.state.user.id}/${Date.now()}_${file.name}`;
-                    
-                    App.ui.toast("Uploading...");
-                    App.ui.toggleModal('upload-modal');
+                    try {
+                        const fileInput = document.getElementById('upload-file');
+                        const titleInput = document.getElementById('upload-title');
+                        if(!fileInput.files.length) return App.ui.toast("Select an MP3 file");
+                        
+                        const file = fileInput.files[0];
+                        const title = titleInput.value.trim() || file.name.replace('.mp3', '');
+                        const filePath = `${App.state.user.id}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`; // Clean filename
+                        
+                        App.ui.toast("Uploading...");
+                        App.ui.toggleModal('upload-modal');
 
-                    const { data, error } = await supabase.storage.from('music').upload(filePath, file);
-                    if (error) return App.ui.toast("Upload failed");
+                        const { error: uploadErr } = await supabase.storage.from('music').upload(filePath, file);
+                        if (uploadErr) throw uploadErr;
 
-                    await supabase.from('songs').insert([
-                        { user_id: App.state.user.id, title, file_path: filePath, file_size: file.size }
-                    ]);
+                        const { error: dbErr } = await supabase.from('songs').insert([
+                            { user_id: App.state.user.id, title, file_path: filePath, file_size: file.size }
+                        ]);
+                        if (dbErr) throw dbErr;
 
-                    App.ui.toast("Upload complete");
-                    this.loadLibrary();
+                        App.ui.toast("Upload complete!");
+                        document.getElementById('upload-file').value = '';
+                        document.getElementById('upload-title').value = '';
+                        this.loadLibrary();
+                    } catch (err) {
+                        App.ui.toast("Upload failed: " + err.message);
+                    }
                 },
+
                 async createPlaylist() {
                     if (App.state.playlists.length >= 10) return App.ui.toast("Max 10 playlists allowed.");
                     const name = prompt("Playlist Name:");
                     if (!name) return;
-                    await supabase.from('playlists').insert([{ user_id: App.state.user.id, name }]);
-                    this.loadLibrary();
+                    try {
+                        await supabase.from('playlists').insert([{ user_id: App.state.user.id, name }]);
+                        this.loadLibrary();
+                    } catch (err) {
+                        App.ui.toast("Error creating playlist.");
+                    }
                 }
             },
 
-            // --- EXPLORE ---
             explore: {
                 async loadUsers() {
-                    const { data } = await supabase.from('users').select('id, handle').neq('id', App.state.user.id);
-                    App.state.users = data || [];
-                    const container = document.getElementById('users-list');
-                    container.innerHTML = App.state.users.map(u => `
-                        <div class="item-card" onclick="App.explore.viewUserSongs('${u.id}', '${u.handle}')">
-                            <div class="item-info"><h4>@${u.handle}</h4></div>
-                        </div>
-                    `).join('');
+                    try {
+                        const { data, error } = await supabase.from('users').select('id, handle');
+                        if (error) throw error;
+                        
+                        App.state.users = data || [];
+                        const container = document.getElementById('users-list');
+                        container.innerHTML = App.state.users.map(u => `
+                            <div class="item-card" onclick="App.explore.viewUserSongs('${u.id}', '${u.handle}')">
+                                <div class="item-info"><h4>@${u.handle}</h4></div>
+                                <i class="ph ph-caret-right" style="color:var(--text-secondary)"></i>
+                            </div>
+                        `).join('');
+                    } catch (err) {
+                        App.ui.toast("Could not load users: " + err.message);
+                    }
                 },
+                
                 async viewUserSongs(userId, handle) {
-                    const { data: songs } = await supabase.from('songs').select('*').eq('user_id', userId);
-                    const container = document.getElementById('users-list');
-                    container.innerHTML = `<button onclick="App.explore.loadUsers()" style="margin-bottom:10px; color:var(--text-secondary);"><i class="ph ph-arrow-left"></i> Back</button>
-                                           <h3 style="margin-bottom:10px;">@${handle}'s Tracks</h3>
-                                           <div id="explore-songs-list" class="flex-col gap-2"></div>`;
-                    App.library.renderSongs(songs || [], 'explore-songs-list');
+                    try {
+                        const { data: songs, error } = await supabase.from('songs').select('*').eq('user_id', userId);
+                        if (error) throw error;
+
+                        const container = document.getElementById('users-list');
+                        container.innerHTML = `<button onclick="App.explore.loadUsers()" style="margin-bottom:16px; color:var(--text-secondary);"><i class="ph ph-arrow-left" style="margin-right:4px;"></i> Back</button>
+                                               <h3 style="margin-bottom:12px;">@${handle}'s Tracks</h3>
+                                               <div id="explore-songs-list" class="flex-col gap-2"></div>`;
+                        App.library.renderSongs(songs || [], 'explore-songs-list');
+                    } catch (err) {
+                        App.ui.toast("Could not load tracks.");
+                    }
                 }
             },
 
-            // --- AUDIO PLAYER ---
             audio: {
                 async playQueue(encodedQueue, index) {
-                    App.state.queue = JSON.parse(atob(encodedQueue));
-                    App.state.currentIndex = index;
-                    this.loadAndPlay(App.state.queue[index]);
+                    try {
+                        // Safe decode for strings containing special characters
+                        App.state.queue = JSON.parse(decodeURIComponent(escape(atob(encodedQueue))));
+                        App.state.currentIndex = index;
+                        this.loadAndPlay(App.state.queue[index]);
+                    } catch (err) {
+                        App.ui.toast("Error playing track.");
+                    }
                 },
-                async loadAndPlay(song) {
+                loadAndPlay(song) {
                     document.getElementById('player-title').innerText = song.title;
-                    document.getElementById('player-artist').innerText = "Loading...";
+                    document.getElementById('player-artist').innerText = "Loading streaming URL...";
                     
                     const { data } = supabase.storage.from('music').getPublicUrl(song.file_path);
-                    let urlToPlay = data.publicUrl;
-
-                    // Offline Caching Logic
-                    if (App.state.cachingEnabled) {
-                        const cachedBlob = await IDB.get(song.file_path);
-                        if (cachedBlob) {
-                            urlToPlay = URL.createObjectURL(cachedBlob);
-                            document.getElementById('player-artist').innerText = "Cached • Playing";
-                        } else {
-                            document.getElementById('player-artist').innerText = "Caching... • Playing";
-                            fetch(urlToPlay).then(res => res.blob()).then(blob => {
-                                IDB.set(song.file_path, blob);
-                                document.getElementById('player-artist').innerText = "Cached • Playing";
-                            });
-                        }
-                    } else {
-                        document.getElementById('player-artist').innerText = "Streaming";
-                    }
-
-                    App.audioElement.src = urlToPlay;
-                    App.audioElement.play();
+                    
+                    App.audioElement.src = data.publicUrl;
+                    document.getElementById('player-artist').innerText = "Streaming";
+                    
+                    App.audioElement.play().catch(e => {
+                        App.ui.toast("Browser prevented autoplay. Tap play manually.");
+                    });
                 },
                 togglePlay() {
                     if(!App.audioElement.src) return;
@@ -468,7 +428,7 @@
                     else this.next();
                 },
                 seek(e) {
-                    if(!App.audioElement.src) return;
+                    if(!App.audioElement.src || !App.audioElement.duration) return;
                     const rect = e.currentTarget.getBoundingClientRect();
                     const percent = (e.clientX - rect.left) / rect.width;
                     App.audioElement.currentTime = percent * App.audioElement.duration;
@@ -483,8 +443,19 @@
                 }
             },
 
-            // --- UI & UTILS ---
             ui: {
+                setupGuestMode() {
+                    document.getElementById('upload-btn-header').classList.add('hidden');
+                    document.getElementById('library-guest-msg').classList.remove('hidden');
+                    document.getElementById('library-user-content').classList.add('hidden');
+                    document.getElementById('auth-status-row').innerHTML = `<button class="btn-primary" onclick="App.ui.toggleModal('login-modal'); App.ui.toggleModal('settings-modal');">Log In to Upload</button>`;
+                },
+                setupUserMode() {
+                    document.getElementById('upload-btn-header').classList.remove('hidden');
+                    document.getElementById('library-guest-msg').classList.add('hidden');
+                    document.getElementById('library-user-content').classList.remove('hidden');
+                    document.getElementById('auth-status-row').innerHTML = `<button class="btn-primary" style="background: #ff3b30;" onclick="App.auth.logout()">Log Out (@${App.state.userHandle})</button>`;
+                },
                 switchTab(tab) {
                     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
                     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -498,7 +469,7 @@
                 toast(msg) {
                     const el = document.getElementById('toast');
                     el.innerText = msg; el.classList.add('show');
-                    setTimeout(() => el.classList.remove('show'), 3000);
+                    setTimeout(() => el.classList.remove('show'), 3500);
                 },
                 formatTime(sec) {
                     if(isNaN(sec)) return "0:00";
@@ -509,31 +480,20 @@
                 updateProgress() {
                     const curr = App.audioElement.currentTime;
                     const tot = App.audioElement.duration;
+                    if(isNaN(tot)) return;
                     document.getElementById('time-current').innerText = this.formatTime(curr);
                     document.getElementById('time-total').innerText = this.formatTime(tot);
                     document.getElementById('player-progress').style.width = `${(curr / tot) * 100}%`;
                 }
             },
 
-            // --- SETTINGS ---
             settings: {
                 toggleTheme() {
                     App.state.theme = App.state.theme === 'dark' ? 'light' : 'dark';
                     document.body.setAttribute('data-theme', App.state.theme);
-                },
-                toggleCache() {
-                    App.state.cachingEnabled = !App.state.cachingEnabled;
-                    document.getElementById('cache-toggle').innerText = App.state.cachingEnabled ? 'ON' : 'OFF';
-                    App.ui.toast(`Offline caching ${App.state.cachingEnabled ? 'enabled' : 'disabled'}`);
-                },
-                calculateStorage() {
-                    const totalBytes = App.state.songs.reduce((acc, s) => acc + Number(s.file_size), 0);
-                    const mb = (totalBytes / 1024 / 1024).toFixed(2);
-                    document.getElementById('storage-info').innerText = `${mb} MB / ~1000 MB`;
                 }
             },
 
-            // --- VISUALIZER (Aesthetic Canvas) ---
             visualizer: {
                 canvas: null, ctx: null, particles: [], offset: 0,
                 init() {
@@ -550,11 +510,9 @@
                 },
                 draw() {
                     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                    
                     const isDark = App.state.theme === 'dark';
                     this.ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.3)';
                     
-                    // Particles
                     if(App.state.isPlaying) {
                         this.particles.forEach(p => {
                             p.x += p.speed;
@@ -566,7 +524,6 @@
                         this.offset += 0.05;
                     }
 
-                    // Sine Wave
                     this.ctx.beginPath();
                     this.ctx.strokeStyle = isDark ? '#ffffff' : '#000000';
                     this.ctx.lineWidth = 2;
@@ -582,7 +539,6 @@
             }
         };
 
-        // Boot
         window.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
