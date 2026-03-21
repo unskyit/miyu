@@ -22,7 +22,6 @@
             --border: rgba(0, 0, 0, 0.05); --shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
         }
 
-        /* Fullscreen resets */
         ::backdrop { background-color: var(--bg-color); }
         :fullscreen { background-color: var(--bg-color); display: flex; flex-direction: column; width: 100vw; height: 100vh; }
         
@@ -36,8 +35,9 @@
         .gap-2 { gap: 8px; } .gap-4 { gap: 16px; }
 
         button { background: none; border: none; color: inherit; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; outline: none; }
-        button:hover { opacity: 0.7; transform: scale(0.98); }
-        button:active { transform: scale(0.95); }
+        button:hover:not(:disabled) { opacity: 0.7; transform: scale(0.98); }
+        button:active:not(:disabled) { transform: scale(0.95); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .btn-primary { background: var(--text-primary); color: var(--bg-color); padding: 12px 20px; border-radius: 20px; font-weight: 500; font-size: 14px; width: 100%; }
         .btn-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-color); border: 0.5px solid var(--border); }
@@ -67,7 +67,6 @@
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 11px; width: 60px; cursor: pointer; }
         .nav-item.active { color: var(--text-primary); }
 
-        /* Z-index increased to ensure Modals overlay absolutely everything */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal.active { opacity: 1; pointer-events: all; }
         .modal-content { width: 100%; max-width: 500px; background: var(--bg-color); border-top: 0.5px solid var(--border); border-radius: 24px 24px 0 0; padding: 24px; transform: translateY(100%); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); max-height: 85vh; overflow-y: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
@@ -172,8 +171,7 @@
                     <span>Dark Mode</span>
                     <button type="button" onclick="App.settings.toggleTheme()"><i class="ph ph-moon size-20"></i></button>
                 </div>
-                <div id="auth-status-row" class="setting-row" style="border-bottom: none; padding-bottom: 0;">
-                    </div>
+                <div id="auth-status-row" class="setting-row" style="border-bottom: none; padding-bottom: 0;"></div>
             </div>
         </div>
 
@@ -181,31 +179,25 @@
             <div class="modal-content flex-col gap-4">
                 <h2 style="margin-top: 0;">Upload Track</h2>
                 <input type="text" id="upload-title" placeholder="Song Title (optional)">
-                <input type="file" id="upload-file" accept="audio/mp3, audio/mpeg" style="padding: 10px 0; border: none; background: transparent;">
-                <button type="button" class="btn-primary" onclick="App.library.uploadSong()">Upload to Miyu</button>
+                <input type="file" id="upload-file" accept="audio/*" style="padding: 10px 0; border: none; background: transparent;">
+                
+                <div id="upload-progress-container" class="hidden" style="width: 100%; height: 6px; background: var(--surface-hover); border-radius: 3px; overflow: hidden; margin-top: 8px;">
+                    <div id="upload-progress-bar" style="height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease, background-color 0.3s;"></div>
+                </div>
+
+                <button type="button" id="upload-submit-btn" class="btn-primary" onclick="App.library.uploadSong()">Upload to Miyu</button>
             </div>
         </div>
     </div>
 
     <script>
-        // GLOBAL ERROR CATCHER (Helps if anything else breaks)
-        window.onerror = function(message, source, lineno) {
-            console.error("SYSTEM ERROR:", message, "Line:", lineno);
-            return true;
-        };
+        window.onerror = function(message, source, lineno) { console.error("SYSTEM ERROR:", message, "Line:", lineno); return true; };
 
-        // ==========================================
-        // SECURE INITIALIZATION (NO NAMESPACE COLLISIONS)
-        // ==========================================
         const MIYU_URL = 'https://vfkkoacakiaulcjviyfe.supabase.co';
         const MIYU_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZma2tvYWNha2lhdWxjanZpeWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTQxNjAsImV4cCI6MjA4OTY5MDE2MH0.qlXPSD-31q-UrTDja9wN2QXp8Fazm2zORKaFuzJ1vq4';
         
-        // We call it `miyuDB` to ensure it NEVER conflicts with the window.supabase CDN object
         const miyuDB = window.supabase.createClient(MIYU_URL, MIYU_KEY);
 
-        // ==========================================
-        // MAIN APPLICATION LOGIC
-        // ==========================================
         const App = {
             state: {
                 user: null, userHandle: '', theme: 'dark',
@@ -215,11 +207,9 @@
             audioElement: new Audio(),
 
             init() {
-                // UI Setup
                 this.ui.setupGuestMode();
                 this.visualizer.init();
                 
-                // Audio Event Listeners
                 this.audioElement.addEventListener('timeupdate', () => this.ui.updateProgress());
                 this.audioElement.addEventListener('ended', () => this.audio.handleEnd());
                 this.audioElement.addEventListener('play', () => { 
@@ -231,17 +221,12 @@
                     document.getElementById('icon-play').classList.replace('ph-pause', 'ph-play'); 
                 });
 
-                // Fullscreen Listener (to update the icon automatically)
                 document.addEventListener('fullscreenchange', () => {
                     const icon = document.getElementById('icon-fullscreen');
-                    if (document.fullscreenElement) {
-                        icon.classList.replace('ph-corners-out', 'ph-corners-in');
-                    } else {
-                        icon.classList.replace('ph-corners-in', 'ph-corners-out');
-                    }
+                    if (document.fullscreenElement) { icon.classList.replace('ph-corners-out', 'ph-corners-in'); } 
+                    else { icon.classList.replace('ph-corners-in', 'ph-corners-out'); }
                 });
 
-                // Database Calls
                 this.checkSession();
                 this.explore.loadUsers(); 
             },
@@ -250,12 +235,8 @@
                 try {
                     const { data: { session }, error } = await miyuDB.auth.getSession();
                     if (error) throw error;
-                    if (session) {
-                        await this.auth.handleSession(session.user);
-                    }
-                } catch (err) {
-                    console.warn("Session check skipped or failed:", err.message);
-                }
+                    if (session) { await this.auth.handleSession(session.user); }
+                } catch (err) { console.warn("Session check skipped:", err.message); }
             },
 
             auth: {
@@ -265,51 +246,34 @@
                         let handle = document.getElementById('auth-handle').value.trim().toLowerCase();
                         const password = document.getElementById('auth-password').value;
                         
-                        if(!handle || !password) {
-                            App.ui.toast("Please enter both handle and password.");
-                            return;
-                        }
+                        if(!handle || !password) { App.ui.toast("Please enter both handle and password."); return; }
                         
                         btn.innerText = "Authenticating...";
                         
                         const email = `${handle}@miyu.app`;
                         const { data, error } = await miyuDB.auth.signInWithPassword({ email, password });
                         
-                        if (error) {
-                            App.ui.toast("Login Failed: " + error.message);
-                            return;
-                        }
+                        if (error) { App.ui.toast("Login Failed: " + error.message); return; }
                         
                         App.ui.toggleModal('login-modal');
                         App.ui.toast("Success! Loading library...");
                         await this.handleSession(data.user);
-                        
-                    } catch (err) {
-                        App.ui.toast("Error: " + err.message);
-                    } finally {
-                        btn.innerText = "Enter";
-                    }
+                    } catch (err) { App.ui.toast("Error: " + err.message); } 
+                    finally { btn.innerText = "Enter"; }
                 },
                 
                 async handleSession(authUser) {
                     try {
                         const { data: userData } = await miyuDB.from('users').select('handle').eq('id', authUser.id).single();
-                        
                         App.state.user = authUser;
                         App.state.userHandle = userData ? userData.handle : authUser.email.split('@')[0];
-                        
                         App.ui.setupUserMode();
                         App.ui.toast(`Welcome back, @${App.state.userHandle}`);
                         App.library.loadLibrary();
-                    } catch (err) {
-                        console.error("Session load error:", err);
-                    }
+                    } catch (err) { console.error("Session load error:", err); }
                 },
 
-                async logout() {
-                    await miyuDB.auth.signOut();
-                    window.location.reload();
-                }
+                async logout() { await miyuDB.auth.signOut(); window.location.reload(); }
             },
 
             library: {
@@ -330,21 +294,15 @@
                         plContainer.innerHTML = App.state.playlists.map(pl => `
                             <div class="item-card"><div class="item-info"><h4>${pl.name}</h4></div></div>
                         `).join('');
-                    } catch (err) {
-                        App.ui.toast("Library Load Error: " + err.message);
-                    }
+                    } catch (err) { App.ui.toast("Library Load Error: " + err.message); }
                 },
                 
                 renderSongs(songsArray, containerId) {
                     const container = document.getElementById(containerId);
                     if(songsArray.length === 0) { 
-                        container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; text-align:center; padding: 20px;">No tracks found.</p>'; 
-                        return; 
+                        container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; text-align:center; padding: 20px;">No tracks found.</p>'; return; 
                     }
-                    
-                    // Secure base64 encoding for song queues containing spaces or special chars
                     const safeQueue = btoa(encodeURIComponent(JSON.stringify(songsArray)));
-                    
                     container.innerHTML = songsArray.map((song, i) => `
                         <div class="item-card" onclick="App.audio.playQueue('${safeQueue}', ${i})">
                             <div class="item-info">
@@ -356,34 +314,76 @@
                     `).join('');
                 },
                 
+                // --- UPDATED UPLOAD LOGIC ---
                 async uploadSong() {
+                    const btn = document.getElementById('upload-submit-btn');
+                    const progressContainer = document.getElementById('upload-progress-container');
+                    const progressBar = document.getElementById('upload-progress-bar');
+                    const fileInput = document.getElementById('upload-file');
+                    const titleInput = document.getElementById('upload-title');
+
                     try {
-                        const fileInput = document.getElementById('upload-file');
-                        const titleInput = document.getElementById('upload-title');
-                        if(!fileInput.files.length) { App.ui.toast("Select an MP3 file"); return; }
+                        if(!fileInput.files.length) { App.ui.toast("Select an audio file"); return; }
                         
                         const file = fileInput.files[0];
-                        const title = titleInput.value.trim() || file.name.replace('.mp3', '');
+                        if(!file.type.includes('audio')) { App.ui.toast("File must be audio format"); return; }
+
+                        const title = titleInput.value.trim() || file.name.replace(/\.[^/.]+$/, "");
                         const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
                         const filePath = `${App.state.user.id}/${Date.now()}_${safeFileName}`;
                         
-                        App.ui.toast("Uploading...");
-                        App.ui.toggleModal('upload-modal');
+                        // Setup UI for uploading
+                        btn.innerText = "Uploading...";
+                        btn.disabled = true;
+                        progressContainer.classList.remove('hidden');
+                        progressBar.style.backgroundColor = 'var(--accent)';
+                        progressBar.style.width = '10%';
 
+                        // Simulate progress bar moving
+                        let fakeProgress = 10;
+                        const progressInterval = setInterval(() => {
+                            if (fakeProgress < 90) {
+                                fakeProgress += (Math.random() * 5);
+                                progressBar.style.width = `${fakeProgress}%`;
+                            }
+                        }, 400);
+
+                        // Upload to Storage
                         const { error: uploadErr } = await miyuDB.storage.from('music').upload(filePath, file);
-                        if (uploadErr) throw uploadErr;
+                        
+                        clearInterval(progressInterval);
 
+                        if (uploadErr) {
+                            progressBar.style.backgroundColor = '#ff3b30'; // Turn red on fail
+                            throw uploadErr;
+                        }
+
+                        // Snap to 100%
+                        progressBar.style.width = '100%';
+
+                        // Insert to Database
                         const { error: dbErr } = await miyuDB.from('songs').insert([
                             { user_id: App.state.user.id, title, file_path: filePath, file_size: file.size }
                         ]);
                         if (dbErr) throw dbErr;
 
-                        App.ui.toast("Upload complete!");
-                        document.getElementById('upload-file').value = '';
-                        document.getElementById('upload-title').value = '';
-                        this.loadLibrary();
+                        // Reset UI after short delay for visual satisfaction
+                        setTimeout(() => {
+                            App.ui.toast("Upload complete!");
+                            App.ui.toggleModal('upload-modal');
+                            fileInput.value = '';
+                            titleInput.value = '';
+                            progressBar.style.width = '0%';
+                            progressContainer.classList.add('hidden');
+                            btn.innerText = "Upload to Miyu";
+                            btn.disabled = false;
+                            this.loadLibrary();
+                        }, 600);
+
                     } catch (err) {
                         App.ui.toast("Upload failed: " + err.message);
+                        btn.innerText = "Try Again";
+                        btn.disabled = false;
                     }
                 },
 
@@ -394,9 +394,7 @@
                     try {
                         await miyuDB.from('playlists').insert([{ user_id: App.state.user.id, name }]);
                         this.loadLibrary();
-                    } catch (err) {
-                        App.ui.toast("Error creating playlist: " + err.message);
-                    }
+                    } catch (err) { App.ui.toast("Error creating playlist: " + err.message); }
                 }
             },
 
@@ -418,9 +416,7 @@
                                 </div>
                             `).join('');
                         }
-                    } catch (err) {
-                        console.error("Could not load users", err);
-                    }
+                    } catch (err) { console.error("Could not load users", err); }
                 },
                 
                 async viewUserSongs(userId, handle) {
@@ -437,9 +433,7 @@
                             <div id="explore-songs-list" class="flex-col gap-2"></div>
                         `;
                         App.library.renderSongs(songs || [], 'explore-songs-list');
-                    } catch (err) {
-                        App.ui.toast("Could not load tracks: " + err.message);
-                    }
+                    } catch (err) { App.ui.toast("Could not load tracks: " + err.message); }
                 }
             },
 
@@ -449,9 +443,7 @@
                         App.state.queue = JSON.parse(decodeURIComponent(atob(encodedQueue)));
                         App.state.currentIndex = index;
                         this.loadAndPlay(App.state.queue[index]);
-                    } catch (err) {
-                        App.ui.toast("Error parsing track data.");
-                    }
+                    } catch (err) { App.ui.toast("Error parsing track data."); }
                 },
                 loadAndPlay(song) {
                     document.getElementById('player-title').innerText = song.title;
@@ -525,21 +517,11 @@
                     document.getElementById(`tab-${tab}`).classList.remove('hidden');
                     event.currentTarget.classList.add('active');
                 },
-                toggleModal(id) {
-                    const modal = document.getElementById(id);
-                    // Force the click event to NOT bubble up if clicked inside
-                    modal.classList.toggle('active');
-                },
+                toggleModal(id) { document.getElementById(id).classList.toggle('active'); },
                 toggleFullscreen() {
                     if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(err => {
-                            App.ui.toast(`Fullscreen unavailable: ${err.message}`);
-                        });
-                    } else {
-                        if (document.exitFullscreen) {
-                            document.exitFullscreen();
-                        }
-                    }
+                        document.documentElement.requestFullscreen().catch(err => { App.ui.toast(`Fullscreen unavailable: ${err.message}`); });
+                    } else { if (document.exitFullscreen) { document.exitFullscreen(); } }
                 },
                 toast(msg) {
                     const el = document.getElementById('toast');
@@ -615,7 +597,6 @@
             }
         };
 
-        // Initialize the app cleanly once the DOM is ready
         window.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
