@@ -97,11 +97,11 @@
                 <div id="library-guest-msg" class="guest-message">
                     <i class="ph ph-lock-key size-32" style="margin-bottom: 12px; opacity: 0.5;"></i>
                     <p>Log in to upload music and manage your personal library.</p>
-                    <button class="btn-primary" style="margin-top: 20px;" onclick="App.ui.toggleModal('login-modal')">Log In</button>
+                    <button type="button" class="btn-primary" style="margin-top: 20px;" onclick="App.ui.toggleModal('login-modal')">Log In</button>
                 </div>
 
                 <div id="library-user-content" class="hidden">
-                    <h3>Playlists <button id="create-playlist-btn" onclick="App.library.createPlaylist()" style="display:inline; color:var(--text-secondary)"><i class="ph ph-plus-circle"></i></button></h3>
+                    <h3>Playlists <button type="button" id="create-playlist-btn" onclick="App.library.createPlaylist()" style="display:inline; color:var(--text-secondary)"><i class="ph ph-plus-circle"></i></button></h3>
                     <div id="playlists-list" class="flex-col gap-2"></div>
                     <h3 style="margin-top:20px;">All Songs</h3>
                     <div id="songs-list" class="flex-col gap-2"></div>
@@ -122,13 +122,13 @@
                 <div class="progress-bar" id="player-progress"></div>
             </div>
             <div class="player-controls" style="margin-top: 8px;">
-                <button onclick="App.audio.toggleShuffle()"><i class="ph ph-shuffle" id="icon-shuffle"></i></button>
+                <button type="button" onclick="App.audio.toggleShuffle()"><i class="ph ph-shuffle" id="icon-shuffle"></i></button>
                 <div class="main-controls">
-                    <button onclick="App.audio.prev()"><i class="ph ph-skip-back size-24"></i></button>
-                    <button class="play-btn" onclick="App.audio.togglePlay()"><i class="ph ph-play size-24" id="icon-play"></i></button>
-                    <button onclick="App.audio.next()"><i class="ph ph-skip-forward size-24"></i></button>
+                    <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back size-24"></i></button>
+                    <button type="button" class="play-btn" onclick="App.audio.togglePlay()"><i class="ph ph-play size-24" id="icon-play"></i></button>
+                    <button type="button" onclick="App.audio.next()"><i class="ph ph-skip-forward size-24"></i></button>
                 </div>
-                <button onclick="App.audio.toggleLoop()"><i class="ph ph-repeat" id="icon-loop"></i></button>
+                <button type="button" onclick="App.audio.toggleLoop()"><i class="ph ph-repeat" id="icon-loop"></i></button>
             </div>
         </div>
 
@@ -146,9 +146,9 @@
         <div id="login-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('login-modal')">
             <div class="modal-content flex-col gap-4">
                 <h2 style="text-align: center;">Welcome Back</h2>
-                <input type="text" id="auth-handle" placeholder="Handle (e.g., alex)" autocomplete="off">
+                <input type="text" id="auth-handle" placeholder="Handle (e.g., alex)" autocomplete="off" autocapitalize="none">
                 <input type="password" id="auth-password" placeholder="Password">
-                <button class="btn-primary" onclick="App.auth.login()">Enter</button>
+                <button type="button" id="login-btn" class="btn-primary" onclick="App.auth.login()">Enter</button>
             </div>
         </div>
 
@@ -157,7 +157,7 @@
                 <h2>Settings</h2>
                 <div class="setting-row">
                     <span>Dark Mode</span>
-                    <button onclick="App.settings.toggleTheme()"><i class="ph ph-moon size-20"></i></button>
+                    <button type="button" onclick="App.settings.toggleTheme()"><i class="ph ph-moon size-20"></i></button>
                 </div>
                 <div id="auth-status-row" class="setting-row">
                     </div>
@@ -169,17 +169,26 @@
                 <h2>Upload Track</h2>
                 <input type="text" id="upload-title" placeholder="Song Title (optional)">
                 <input type="file" id="upload-file" accept="audio/mp3, audio/mpeg" style="padding: 10px 0; border: none; background: transparent;">
-                <button class="btn-primary" onclick="App.library.uploadSong()">Upload to Miyu</button>
+                <button type="button" class="btn-primary" onclick="App.library.uploadSong()">Upload to Miyu</button>
             </div>
         </div>
     </div>
 
     <script>
+        // GLOBAL MOBILE ERROR CATCHER - This ensures you ALWAYS see if something breaks
+        window.onerror = function(message, source, lineno, colno, error) {
+            alert("SYSTEM ERROR:\n" + message + "\nLine: " + lineno);
+            return true;
+        };
+        window.onunhandledrejection = function(event) {
+            alert("ASYNC ERROR:\n" + event.reason);
+        };
+
         // INTEGRATED KEYS
         const SUPABASE_URL = 'https://vfkkoacakiaulcjviyfe.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZma2tvYWNha2lhdWxjanZpeWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTQxNjAsImV4cCI6MjA4OTY5MDE2MH0.qlXPSD-31q-UrTDja9wN2QXp8Fazm2zORKaFuzJ1vq4';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let supabase;
 
         const App = {
             state: {
@@ -189,52 +198,70 @@
             },
             audioElement: new Audio(),
 
-            async init() {
+            init() {
+                // 1. Instantly set up UI for guests so the screen is never blank
+                this.ui.setupGuestMode();
+                this.visualizer.init();
+                
+                // 2. Set up Audio Listeners
                 this.audioElement.addEventListener('timeupdate', () => this.ui.updateProgress());
                 this.audioElement.addEventListener('ended', () => this.audio.handleEnd());
                 this.audioElement.addEventListener('play', () => { this.state.isPlaying = true; document.getElementById('icon-play').classList.replace('ph-play', 'ph-pause'); });
                 this.audioElement.addEventListener('pause', () => { this.state.isPlaying = false; document.getElementById('icon-play').classList.replace('ph-pause', 'ph-play'); });
 
-                this.visualizer.init();
+                // 3. Initialize Supabase safely
+                try {
+                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    this.checkSession();
+                    this.explore.loadUsers(); // Load the people tab data immediately
+                } catch (err) {
+                    alert("Failed to connect to Database: " + err.message);
+                }
+            },
 
+            async checkSession() {
                 try {
                     const { data: { session }, error } = await supabase.auth.getSession();
                     if (error) throw error;
-
                     if (session) {
                         await this.auth.handleSession(session.user);
-                    } else {
-                        this.ui.setupGuestMode();
                     }
                 } catch (err) {
-                    App.ui.toast("Session check failed: " + err.message);
-                    this.ui.setupGuestMode();
+                    console.log("No active session or error checking session", err);
                 }
-
-                // Everyone loads the explore tab immediately
-                this.explore.loadUsers();
             },
 
             auth: {
                 async login() {
+                    const btn = document.getElementById('login-btn');
                     try {
-                        const handle = document.getElementById('auth-handle').value.trim();
+                        let handle = document.getElementById('auth-handle').value.trim().toLowerCase(); // Forced lowercase
                         const password = document.getElementById('auth-password').value;
                         
-                        if(!handle || !password) return App.ui.toast("Please enter handle and password");
+                        if(!handle || !password) {
+                            alert("Please enter both handle and password.");
+                            return;
+                        }
                         
-                        App.ui.toast("Logging in...");
+                        btn.innerText = "Authenticating...";
                         
                         const email = `${handle}@miyu.app`;
                         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
                         
-                        if (error) throw error;
+                        if (error) {
+                            alert("LOGIN FAILED:\n" + error.message);
+                            btn.innerText = "Enter";
+                            return;
+                        }
                         
                         App.ui.toggleModal('login-modal');
+                        App.ui.toast("Success! Loading library...");
                         await this.handleSession(data.user);
                         
                     } catch (err) {
-                        App.ui.toast("Login Error: " + err.message);
+                        alert("UNEXPECTED LOGIN ERROR:\n" + err.message);
+                    } finally {
+                        btn.innerText = "Enter";
                     }
                 },
                 
@@ -242,7 +269,6 @@
                     try {
                         const { data: userData, error } = await supabase.from('users').select('handle').eq('id', authUser.id).single();
                         
-                        // If user doesn't exist in the users table, we still let them in, but fallback to email prefix
                         App.state.user = authUser;
                         App.state.userHandle = userData ? userData.handle : authUser.email.split('@')[0];
                         
@@ -250,7 +276,7 @@
                         App.ui.toast(`Welcome back, ${App.state.userHandle}`);
                         App.library.loadLibrary();
                     } catch (err) {
-                        App.ui.toast("Session Error: " + err.message);
+                        alert("Session loading error:\n" + err.message);
                     }
                 },
 
@@ -262,8 +288,7 @@
 
             library: {
                 async loadLibrary() {
-                    if (!App.state.user) return; // Guests have no library
-                    
+                    if (!App.state.user) return;
                     try {
                         const { data: songs, error: sErr } = await supabase.from('songs').select('*').eq('user_id', App.state.user.id).order('created_at', { ascending: false });
                         if (sErr) throw sErr;
@@ -280,7 +305,7 @@
                             <div class="item-card"><div class="item-info"><h4>${pl.name}</h4></div></div>
                         `).join('');
                     } catch (err) {
-                        App.ui.toast("Failed to load library: " + err.message);
+                        alert("Library Load Error: " + err.message);
                     }
                 },
                 
@@ -290,7 +315,6 @@
                         container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">No tracks found.</p>'; 
                         return; 
                     }
-                    
                     container.innerHTML = songsArray.map((song, i) => `
                         <div class="item-card" onclick="App.audio.playQueue('${btoa(unescape(encodeURIComponent(JSON.stringify(songsArray))))}', ${i})">
                             <div class="item-info">
@@ -306,11 +330,11 @@
                     try {
                         const fileInput = document.getElementById('upload-file');
                         const titleInput = document.getElementById('upload-title');
-                        if(!fileInput.files.length) return App.ui.toast("Select an MP3 file");
+                        if(!fileInput.files.length) { alert("Select an MP3 file"); return; }
                         
                         const file = fileInput.files[0];
                         const title = titleInput.value.trim() || file.name.replace('.mp3', '');
-                        const filePath = `${App.state.user.id}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`; // Clean filename
+                        const filePath = `${App.state.user.id}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
                         
                         App.ui.toast("Uploading...");
                         App.ui.toggleModal('upload-modal');
@@ -328,19 +352,19 @@
                         document.getElementById('upload-title').value = '';
                         this.loadLibrary();
                     } catch (err) {
-                        App.ui.toast("Upload failed: " + err.message);
+                        alert("Upload failed:\n" + err.message);
                     }
                 },
 
                 async createPlaylist() {
-                    if (App.state.playlists.length >= 10) return App.ui.toast("Max 10 playlists allowed.");
+                    if (App.state.playlists.length >= 10) { alert("Max 10 playlists allowed."); return; }
                     const name = prompt("Playlist Name:");
                     if (!name) return;
                     try {
                         await supabase.from('playlists').insert([{ user_id: App.state.user.id, name }]);
                         this.loadLibrary();
                     } catch (err) {
-                        App.ui.toast("Error creating playlist.");
+                        alert("Error creating playlist: " + err.message);
                     }
                 }
             },
@@ -353,14 +377,18 @@
                         
                         App.state.users = data || [];
                         const container = document.getElementById('users-list');
-                        container.innerHTML = App.state.users.map(u => `
-                            <div class="item-card" onclick="App.explore.viewUserSongs('${u.id}', '${u.handle}')">
-                                <div class="item-info"><h4>@${u.handle}</h4></div>
-                                <i class="ph ph-caret-right" style="color:var(--text-secondary)"></i>
-                            </div>
-                        `).join('');
+                        if(App.state.users.length === 0) {
+                             container.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">No users found yet.</p>';
+                        } else {
+                            container.innerHTML = App.state.users.map(u => `
+                                <div class="item-card" onclick="App.explore.viewUserSongs('${u.id}', '${u.handle}')">
+                                    <div class="item-info"><h4>@${u.handle}</h4></div>
+                                    <i class="ph ph-caret-right" style="color:var(--text-secondary)"></i>
+                                </div>
+                            `).join('');
+                        }
                     } catch (err) {
-                        App.ui.toast("Could not load users: " + err.message);
+                        console.log("Could not load users", err);
                     }
                 },
                 
@@ -375,7 +403,7 @@
                                                <div id="explore-songs-list" class="flex-col gap-2"></div>`;
                         App.library.renderSongs(songs || [], 'explore-songs-list');
                     } catch (err) {
-                        App.ui.toast("Could not load tracks.");
+                        alert("Could not load tracks: " + err.message);
                     }
                 }
             },
@@ -383,17 +411,16 @@
             audio: {
                 async playQueue(encodedQueue, index) {
                     try {
-                        // Safe decode for strings containing special characters
                         App.state.queue = JSON.parse(decodeURIComponent(escape(atob(encodedQueue))));
                         App.state.currentIndex = index;
                         this.loadAndPlay(App.state.queue[index]);
                     } catch (err) {
-                        App.ui.toast("Error playing track.");
+                        alert("Error playing track.");
                     }
                 },
                 loadAndPlay(song) {
                     document.getElementById('player-title').innerText = song.title;
-                    document.getElementById('player-artist').innerText = "Loading streaming URL...";
+                    document.getElementById('player-artist').innerText = "Loading URL...";
                     
                     const { data } = supabase.storage.from('music').getPublicUrl(song.file_path);
                     
@@ -401,7 +428,7 @@
                     document.getElementById('player-artist').innerText = "Streaming";
                     
                     App.audioElement.play().catch(e => {
-                        App.ui.toast("Browser prevented autoplay. Tap play manually.");
+                        console.log("Browser prevented autoplay", e);
                     });
                 },
                 togglePlay() {
@@ -448,7 +475,7 @@
                     document.getElementById('upload-btn-header').classList.add('hidden');
                     document.getElementById('library-guest-msg').classList.remove('hidden');
                     document.getElementById('library-user-content').classList.add('hidden');
-                    document.getElementById('auth-status-row').innerHTML = `<button class="btn-primary" onclick="App.ui.toggleModal('login-modal'); App.ui.toggleModal('settings-modal');">Log In to Upload</button>`;
+                    document.getElementById('auth-status-row').innerHTML = `<button class="btn-primary" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">Log In to Upload</button>`;
                 },
                 setupUserMode() {
                     document.getElementById('upload-btn-header').classList.remove('hidden');
@@ -505,6 +532,7 @@
                     requestAnimationFrame(() => this.draw());
                 },
                 resize() {
+                    if(!this.canvas.parentElement) return;
                     this.canvas.width = this.canvas.parentElement.clientWidth;
                     this.canvas.height = 60;
                 },
@@ -539,6 +567,7 @@
             }
         };
 
+        // Initialize immediately when the DOM is ready
         window.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
