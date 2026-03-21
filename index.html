@@ -6,29 +6,29 @@
     <title>Miyu | Premium</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23ffffff%22/></svg>">
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
             /* AMOLED Dark */
-            --bg: #000000; --surface: rgba(20, 20, 20, 0.65); --surface-hover: rgba(40, 40, 40, 0.85);
-            --text-main: #ffffff; --text-muted: #888888; --accent: #ffffff;
-            --border: rgba(255, 255, 255, 0.08); --blur: blur(24px); --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --bg: #000000; --surface: rgba(20, 20, 20, 0.7); --surface-hover: rgba(40, 40, 40, 0.9);
+            --text-main: #ffffff; --text-muted: #888888; --accent: #ffffff; --accent-invert: #000000;
+            --border: rgba(255, 255, 255, 0.1); --blur: blur(24px); --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
             --danger: #ff453a; --success: #32d74b;
         }
         [data-theme="ips"] {
             /* IPS Premium Deep Gray */
-            --bg: #121212; --surface: rgba(30, 30, 30, 0.7); --surface-hover: rgba(50, 50, 50, 0.9);
-            --text-main: #f5f5f5; --text-muted: #9e9e9e; --accent: #ffffff;
-            --border: rgba(255, 255, 255, 0.05); --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --bg: #121212; --surface: rgba(30, 30, 30, 0.75); --surface-hover: rgba(50, 50, 50, 0.95);
+            --text-main: #f5f5f5; --text-muted: #9e9e9e; --accent: #ffffff; --accent-invert: #000000;
+            --border: rgba(255, 255, 255, 0.08); --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
         [data-theme="light"] {
             /* Crisp Light */
-            --bg: #f5f5f7; --surface: rgba(255, 255, 255, 0.7); --surface-hover: rgba(240, 240, 240, 0.9);
-            --text-main: #1d1d1f; --text-muted: #86868b; --accent: #000000;
-            --border: rgba(0, 0, 0, 0.06); --shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            --bg: #f5f5f7; --surface: rgba(255, 255, 255, 0.75); --surface-hover: rgba(240, 240, 240, 0.95);
+            --text-main: #1d1d1f; --text-muted: #86868b; --accent: #000000; --accent-invert: #ffffff;
+            --border: rgba(0, 0, 0, 0.08); --shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
         }
 
         ::backdrop { background-color: var(--bg); }
@@ -37,7 +37,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; transition: background-color 0.4s ease; }
         
-        .glass { background: var(--surface); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); }
+        .glass { background: var(--surface); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--border); border-radius: 24px; box-shadow: var(--shadow); }
         .hidden { display: none !important; }
         .flex { display: flex; } .flex-col { display: flex; flex-direction: column; }
         .items-center { align-items: center; } .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
@@ -48,31 +48,30 @@
         button:active:not(:disabled) { transform: scale(0.92); }
         button:disabled { opacity: 0.3; cursor: not-allowed; }
         
-        .btn-primary { background: var(--text-main); color: var(--bg); padding: 14px 24px; border-radius: 24px; font-weight: 600; font-size: 14px; width: 100%; transition: 0.3s; }
+        .btn-primary { background: var(--text-main); color: var(--accent-invert); padding: 14px 24px; border-radius: 24px; font-weight: 600; font-size: 14px; width: 100%; transition: 0.3s; }
         .btn-icon { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); }
         
-        input, textarea, select { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); padding: 14px 16px; border-radius: 14px; outline: none; width: 100%; transition: 0.2s; font-size: 14px; }
-        input:focus, textarea:focus { border-color: var(--text-muted); }
+        input, textarea, select { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); padding: 14px 16px; border-radius: 14px; outline: none; width: 100%; transition: 0.2s; font-size: 14px; appearance: none; }
+        input:focus, textarea:focus, select:focus { border-color: var(--text-muted); }
+        select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23888888%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 16px auto; padding-right: 40px; }
 
         /* Typography & Layout */
         header { padding: env(safe-area-inset-top, 20px) 24px 20px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
-        h2 { font-size: 20px; font-weight: 600; margin: 24px 0 16px 0; letter-spacing: -0.3px; }
-        h3 { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-top: 24px; margin-bottom: 12px; }
+        h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        h2 { font-size: 20px; font-weight: 700; margin: 24px 0 16px 0; letter-spacing: -0.3px; }
+        h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-top: 24px; margin-bottom: 12px; }
         
-        main { flex: 1; overflow-y: auto; padding: 0 24px 180px 24px; scroll-behavior: smooth; } 
+        main { flex: 1; overflow-y: auto; padding: 0 24px calc(env(safe-area-inset-bottom) + 260px) 24px; scroll-behavior: smooth; } 
         main::-webkit-scrollbar { display: none; }
 
         /* Component Cards */
         .card { padding: 14px 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
         .card:hover { background: var(--surface-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .card-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 200px;}
+        .card-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 220px;}
         .card-info p { font-size: 12px; color: var(--text-muted); font-weight: 500;}
         
-        /* Avatar System */
-        .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; margin-right: 16px; flex-shrink: 0;}
+        .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; margin-right: 16px; flex-shrink: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
         
-        /* Grid Playlists */
         .playlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
         .pl-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; }
         .pl-card:hover { transform: scale(1.03); }
@@ -81,20 +80,29 @@
         .pl-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
         .pl-info p { font-size: 11px; color: var(--text-muted); }
 
-        /* The Ultimate Player */
-        #player-container { position: fixed; bottom: 85px; left: 20px; right: 20px; padding: 20px; z-index: 20; display: flex; flex-direction: column; gap: 16px; overflow: hidden; }
-        #visualizer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.8; transition: opacity 0.3s; }
+        /* The Ultimate Dynamic Player */
+        #player-container { position: fixed; bottom: 85px; left: 16px; right: 16px; padding: 20px; z-index: 20; display: flex; flex-direction: column; gap: 16px; overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        #player-container.minimized { padding: 12px 20px; gap: 0; height: 72px; cursor: pointer; border-radius: 36px; }
+        #player-container.minimized .expanded-only { display: none !important; opacity: 0; }
+        #player-container.minimized .mini-controls { display: flex !important; opacity: 1; }
+        
+        .mini-controls { display: none; align-items: center; justify-content: space-between; width: 100%; z-index: 2; opacity: 0; transition: 0.3s; }
+        
+        #visualizer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.85; transition: opacity 0.3s; border-radius: inherit;}
         .player-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .main-controls { display: flex; gap: 20px; align-items: center; }
-        .play-btn { width: 56px; height: 56px; border-radius: 50%; background: var(--text-main); color: var(--bg); box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
         
-        .progress-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; font-weight: 600;}
-        .progress-container { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; cursor: pointer; position: relative; overflow: hidden; }
+        /* Fixed contrast for Play Button */
+        .play-btn { width: 56px; height: 56px; border-radius: 50%; background: var(--text-main); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .play-btn i { color: var(--accent-invert) !important; }
+        
+        .progress-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 11px; color: var(--text-main); font-variant-numeric: tabular-nums; font-weight: 600;}
+        .progress-container { flex: 1; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; position: relative; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--text-main); width: 0%; transition: width 0.1s linear; border-radius: 3px; }
         
         /* Navigation */
         nav { position: fixed; bottom: 0; width: 100%; height: 75px; display: flex; justify-content: space-around; align-items: center; z-index: 30; background: var(--surface); backdrop-filter: var(--blur); border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); font-size: 10px; font-weight: 600; width: 64px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;}
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); font-size: 10px; font-weight: 700; width: 64px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;}
         .nav-item.active { color: var(--text-main); }
 
         /* Modals */
@@ -103,12 +111,15 @@
         .modal-content { width: 100%; max-width: 500px; background: var(--bg); border: 1px solid var(--border); border-radius: 32px 32px 0 0; padding: 32px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-height: 90vh; overflow-y: auto; padding-bottom: calc(32px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
         .modal.active .modal-content { transform: translateY(0); }
         
-        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border); font-weight: 500;}
-        .setting-row select { width: auto; padding: 8px 12px; font-size: 13px; }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border); font-weight: 600;}
+        .setting-row select { width: auto; padding: 10px 40px 10px 16px; font-size: 13px; font-weight: 600; border-radius: 20px;}
+
+        /* Sync Code Box Polish */
+        .sync-code-box { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; background: var(--text-main); color: var(--accent-invert); border-radius: 16px; padding: 16px 24px; text-align: center; margin: 20px auto; display: inline-block; box-shadow: 0 4px 20px rgba(255,255,255,0.15); }
 
         /* Upload Staging List */
         .stage-item { display: flex; flex-direction: column; gap: 8px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; }
-        .stage-prog-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .stage-prog-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
         .stage-prog-fill { height: 100%; background: var(--success); width: 0%; transition: 0.2s; }
 
         #toast { position: fixed; top: env(safe-area-inset-top, 20px); left: 50%; transform: translateX(-50%) translateY(-100px); padding: 14px 28px; border-radius: 30px; font-size: 13px; z-index: 200; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); background: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border); text-align: center; max-width: 90%; box-shadow: var(--shadow); font-weight: 600; pointer-events: none; backdrop-filter: blur(10px);}
@@ -123,7 +134,7 @@
         <header>
             <h1>Miyu</h1>
             <div class="flex gap-4 items-center">
-                <button type="button" class="btn-icon" id="sync-btn-header" onclick="App.sync.toggleMenu()" title="Listen Together" style="display:none;"><i class="ph ph-broadcast size-20"></i></button>
+                <button type="button" class="btn-icon" id="sync-btn-header" onclick="App.sync.toggleMenu()" title="Listen Together"><i class="ph ph-broadcast size-20"></i></button>
                 <button type="button" onclick="App.ui.toggleFullscreen()" title="Fullscreen"><i class="ph ph-corners-out size-24" id="icon-fullscreen"></i></button>
                 <button type="button" id="upload-btn-header" class="btn-icon hidden" onclick="App.ui.toggleModal('upload-modal')" title="Upload"><i class="ph ph-plus size-20"></i></button>
                 <button type="button" class="btn-icon" onclick="App.ui.toggleModal('settings-modal')" title="Settings"><i class="ph ph-sliders-horizontal size-20"></i></button>
@@ -152,7 +163,7 @@
                 <div id="library-user-content" class="hidden">
                     <div class="flex justify-between items-center">
                         <h3>Playlists</h3>
-                        <button type="button" onclick="App.ui.toggleModal('create-pl-modal')" style="color:var(--text-muted); font-size: 12px; font-weight: 600;"><i class="ph ph-plus" style="margin-right: 4px;"></i> NEW</button>
+                        <button type="button" onclick="App.ui.toggleModal('create-pl-modal')" style="color:var(--text-muted); font-size: 12px; font-weight: 700;"><i class="ph ph-plus" style="margin-right: 4px;"></i> NEW</button>
                     </div>
                     <div id="playlists-list" class="playlist-grid"></div>
                     
@@ -162,17 +173,34 @@
             </div>
         </main>
 
-        <div id="player-container" class="glass">
+        <div id="player-container" class="glass minimized">
             <canvas id="visualizer-canvas"></canvas>
-            <div class="flex justify-between items-center" style="margin-bottom: 12px; z-index: 2;">
-                <div class="card-info" style="max-width: 70%;">
-                    <h4 id="player-title" style="font-size: 16px;">Miyu Space</h4>
-                    <p id="player-artist" style="font-size: 12px; opacity: 0.8;">Idle</p>
+            
+            <div class="mini-controls" onclick="App.ui.togglePlayerExpand(event)">
+                <div class="flex items-center gap-3" style="max-width: 70%; overflow: hidden;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--text-main); display: flex; align-items: center; justify-content: center;">
+                        <i class="ph ph-music-notes size-20" style="color: var(--accent-invert);"></i>
+                    </div>
+                    <div class="card-info">
+                        <h4 id="mini-title" style="font-size: 14px; font-weight: 600;">Miyu Space</h4>
+                        <p id="mini-artist" style="font-size: 11px;">Idle</p>
+                    </div>
                 </div>
-                <button type="button" onclick="App.audio.toggleVolume()"><i class="ph ph-speaker-high size-20" id="icon-vol"></i></button>
+                <div class="flex gap-4 items-center">
+                    <button type="button" onclick="event.stopPropagation(); App.audio.togglePlay();"><i class="ph ph-play-fill size-24" id="icon-play-mini"></i></button>
+                </div>
+            </div>
+
+            <div class="expanded-only flex justify-between items-center" style="margin-bottom: 12px; z-index: 2;">
+                <button type="button" onclick="App.ui.togglePlayerExpand()"><i class="ph ph-caret-down size-24"></i></button>
+                <div class="card-info" style="text-align: center; max-width: 60%;">
+                    <h4 id="player-title" style="font-size: 18px; font-weight: 700; white-space: normal;">Miyu Space</h4>
+                    <p id="player-artist" style="font-size: 13px; font-weight: 600; opacity: 0.8; margin-top: 4px;">Idle</p>
+                </div>
+                <button type="button" onclick="App.audio.toggleVolume()"><i class="ph ph-speaker-high size-24" id="icon-vol"></i></button>
             </div>
             
-            <div class="progress-wrapper" style="z-index: 2;">
+            <div class="expanded-only progress-wrapper" style="z-index: 2;">
                 <span id="time-current">0:00</span>
                 <div class="progress-container" onclick="App.audio.seek(event)">
                     <div class="progress-bar" id="player-progress"></div>
@@ -180,14 +208,14 @@
                 <span id="time-total">0:00</span>
             </div>
 
-            <div class="player-controls" style="margin-top: 12px; z-index: 2;">
-                <button type="button" onclick="App.audio.toggleShuffle()"><i class="ph ph-shuffle size-20" id="icon-shuffle"></i></button>
+            <div class="expanded-only player-controls" style="margin-top: 16px; z-index: 2; padding: 0 10px;">
+                <button type="button" onclick="App.audio.toggleShuffle()"><i class="ph ph-shuffle size-24" id="icon-shuffle"></i></button>
                 <div class="main-controls">
-                    <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back-fill size-24"></i></button>
-                    <button type="button" class="play-btn" onclick="App.audio.togglePlay()"><i class="ph ph-play-fill size-28" id="icon-play" style="margin-left: 4px;"></i></button>
-                    <button type="button" onclick="App.audio.next()"><i class="ph ph-skip-forward-fill size-24"></i></button>
+                    <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back-fill size-32"></i></button>
+                    <button type="button" class="play-btn" onclick="App.audio.togglePlay()"><i class="ph ph-play-fill size-32" id="icon-play" style="margin-left: 4px;"></i></button>
+                    <button type="button" onclick="App.audio.next()"><i class="ph ph-skip-forward-fill size-32"></i></button>
                 </div>
-                <button type="button" onclick="App.audio.toggleLoop()"><i class="ph ph-repeat size-20" id="icon-loop"></i></button>
+                <button type="button" onclick="App.audio.toggleLoop()"><i class="ph ph-repeat size-24" id="icon-loop"></i></button>
             </div>
         </div>
 
@@ -216,31 +244,35 @@
                 <h2 style="margin-top: 0;">Preferences</h2>
                 <div class="setting-row">
                     <span>Theme</span>
-                    <select id="theme-select" onchange="App.settings.setTheme(this.value)" style="background: var(--bg); border: none;">
+                    <select id="theme-select" onchange="App.settings.setTheme(this.value)">
                         <option value="dark">AMOLED Dark</option>
                         <option value="ips">IPS Premium</option>
                         <option value="light">Crisp Light</option>
                     </select>
                 </div>
                 <div class="setting-row">
-                    <span>Offline Caching</span>
-                    <button type="button" id="cache-toggle" onclick="App.settings.toggleCache()" style="font-weight: 600; color: var(--text-muted);">OFF</button>
+                    <span>Beat Visualizer</span>
+                    <button type="button" id="vis-toggle" onclick="App.settings.toggleVis()" style="font-weight: 700; color: var(--success);">ON</button>
+                </div>
+                <div class="setting-row">
+                    <span>Offline Engine</span>
+                    <button type="button" id="cache-toggle" onclick="App.settings.toggleCache()" style="font-weight: 700; color: var(--text-muted);">OFF</button>
                 </div>
                 <div class="setting-row">
                     <span>Seek Interval</span>
-                    <select id="seek-select" onchange="App.settings.seekStep = parseInt(this.value)" style="background: var(--bg); border: none;">
-                        <option value="5">5 Seconds</option>
-                        <option value="10" selected>10 Seconds</option>
-                        <option value="15">15 Seconds</option>
+                    <select id="seek-select" onchange="App.settings.seekStep = parseInt(this.value)">
+                        <option value="5">5 Secs</option>
+                        <option value="10" selected>10 Secs</option>
+                        <option value="15">15 Secs</option>
                     </select>
                 </div>
-                <div class="setting-row flex-col items-start gap-2" style="border-bottom: none; padding-bottom: 0;">
+                <div class="setting-row flex-col items-start gap-3" style="border-bottom: none; padding-bottom: 0;">
                     <div class="flex justify-between" style="width: 100%;">
-                        <span>Storage Allocation</span>
-                        <span id="storage-txt" style="font-size: 12px; color: var(--text-muted);">Calculating...</span>
+                        <span>Vault Allocation</span>
+                        <span id="storage-txt" style="font-size: 13px; color: var(--text-muted);">0.0 MB / 1GB</span>
                     </div>
-                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
-                        <div id="storage-bar" style="height: 100%; width: 0%; background: var(--accent); transition: 0.5s;"></div>
+                    <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                        <div id="storage-bar" style="height: 100%; width: 0%; background: var(--text-main); transition: 0.5s;"></div>
                     </div>
                 </div>
                 <div id="auth-status-row" class="setting-row" style="border-bottom: none; margin-top: 16px;"></div>
@@ -250,11 +282,9 @@
         <div id="upload-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('upload-modal')">
             <div class="modal-content flex-col gap-4">
                 <h2 style="margin-top: 0;">Drop Tracks</h2>
-                <input type="file" id="upload-files" accept="audio/*" multiple style="padding: 16px; border: 1px dashed var(--text-muted); background: transparent; text-align: center;">
-                <p style="font-size: 11px; color: var(--text-muted); text-align: center;">Max 50 files. Rename below before uploading.</p>
-                
+                <input type="file" id="upload-files" accept="audio/*" multiple style="padding: 16px; border: 1px dashed var(--text-muted); background: transparent; text-align: center; cursor:pointer;">
+                <p style="font-size: 12px; color: var(--text-muted); text-align: center; font-weight:500;">Max 50 files. Rename below before uploading.</p>
                 <div id="upload-staging-area" class="flex-col gap-2" style="max-height: 250px; overflow-y: auto;"></div>
-                
                 <button type="button" id="upload-submit-btn" class="btn-primary" onclick="App.library.processUploads()" disabled>Upload 0 Tracks</button>
             </div>
         </div>
@@ -264,23 +294,25 @@
                 <h2 style="margin-top: 0;">New Playlist</h2>
                 <input type="text" id="pl-name" placeholder="Name (Max 20 chars)" maxlength="20">
                 <textarea id="pl-desc" placeholder="Description (Max 100 chars)" maxlength="100" rows="2"></textarea>
-                <div id="pl-song-selector" class="flex-col gap-2" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); padding: 10px; border-radius: 12px;"></div>
-                <button type="button" class="btn-primary" onclick="App.library.savePlaylist()">Create Entity</button>
+                <div id="pl-song-selector" class="flex-col gap-2" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); padding: 12px; border-radius: 14px;"></div>
+                <button type="button" class="btn-primary" onclick="App.library.savePlaylist()">Forge Collection</button>
             </div>
         </div>
 
         <div id="sync-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('sync-modal')">
             <div class="modal-content flex-col gap-4" style="text-align: center;">
                 <h2 style="margin-top: 0;">Listen Together</h2>
-                <p style="font-size: 13px; color: var(--text-muted);">Sync playback globally with another device.</p>
+                <p style="font-size: 14px; color: var(--text-muted); font-weight: 500; margin-bottom: 10px;">Lock playback seamlessly across devices anywhere in the world.</p>
                 
                 <div class="flex gap-4">
-                    <button type="button" class="btn-primary" onclick="App.sync.hostSession()">Host Session</button>
+                    <button type="button" class="btn-primary" onclick="App.sync.hostSession()">Create Room</button>
                     <button type="button" class="btn-primary" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);" onclick="App.sync.joinPrompt()">Join Code</button>
                 </div>
                 
-                <div id="sync-status" style="margin-top: 16px; font-weight: 600; font-size: 18px; letter-spacing: 2px;"></div>
-                <button type="button" id="sync-leave-btn" class="hidden" style="color: var(--danger); font-size: 13px; margin-top: 10px;" onclick="App.sync.leave()">Leave Session</button>
+                <div id="sync-status" class="sync-code-box hidden"></div>
+                <p id="sync-subtitle" style="color:var(--success); font-weight:600; font-size:13px;" class="hidden">Session Live</p>
+                
+                <button type="button" id="sync-leave-btn" class="btn-primary hidden" style="background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger); margin-top: 10px;" onclick="App.sync.leave()">End Session</button>
             </div>
         </div>
     </div>
@@ -288,14 +320,13 @@
     <script>
         window.onerror = function(m, s, l) { console.error("ERR:", m, "L:", l); return true; };
 
-        // --- CORE CONFIG ---
         const MIYU_URL = 'https://vfkkoacakiaulcjviyfe.supabase.co';
         const MIYU_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZma2tvYWNha2lhdWxjanZpeWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTQxNjAsImV4cCI6MjA4OTY5MDE2MH0.qlXPSD-31q-UrTDja9wN2QXp8Fazm2zORKaFuzJ1vq4';
         const miyuDB = window.supabase.createClient(MIYU_URL, MIYU_KEY, { realtime: { params: { eventsPerSecond: 10 } } });
 
         const App = {
             state: {
-                user: null, userHandle: '', theme: 'ips', caching: false,
+                user: null, userHandle: '', theme: 'ips', caching: false, visEnabled: true,
                 songs: [], playlists: [], users: [], queue: [], currentIndex: -1,
                 isPlaying: false, loop: false, shuffle: false, volume: 1
             },
@@ -303,21 +334,16 @@
             stagedFiles: [],
 
             init() {
-                this.audioElement.crossOrigin = "anonymous"; // Mandatory for Visualizer
-                
+                this.audioElement.crossOrigin = "anonymous";
                 this.settings.loadLocal();
                 this.ui.setupGuestMode();
-                
-                // Initialize MediaSession & Event Listeners
                 this.setupAudioBindings();
                 this.visualizer.init();
                 
-                // Input Listeners
                 document.getElementById('upload-files').addEventListener('change', (e) => this.library.stageUploads(e));
 
                 document.addEventListener('fullscreenchange', () => {
-                    const icon = document.getElementById('icon-fullscreen');
-                    icon.classList.replace(document.fullscreenElement ? 'ph-corners-out' : 'ph-corners-in', document.fullscreenElement ? 'ph-corners-in' : 'ph-corners-out');
+                    document.getElementById('icon-fullscreen').classList.replace(document.fullscreenElement ? 'ph-corners-out' : 'ph-corners-in', document.fullscreenElement ? 'ph-corners-in' : 'ph-corners-out');
                 });
 
                 this.checkSession();
@@ -328,19 +354,24 @@
                 const aud = this.audioElement;
                 aud.addEventListener('timeupdate', () => this.ui.updateProgress());
                 aud.addEventListener('ended', () => this.audio.handleEnd());
+                
                 aud.addEventListener('play', () => { 
                     this.state.isPlaying = true; 
                     document.getElementById('icon-play').classList.replace('ph-play-fill', 'ph-pause-fill'); 
-                    this.sync.broadcast('play', aud.currentTime);
+                    document.getElementById('icon-play-mini').classList.replace('ph-play-fill', 'ph-pause-fill'); 
+                    
+                    if(!this.sync.isRemoteAction) this.sync.broadcast('play', aud.currentTime);
                     if(this.visualizer.audioCtx && this.visualizer.audioCtx.state === 'suspended') this.visualizer.audioCtx.resume();
                 });
+                
                 aud.addEventListener('pause', () => { 
                     this.state.isPlaying = false; 
                     document.getElementById('icon-play').classList.replace('ph-pause-fill', 'ph-play-fill'); 
-                    this.sync.broadcast('pause', aud.currentTime);
+                    document.getElementById('icon-play-mini').classList.replace('ph-pause-fill', 'ph-play-fill'); 
+                    
+                    if(!this.sync.isRemoteAction) this.sync.broadcast('pause', aud.currentTime);
                 });
 
-                // Media Session API for Background Playback OS Controls
                 if ('mediaSession' in navigator) {
                     navigator.mediaSession.setActionHandler('play', () => this.audio.togglePlay());
                     navigator.mediaSession.setActionHandler('pause', () => this.audio.togglePlay());
@@ -403,7 +434,6 @@
                     } catch (err) { App.ui.toast("Library Error"); }
                 },
 
-                // --- UI RENDERING ---
                 renderSongs(songsArray, containerId, isOwner = false) {
                     const container = document.getElementById(containerId);
                     if(!songsArray.length) { container.innerHTML = '<p style="color:var(--text-muted); font-size:13px; padding:20px; text-align:center;">Empty Space</p>'; return; }
@@ -412,13 +442,13 @@
                     container.innerHTML = songsArray.map((song, i) => `
                         <div class="card">
                             <div class="flex items-center gap-4" style="flex:1; overflow:hidden;" onclick="App.audio.playQueue('${safeQueue}', ${i})">
-                                <button class="btn-icon" style="width:36px; height:36px;"><i class="ph ph-play-fill"></i></button>
+                                <button class="btn-icon" style="width:38px; height:38px; flex-shrink:0;"><i class="ph ph-play-fill size-20"></i></button>
                                 <div class="card-info">
                                     <h4>${song.title}</h4>
                                     <p>${(song.file_size / 1024 / 1024).toFixed(2)} MB</p>
                                 </div>
                             </div>
-                            ${isOwner ? `<button onclick="App.library.deleteSong('${song.id}', '${song.file_path}')" style="color:var(--danger); padding:8px;"><i class="ph ph-trash"></i></button>` : ''}
+                            ${isOwner ? `<button onclick="App.library.deleteSong('${song.id}', '${song.file_path}')" style="color:var(--danger); padding:10px;"><i class="ph ph-trash size-20"></i></button>` : ''}
                         </div>
                     `).join('');
                 },
@@ -428,32 +458,30 @@
                     container.innerHTML = App.state.playlists.map(pl => `
                         <div class="pl-card" onclick="App.explore.viewPlaylist('${pl.id}', '${pl.name}')">
                             <div class="pl-cover" style="background: ${this.generateGradient(pl.name)}">
-                                <i class="ph ph-vinyl-record" style="font-size: 48px; color: rgba(255,255,255,0.3);"></i>
+                                <i class="ph ph-vinyl-record" style="font-size: 54px; color: rgba(255,255,255,0.25);"></i>
                             </div>
                             <div class="pl-info">
                                 <h4>${pl.name}</h4>
-                                <p>${pl.description || 'Custom Collection'}</p>
+                                <p>${pl.description || 'Collection'}</p>
                             </div>
                         </div>
                     `).join('');
 
-                    // Populate playlist song selector
                     const sel = document.getElementById('pl-song-selector');
                     sel.innerHTML = App.state.songs.map(s => `
-                        <label class="flex items-center gap-2" style="font-size: 13px; padding: 6px 0;">
-                            <input type="checkbox" value="${s.id}" class="pl-song-cb"> ${s.title}
+                        <label class="flex items-center gap-3" style="font-size: 14px; padding: 8px 0; font-weight:500;">
+                            <input type="checkbox" value="${s.id}" class="pl-song-cb" style="width:18px; height:18px; accent-color: var(--text-main);"> ${s.title}
                         </label>
                     `).join('');
                 },
 
                 generateGradient(str) {
                     let hash = 0; for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-                    const c1 = `hsl(${hash % 360}, 70%, 40%)`;
-                    const c2 = `hsl(${(hash * 2) % 360}, 70%, 20%)`;
+                    const c1 = `hsl(${Math.abs(hash) % 360}, 70%, 45%)`;
+                    const c2 = `hsl(${Math.abs(hash * 2) % 360}, 80%, 25%)`;
                     return `linear-gradient(135deg, ${c1}, ${c2})`;
                 },
 
-                // --- MASS UPLOAD ENGINE ---
                 stageUploads(e) {
                     const files = Array.from(e.target.files).slice(0, 50);
                     App.stagedFiles = files.map(f => ({ file: f, title: f.name.replace(/\.[^/.]+$/, "") }));
@@ -466,12 +494,12 @@
                     container.innerHTML = App.stagedFiles.map((sf, i) => `
                         <div class="stage-item" id="stage-${i}">
                             <div class="flex gap-2">
-                                <input type="text" value="${sf.title}" onchange="App.stagedFiles[${i}].title = this.value" style="padding:8px; font-size:12px;">
-                                <button onclick="App.library.removeStage(${i})" style="color:var(--danger);"><i class="ph ph-x-circle size-20"></i></button>
+                                <input type="text" value="${sf.title}" onchange="App.stagedFiles[${i}].title = this.value" style="padding:10px; font-size:13px; font-weight:600;">
+                                <button onclick="App.library.removeStage(${i})" style="color:var(--danger); padding:0 8px;"><i class="ph ph-x-circle size-24"></i></button>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-3">
                                 <div class="stage-prog-bg"><div class="stage-prog-fill" id="prog-${i}"></div></div>
-                                <span style="font-size:10px; width:30px;" id="perc-${i}">0%</span>
+                                <span style="font-size:11px; width:35px; font-weight:700;" id="perc-${i}">0%</span>
                             </div>
                         </div>
                     `).join('');
@@ -479,14 +507,14 @@
 
                 removeStage(i) {
                     App.stagedFiles.splice(i, 1);
-                    document.getElementById('upload-files').dispatchEvent(new Event('change', {bubbles: true})); // re-render hack
-                    this.stageUploads({target: {files: App.stagedFiles.map(s=>s.file)}}); // rebuild
+                    document.getElementById('upload-files').dispatchEvent(new Event('change', {bubbles: true})); 
+                    this.stageUploads({target: {files: App.stagedFiles.map(s=>s.file)}}); 
                 },
 
                 async processUploads() {
                     const btn = document.getElementById('upload-submit-btn');
                     btn.disabled = true;
-                    btn.innerText = "Processing...";
+                    btn.innerText = "Processing Data...";
 
                     const { data: { session } } = await miyuDB.auth.getSession();
                     if (!session) return App.ui.toast("Auth lost");
@@ -510,7 +538,7 @@
 
                                 xhr.upload.onprogress = (e) => {
                                     if(e.lengthComputable) {
-                                        const p = Math.floor((e.loaded / e.total) * 95);
+                                        const p = Math.floor((e.loaded / e.total) * 98);
                                         bar.style.width = p + '%'; perc.innerText = p + '%';
                                     }
                                 };
@@ -519,17 +547,17 @@
                                         await miyuDB.from('songs').insert([{ user_id: App.state.user.id, title, file_path: filePath, file_size: file.size }]);
                                         bar.style.width = '100%'; perc.innerText = '100%'; successCount++;
                                         resolve();
-                                    } else reject(new Error("Storage block"));
+                                    } else reject(new Error());
                                 };
-                                xhr.onerror = () => reject(new Error("Network err"));
+                                xhr.onerror = () => reject();
                                 xhr.send(file);
                             });
                         } catch (err) {
-                            bar.style.background = 'var(--danger)'; perc.innerText = 'Err';
+                            bar.style.background = 'var(--danger)'; perc.innerText = 'ERR';
                         }
                     }
 
-                    App.ui.toast(`Uploaded ${successCount}/${App.stagedFiles.length} tracks`);
+                    App.ui.toast(`Stored ${successCount}/${App.stagedFiles.length} tracks`);
                     setTimeout(() => {
                         App.ui.toggleModal('upload-modal');
                         document.getElementById('upload-files').value = '';
@@ -539,30 +567,28 @@
                     }, 1000);
                 },
 
-                // --- DELETIONS ---
                 async deleteSong(id, path) {
-                    if(!confirm("Delete this track forever?")) return;
+                    if(!confirm("Eradicate this track from existence?")) return;
                     await miyuDB.storage.from('music').remove([path]);
                     await miyuDB.from('songs').delete().eq('id', id);
                     App.ui.toast("Track eradicated");
                     this.loadLibrary();
                 },
                 async deletePlaylist(id) {
-                    if(!confirm("Delete playlist?")) return;
+                    if(!confirm("Destroy playlist?")) return;
                     await miyuDB.from('playlists').delete().eq('id', id);
                     App.ui.switchTab('library');
-                    App.ui.toast("Playlist deleted");
+                    App.ui.toast("Playlist destroyed");
                     this.loadLibrary();
                 },
 
-                // --- PLAYLIST CREATION ---
                 async savePlaylist() {
                     const name = document.getElementById('pl-name').value.trim() || 'Untitled';
                     const desc = document.getElementById('pl-desc').value.trim();
                     const cbs = document.querySelectorAll('.pl-song-cb:checked');
                     const songIds = Array.from(cbs).map(cb => cb.value);
 
-                    if(App.state.playlists.length >= 15) return App.ui.toast("Limit reached");
+                    if(App.state.playlists.length >= 15) return App.ui.toast("Storage limit reached");
 
                     const { data: pl } = await miyuDB.from('playlists').insert([{ user_id: App.state.user.id, name, description: desc }]).select().single();
                     
@@ -572,7 +598,7 @@
                     }
 
                     App.ui.toggleModal('create-pl-modal');
-                    App.ui.toast("Playlist Forged");
+                    App.ui.toast("Collection Forged");
                     document.getElementById('pl-name').value = ''; document.getElementById('pl-desc').value = '';
                     cbs.forEach(c => c.checked = false);
                     this.loadLibrary();
@@ -581,29 +607,45 @@
 
             explore: {
                 async loadUsers() {
-                    const { data } = await miyuDB.from('users').select('id, handle');
-                    const container = document.getElementById('users-list');
-                    if(!data || !data.length) return container.innerHTML = '<p>No network activity.</p>';
+                    // Optimized fetching to get details in one payload
+                    const { data } = await miyuDB.from('users').select(`
+                        id, handle,
+                        songs ( file_size ),
+                        playlists ( name )
+                    `);
                     
-                    container.innerHTML = data.map(u => `
+                    const container = document.getElementById('users-list');
+                    if(!data || !data.length) return container.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:20px;">No signal found.</p>';
+                    
+                    container.innerHTML = data.map(u => {
+                        const tBytes = u.songs ? u.songs.reduce((a,b)=>a+(Number(b.file_size)||0), 0) : 0;
+                        const mb = (tBytes / 1024 / 1024).toFixed(1);
+                        let plNames = u.playlists && u.playlists.length ? u.playlists.slice(0, 2).map(p=>p.name).join(', ') : 'No Collections';
+                        if(u.playlists && u.playlists.length > 2) plNames += '...';
+                        
+                        return `
                         <div class="card" onclick="App.explore.viewUserSongs('${u.id}', '${u.handle}')" style="padding: 16px;">
-                            <div class="flex items-center">
+                            <div class="flex items-center" style="width: 100%;">
                                 <div class="avatar" style="background: ${App.library.generateGradient(u.handle)}">${u.handle.charAt(0).toUpperCase()}</div>
-                                <h4 style="font-size: 16px; font-weight: 600; text-transform: capitalize;">${u.handle}</h4>
+                                <div class="card-info" style="flex:1;">
+                                    <h4 style="font-size: 16px; font-weight: 700; text-transform: capitalize;">${u.handle}</h4>
+                                    <p style="margin-top:2px;">${mb} MB Space • <span style="font-weight:400; font-style:italic;">${plNames}</span></p>
+                                </div>
+                                <i class="ph ph-caret-right size-20" style="color:var(--text-muted)"></i>
                             </div>
-                            <i class="ph ph-caret-right size-20" style="color:var(--text-muted)"></i>
                         </div>
-                    `).join('');
+                        `;
+                    }).join('');
                 },
                 
                 async viewUserSongs(userId, handle) {
                     const { data: songs } = await miyuDB.from('songs').select('*').eq('user_id', userId);
                     const container = document.getElementById('users-list');
                     container.innerHTML = `
-                        <button class="btn-primary" style="background:var(--surface); color:var(--text-main); border:1px solid var(--border); width:auto; margin-bottom:20px;" onclick="App.explore.loadUsers()">
-                            <i class="ph ph-arrow-left" style="margin-right:8px;"></i> Back
+                        <button class="btn-primary" style="background:var(--surface); color:var(--text-main); border:1px solid var(--border); width:auto; margin-bottom:20px; font-weight:700;" onclick="App.explore.loadUsers()">
+                            <i class="ph ph-arrow-left size-20" style="margin-right:8px;"></i> BACK TO NETWORK
                         </button>
-                        <h2 style="margin-top:0; text-transform: capitalize;">${handle}'s Vault</h2>
+                        <h2 style="margin-top:0; text-transform: capitalize; font-size:28px;">${handle}'s Vault</h2>
                         <div id="explore-songs-list" class="flex-col"></div>
                     `;
                     App.library.renderSongs(songs || [], 'explore-songs-list');
@@ -621,39 +663,48 @@
                     const container = document.getElementById('library-user-content');
                     container.innerHTML = `
                         <div class="flex justify-between items-center" style="margin-bottom: 24px;">
-                            <button onclick="App.ui.switchTab('library'); App.library.loadLibrary();" style="color:var(--text-muted); font-weight:600;"><i class="ph ph-arrow-left size-20"></i></button>
-                            <button onclick="App.library.deletePlaylist('${plId}')" style="color:var(--danger); font-size:12px; font-weight:600;"><i class="ph ph-trash"></i> DELETE</button>
+                            <button onclick="App.ui.switchTab('library'); App.library.loadLibrary();" style="background:var(--surface); padding:8px 16px; border-radius:20px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
+                            <button onclick="App.library.deletePlaylist('${plId}')" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:8px 16px; border-radius:20px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE</button>
                         </div>
-                        <h2 style="margin-top:0; font-size:28px;">${plName}</h2>
-                        <div id="pl-view-songs" class="flex-col"></div>
+                        <h2 style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px;">${plName}</h2>
+                        <div id="pl-view-songs" class="flex-col" style="margin-top:20px;"></div>
                     `;
                     App.library.renderSongs(songs, 'pl-view-songs');
                 }
             },
 
-            // --- LISTEN TOGETHER (SYNC ENGINE) ---
+            // --- SYNC ENGINE (LISTEN TOGETHER) ---
             sync: {
                 room: null,
                 isHost: false,
+                isRemoteAction: false,
                 toggleMenu() { App.ui.toggleModal('sync-modal'); },
                 
                 hostSession() {
                     const code = Math.floor(10000 + Math.random() * 90000).toString();
                     this.isHost = true;
                     this.joinRoom(code);
-                    document.getElementById('sync-status').innerText = `Share Code: ${code}`;
-                    document.getElementById('sync-status').style.color = 'var(--success)';
+                    
+                    const box = document.getElementById('sync-status');
+                    box.innerText = code; box.classList.remove('hidden');
+                    document.getElementById('sync-subtitle').innerText = "Hosting Session (Share code to invite)";
+                    document.getElementById('sync-subtitle').classList.remove('hidden');
                     document.getElementById('sync-leave-btn').classList.remove('hidden');
+                    document.getElementById('sync-leave-btn').innerText = "End Session";
                 },
 
                 joinPrompt() {
-                    const code = prompt("Enter 5-digit Sync Code:");
+                    const code = prompt("Enter 5-digit Host Code:");
                     if(code && code.length === 5) {
                         this.isHost = false;
                         this.joinRoom(code);
-                        document.getElementById('sync-status').innerText = `Connected to: ${code}`;
-                        document.getElementById('sync-status').style.color = 'var(--accent)';
+                        
+                        const box = document.getElementById('sync-status');
+                        box.innerText = code; box.classList.remove('hidden');
+                        document.getElementById('sync-subtitle').innerText = "Connected as Guest";
+                        document.getElementById('sync-subtitle').classList.remove('hidden');
                         document.getElementById('sync-leave-btn').classList.remove('hidden');
+                        document.getElementById('sync-leave-btn').innerText = "Leave Session";
                     }
                 },
 
@@ -662,21 +713,32 @@
                     this.room = miyuDB.channel(`sync-${code}`);
                     
                     this.room.on('broadcast', { event: 'playback' }, ({ payload }) => {
+                        // End Session signal
+                        if(payload.action === 'end_session') {
+                            this.leave(true);
+                            return;
+                        }
+
                         if(this.isHost) return; // Host controls, doesn't listen
+                        
+                        this.isRemoteAction = true;
                         const aud = App.audioElement;
+                        
                         if(payload.action === 'play') {
                             if(Math.abs(aud.currentTime - payload.time) > 1) aud.currentTime = payload.time;
-                            if(!App.state.isPlaying) App.audio.togglePlay(true);
+                            if(!App.state.isPlaying) App.audio.togglePlay();
                         }
                         if(payload.action === 'pause') {
                             aud.currentTime = payload.time;
-                            if(App.state.isPlaying) App.audio.togglePlay(true);
+                            if(App.state.isPlaying) App.audio.togglePlay();
                         }
                         if(payload.action === 'load') {
                             App.audio.playQueue(payload.queue, payload.index, true);
                         }
+                        
+                        setTimeout(() => this.isRemoteAction = false, 200);
                     }).subscribe((status) => {
-                        if(status === 'SUBSCRIBED') App.ui.toast("Sync Link Established");
+                        if(status === 'SUBSCRIBED') App.ui.toast("Sync Uplink Established");
                     });
                 },
 
@@ -690,12 +752,23 @@
                     this.room.send({ type: 'broadcast', event: 'playback', payload: { action: 'load', queue: queueEncoded, index }});
                 },
 
-                leave() {
-                    if(this.room) this.room.unsubscribe();
+                leave(kicked = false) {
+                    if(this.room) {
+                        if(this.isHost) this.room.send({ type: 'broadcast', event: 'playback', payload: { action: 'end_session' }});
+                        this.room.unsubscribe();
+                    }
                     this.room = null; this.isHost = false;
-                    document.getElementById('sync-status').innerText = '';
+                    document.getElementById('sync-status').classList.add('hidden');
+                    document.getElementById('sync-subtitle').classList.add('hidden');
                     document.getElementById('sync-leave-btn').classList.add('hidden');
-                    App.ui.toast("Sync Link Severed");
+                    
+                    if(kicked) {
+                        App.audio.audioElement.pause();
+                        App.ui.toast("Host has ended the session.");
+                        App.ui.toggleModal('sync-modal'); // Auto close
+                    } else {
+                        App.ui.toast("Sync Link Severed");
+                    }
                 }
             },
 
@@ -711,7 +784,9 @@
 
                 async loadAndPlay(song) {
                     document.getElementById('player-title').innerText = song.title;
+                    document.getElementById('mini-title').innerText = song.title;
                     document.getElementById('player-artist').innerText = "Establishing stream...";
+                    document.getElementById('mini-artist').innerText = "Loading...";
                     
                     const { data } = miyuDB.storage.from('music').getPublicUrl(song.file_path);
                     let url = data.publicUrl;
@@ -720,7 +795,6 @@
                         navigator.mediaSession.metadata = new MediaMetadata({ title: song.title, artist: 'Miyu Space' });
                     }
 
-                    // Native Cache API for Offline
                     if (App.state.caching && 'caches' in window) {
                         try {
                             const cache = await caches.open('miyu-cache-v1');
@@ -729,22 +803,30 @@
                                 const blob = await res.blob();
                                 url = URL.createObjectURL(blob);
                                 document.getElementById('player-artist').innerText = "Offline Cached";
+                                document.getElementById('mini-artist').innerText = "Offline Cached";
                             } else {
                                 document.getElementById('player-artist').innerText = "Caching to device...";
                                 fetch(url).then(r => cache.put(url, r.clone()));
                                 document.getElementById('player-artist').innerText = "Streaming HQ";
+                                document.getElementById('mini-artist').innerText = "Streaming HQ";
                             }
                         } catch(e) { document.getElementById('player-artist').innerText = "Streaming HQ"; }
                     } else {
                         document.getElementById('player-artist').innerText = "Streaming HQ";
+                        document.getElementById('mini-artist').innerText = "Streaming HQ";
                     }
                     
                     App.audioElement.src = url;
+                    
+                    if(!document.getElementById('player-container').classList.contains('minimized')) {
+                        App.ui.togglePlayerExpand(); // Auto pop-up when new song plays from list
+                    }
+
                     App.audioElement.play().catch(e => { App.ui.toast("Tap play to initiate AudioContext"); });
                     App.visualizer.connectContext();
                 },
 
-                togglePlay(forceNative = false) {
+                togglePlay() {
                     if(!App.audioElement.src) return;
                     if(App.state.isPlaying) App.audioElement.pause();
                     else App.audioElement.play();
@@ -770,15 +852,15 @@
                     const rect = e.currentTarget.getBoundingClientRect();
                     const percent = (e.clientX - rect.left) / rect.width;
                     App.audioElement.currentTime = percent * App.audioElement.duration;
-                    App.sync.broadcast('play', App.audioElement.currentTime);
+                    if(!App.sync.isRemoteAction) App.sync.broadcast('play', App.audioElement.currentTime);
                 },
                 toggleShuffle() {
                     App.state.shuffle = !App.state.shuffle;
-                    document.getElementById('icon-shuffle').style.color = App.state.shuffle ? 'var(--accent)' : 'inherit';
+                    document.getElementById('icon-shuffle').style.color = App.state.shuffle ? 'var(--text-main)' : 'var(--text-muted)';
                 },
                 toggleLoop() {
                     App.state.loop = !App.state.loop;
-                    document.getElementById('icon-loop').style.color = App.state.loop ? 'var(--accent)' : 'inherit';
+                    document.getElementById('icon-loop').style.color = App.state.loop ? 'var(--text-main)' : 'var(--text-muted)';
                 },
                 toggleVolume() {
                     App.state.volume = App.state.volume === 1 ? 0 : 1;
@@ -790,17 +872,15 @@
             ui: {
                 setupGuestMode() {
                     document.getElementById('upload-btn-header').classList.add('hidden');
-                    document.getElementById('sync-btn-header').style.display = 'none';
                     document.getElementById('library-guest-msg').classList.remove('hidden');
                     document.getElementById('library-user-content').classList.add('hidden');
-                    document.getElementById('auth-status-row').innerHTML = `<button class="btn-primary" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">Authenticate</button>`;
+                    document.getElementById('auth-status-row').innerHTML = `<button type="button" class="btn-primary" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">Authenticate to Unlock</button>`;
                 },
                 setupUserMode() {
                     document.getElementById('upload-btn-header').classList.remove('hidden');
-                    document.getElementById('sync-btn-header').style.display = 'flex';
                     document.getElementById('library-guest-msg').classList.add('hidden');
                     document.getElementById('library-user-content').classList.remove('hidden');
-                    document.getElementById('auth-status-row').innerHTML = `<button class="btn-primary" style="background: var(--surface); color: var(--danger); border: 1px solid var(--border);" onclick="App.auth.logout()">Log Out (@${App.state.userHandle})</button>`;
+                    document.getElementById('auth-status-row').innerHTML = `<button type="button" class="btn-primary" style="background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger);" onclick="App.auth.logout()">Terminate Session (@${App.state.userHandle})</button>`;
                 },
                 switchTab(tab) {
                     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -809,6 +889,11 @@
                     event.currentTarget.classList.add('active');
                 },
                 toggleModal(id) { document.getElementById(id).classList.toggle('active'); },
+                togglePlayerExpand(e) {
+                    if(e) e.stopPropagation();
+                    const p = document.getElementById('player-container');
+                    p.classList.toggle('minimized');
+                },
                 toggleFullscreen() {
                     if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
                     else if (document.exitFullscreen) document.exitFullscreen();
@@ -837,9 +922,11 @@
                 loadLocal() {
                     const t = localStorage.getItem('miyu_theme') || 'ips';
                     const c = localStorage.getItem('miyu_cache') === 'true';
+                    const v = localStorage.getItem('miyu_vis') !== 'false';
                     this.setTheme(t);
                     document.getElementById('theme-select').value = t;
-                    if(c) this.toggleCache(); // init UI
+                    if(c) this.toggleCache(); 
+                    if(!v) this.toggleVis();
                 },
                 setTheme(val) {
                     App.state.theme = val;
@@ -853,17 +940,25 @@
                     btn.innerText = App.state.caching ? 'ON' : 'OFF';
                     btn.style.color = App.state.caching ? 'var(--success)' : 'var(--text-muted)';
                 },
+                toggleVis() {
+                    App.state.visEnabled = !App.state.visEnabled;
+                    localStorage.setItem('miyu_vis', App.state.visEnabled);
+                    const btn = document.getElementById('vis-toggle');
+                    btn.innerText = App.state.visEnabled ? 'ON' : 'OFF';
+                    btn.style.color = App.state.visEnabled ? 'var(--success)' : 'var(--text-muted)';
+                    if(!App.state.visEnabled && App.visualizer.ctx) App.visualizer.ctx.clearRect(0,0,App.visualizer.canvas.width,App.visualizer.canvas.height);
+                },
                 calculateStorage() {
                     const totalBytes = App.state.songs.reduce((a, b) => a + Number(b.file_size), 0);
                     const mb = (totalBytes / 1024 / 1024).toFixed(1);
                     const pct = Math.min((mb / 1000) * 100, 100);
-                    document.getElementById('storage-txt').innerText = `${mb} MB / 1GB`;
+                    document.getElementById('storage-txt').innerText = `${mb} MB / 1000 MB`;
                     document.getElementById('storage-bar').style.width = `${pct}%`;
                     if(pct > 90) document.getElementById('storage-bar').style.background = 'var(--danger)';
                 }
             },
 
-            // --- ADVANCED AUDIO VISUALIZER (BEAT REACTIVE) ---
+            // --- SMART REACTIVE VISUALIZER ---
             visualizer: {
                 canvas: null, ctx: null, audioCtx: null, analyser: null, source: null,
                 dataArray: null, blobs: [],
@@ -873,27 +968,26 @@
                     this.ctx = this.canvas.getContext('2d');
                     this.resize(); window.addEventListener('resize', () => this.resize());
                     
-                    // Create floating blobs
-                    for(let i=0; i<5; i++) {
+                    for(let i=0; i<6; i++) {
                         this.blobs.push({
                             x: Math.random() * this.canvas.width, y: Math.random() * this.canvas.height,
-                            vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
-                            r: Math.random() * 100 + 50
+                            vx: (Math.random() - 0.5) * 0.8, vy: (Math.random() - 0.5) * 0.8,
+                            r: Math.random() * 120 + 60, hueOffset: i * 15
                         });
                     }
                     requestAnimationFrame(() => this.draw());
                 },
                 connectContext() {
-                    if (this.audioCtx) return; // Only init once
+                    if (this.audioCtx || !App.state.visEnabled) return;
                     try {
                         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                         this.analyser = this.audioCtx.createAnalyser();
-                        this.analyser.fftSize = 128; // Lower size for performance/smoothness
+                        this.analyser.fftSize = 64; 
                         this.source = this.audioCtx.createMediaElementSource(App.audioElement);
                         this.source.connect(this.analyser);
                         this.analyser.connect(this.audioCtx.destination);
                         this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
-                    } catch(e) { console.log("Audio API restricted by browser", e); }
+                    } catch(e) {}
                 },
                 resize() {
                     if(!this.canvas.parentElement) return;
@@ -901,52 +995,44 @@
                     this.canvas.height = this.canvas.parentElement.clientHeight;
                 },
                 draw() {
+                    if (!App.state.visEnabled) {
+                        requestAnimationFrame(() => this.draw());
+                        return;
+                    }
+
                     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                     
                     let intensity = 0;
                     if (this.analyser && App.state.isPlaying) {
                         this.analyser.getByteFrequencyData(this.dataArray);
-                        intensity = this.dataArray.reduce((a,b)=>a+b, 0) / this.dataArray.length; // Average vol (0-255)
+                        intensity = this.dataArray.reduce((a,b)=>a+b, 0) / this.dataArray.length; 
                     }
 
-                    // Map intensity to Color (Low = Blue/Cyan, High = Red/Orange)
-                    // HSL: 220 (Blue) to 0 (Red). 
-                    const targetHue = App.state.isPlaying ? Math.max(0, 240 - (intensity * 1.5)) : 220;
+                    // Smart Color Engine: Calm = Blue/Purple (220-280), Loud/Phonk = Red/Orange (0-40)
+                    let baseHue = 240; // Default Calm Blue
+                    if (intensity > 120) baseHue = 10; // Aggressive Red
+                    else if (intensity > 80) baseHue = 300; // Energetic Pink/Purple
                     
                     this.ctx.globalCompositeOperation = 'screen';
-                    this.ctx.filter = 'blur(40px)'; // Heavy blur for ambient look
+                    this.ctx.filter = 'blur(50px)'; 
 
                     this.blobs.forEach((b, i) => {
-                        b.x += b.vx + (intensity * 0.01 * (i%2==0?1:-1));
-                        b.y += b.vy + (intensity * 0.01 * (i%3==0?1:-1));
+                        const beatPush = (intensity * 0.02);
+                        b.x += b.vx + (beatPush * (i%2==0?1:-1));
+                        b.y += b.vy + (beatPush * (i%3==0?1:-1));
                         
-                        // Bounce bounds
-                        if(b.x < -100 || b.x > this.canvas.width + 100) b.vx *= -1;
-                        if(b.y < -100 || b.y > this.canvas.height + 100) b.vy *= -1;
+                        if(b.x < -150 || b.x > this.canvas.width + 150) b.vx *= -1;
+                        if(b.y < -150 || b.y > this.canvas.height + 150) b.vy *= -1;
 
-                        const pulse = App.state.isPlaying ? (intensity / 255) * 50 : 0;
+                        const pulse = App.state.isPlaying ? (intensity / 255) * 60 : 0;
                         
                         this.ctx.beginPath();
                         this.ctx.arc(b.x, b.y, b.r + pulse, 0, Math.PI * 2);
-                        // Shift colors slightly per blob for gradient effect
-                        this.ctx.fillStyle = `hsla(${targetHue + (i*15)}, 80%, ${App.state.theme === 'light' ? '60%' : '40%'}, 0.4)`;
+                        this.ctx.fillStyle = `hsla(${baseHue + b.hueOffset}, 85%, ${App.state.theme === 'light' ? '65%' : '45%'}, 0.5)`;
                         this.ctx.fill();
                     });
 
-                    this.ctx.filter = 'none'; // Reset filter
-                    
-                    // Draw Bars if active
-                    if (intensity > 5) {
-                        this.ctx.fillStyle = `rgba(255,255,255,0.15)`;
-                        const barW = (this.canvas.width / this.dataArray.length) * 2;
-                        let x = 0;
-                        for(let i = 0; i < this.dataArray.length; i++) {
-                            const barH = (this.dataArray[i] / 255) * (this.canvas.height * 0.4);
-                            this.ctx.fillRect(x, this.canvas.height - barH, barW - 1, barH);
-                            x += barW;
-                        }
-                    }
-
+                    this.ctx.filter = 'none';
                     requestAnimationFrame(() => this.draw());
                 }
             }
