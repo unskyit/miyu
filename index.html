@@ -85,6 +85,12 @@
         .card { padding: 12px 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
         .card:hover { background: var(--surface-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .card-info { min-width: 0; flex: 1; }
+        
+        /* SCROLLING TEXT FIX FOR CROPPING */
+        .scroll-text-wrapper { width: 100%; overflow: hidden; white-space: nowrap; mask-image: linear-gradient(to right, black 85%, transparent); -webkit-mask-image: linear-gradient(to right, black 85%, transparent); }
+        .scroll-text { display: inline-block; white-space: nowrap; animation: slideText 12s linear infinite alternate; }
+        @keyframes slideText { 0%, 10% { transform: translateX(0); } 90%, 100% { transform: translateX(-20%); } } /* Adjusts dynamically */
+
         .card-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-info p { font-size: 12px; color: var(--text-muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         
@@ -115,7 +121,7 @@
             height: 72px; padding: 12px 20px; 
             border-radius: 36px; cursor: pointer; 
         }
-        #player-container.mode-mini .expanded-only { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        #player-container.mode-mini .expanded-only { opacity: 0; pointer-events: none; transition: opacity 0.2s; display: none; }
         #player-container.mode-mini .mini-controls { opacity: 1; pointer-events: all; display: flex; }
         
         /* MODE: SEMI (Expanded Box) */
@@ -125,8 +131,8 @@
             border-radius: 28px; 
             justify-content: flex-start;
         }
-        #player-container.mode-semi .expanded-only { opacity: 1; pointer-events: all; transition: opacity 0.4s 0.1s; }
-        #player-container.mode-semi .expanded-spacer { display: none; }
+        #player-container.mode-semi .expanded-only { opacity: 1; pointer-events: all; transition: opacity 0.4s 0.1s; display: flex; }
+        #player-container.mode-semi .expanded-spacer { display: none !important; }
         #player-container.mode-semi .mini-controls { opacity: 0; pointer-events: none; position: absolute; }
         
         /* MODE: FULL (Immersive Zen) */
@@ -135,8 +141,8 @@
             padding: calc(env(safe-area-inset-top, 40px) + 20px) 24px calc(env(safe-area-inset-bottom, 40px) + 40px) 24px; 
             border-radius: 0; border: none; justify-content: flex-start;
         }
-        #player-container.mode-full .expanded-only { opacity: 1; pointer-events: all; transition: opacity 0.4s 0.1s; }
-        #player-container.mode-full .expanded-spacer { display: block; flex: 1; min-height: 20px; pointer-events: none; }
+        #player-container.mode-full .expanded-only { opacity: 1; pointer-events: all; transition: opacity 0.4s 0.1s; display: flex; }
+        #player-container.mode-full .expanded-spacer { display: block !important; flex: 1; min-height: 20px; pointer-events: none; }
         #player-container.mode-full .song-cover-large { width: 60vw; max-width: 320px; height: auto; aspect-ratio: 1; margin: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
         #player-container.mode-full .mini-controls { opacity: 0; pointer-events: none; position: absolute; }
 
@@ -146,12 +152,12 @@
 
         .mini-controls { align-items: center; justify-content: space-between; width: 100%; z-index: 2; height: 100%; }
         .song-cover { width: 44px; height: 44px; border-radius: 10px; background: var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .song-cover-large { width: 120px; height: 120px; border-radius: 20px; margin: 20px auto; background: var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .song-cover-large { width: 120px; height: 120px; border-radius: 20px; margin: 20px auto; background: var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); flex-shrink: 0; }
         .song-cover-large:hover { transform: scale(1.05); }
 
         #visualizer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 1; transition: opacity 0.4s; border-radius: inherit;}
         
-        .player-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .player-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-shrink: 0;}
         .main-controls { display: flex; gap: 12px; align-items: center; }
         
         .play-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); box-shadow: 0 6px 24px rgba(0,0,0,0.3); }
@@ -159,7 +165,7 @@
         .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .play-btn-mini i { color: var(--accent-invert) !important; }
         
-        .progress-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 11px; color: var(--text-main); font-variant-numeric: tabular-nums; font-weight: 600;}
+        .progress-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 11px; color: var(--text-main); font-variant-numeric: tabular-nums; font-weight: 600; flex-shrink: 0;}
         .progress-container { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; cursor: pointer; position: relative; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--text-main); width: 0%; transition: width 0.1s linear; border-radius: 3px; pointer-events: none;}
         
@@ -172,6 +178,7 @@
         .modal-content { width: 100%; max-width: 500px; background: var(--bg); border: 1px solid var(--border); border-radius: 32px 32px 0 0; padding: 40px 24px calc(40px + env(safe-area-inset-bottom)) 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
         .modal.active .modal-content { transform: translateY(0); }
         
+        /* Z-INDEX 1000 FOR OVERLAY PROMPTS */
         #custom-dialog.modal { align-items: center; z-index: 1000 !important; }
         #custom-dialog .modal-content { border-radius: 24px; padding: 32px 24px; max-height: 80vh; transform: scale(0.9); opacity: 0; margin: 20px; box-shadow: 0 10px 50px rgba(0,0,0,0.8); }
         #custom-dialog.active .modal-content { transform: scale(1); opacity: 1; }
@@ -283,9 +290,9 @@
             <div class="mini-controls" onclick="App.ui.expandPlayer(event)">
                 <div class="flex items-center gap-3" style="max-width: 70%; min-width: 0;">
                     <div class="song-avatar" id="mini-cover" style="border:none;"><i class="ph ph-music-notes size-20"></i></div>
-                    <div class="card-info">
-                        <h4 id="mini-title" style="font-size: 15px; font-weight: 700;">MYR Space</h4>
-                        <p id="mini-artist" style="font-size: 12px; opacity:0.8;">Idle</p>
+                    <div class="card-info scroll-text-wrapper">
+                        <h4 id="mini-title" class="scroll-text" style="font-size: 15px; font-weight: 700;">MYR Space</h4>
+                        <p id="mini-artist" style="font-size: 12px; opacity:0.8; margin-top:2px;">Idle</p>
                     </div>
                 </div>
                 <div class="flex gap-2 items-center">
@@ -293,7 +300,7 @@
                 </div>
             </div>
 
-            <div class="expanded-only zen-hide flex justify-between items-center" style="margin-bottom: 12px; z-index: 2; width:100%;">
+            <div class="expanded-only flex justify-between items-center zen-hide" style="width:100%; flex-shrink: 0;">
                 <button type="button" onclick="App.ui.collapsePlayer(event)" style="background:rgba(255,255,255,0.1); padding:10px; border-radius:50%;"><i class="ph ph-caret-down size-20"></i></button>
                 <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">Now Playing</div>
                 <div class="flex gap-2">
@@ -308,12 +315,14 @@
 
             <div class="expanded-spacer zen-hide"></div>
 
-            <div class="expanded-only card-info zen-hide" style="text-align: center; margin-bottom: 24px; z-index: 2; width:100%;">
-                <h4 id="player-title" style="font-size: 22px; font-weight: 800; white-space: normal;">MYR Space</h4>
+            <div class="expanded-only flex-col items-center zen-hide" style="width:100%; text-align: center; margin-bottom: 24px; flex-shrink: 0;">
+                <div class="scroll-text-wrapper" style="width: 85%;">
+                    <h4 id="player-title" class="scroll-text" style="font-size: 22px; font-weight: 800;">MYR Space</h4>
+                </div>
                 <p id="player-artist" style="font-size: 14px; font-weight: 600; opacity: 0.7; margin-top: 6px;">Idle</p>
             </div>
 
-            <div class="expanded-only progress-wrapper zen-hide" style="z-index: 2; margin-bottom: 16px;">
+            <div class="expanded-only progress-wrapper zen-hide" style="margin-bottom: 16px; flex-shrink: 0;">
                 <span id="time-current">0:00</span>
                 <div class="progress-container" onclick="App.audio.seek(event)">
                     <div class="progress-bar" id="player-progress"></div>
@@ -321,7 +330,7 @@
                 <span id="time-total">0:00</span>
             </div>
 
-            <div class="expanded-only player-controls zen-hide" style="z-index: 2; padding: 0 10px;">
+            <div class="expanded-only player-controls zen-hide" style="padding: 0 10px; flex-shrink: 0;">
                 <button type="button" onclick="App.audio.toggleShuffle()"><i class="ph ph-shuffle size-24" id="icon-shuffle" style="color:var(--text-muted);"></i></button>
                 <div class="main-controls">
                     <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back-fill size-28"></i></button>
@@ -460,6 +469,8 @@
 
         const MIYU_URL = 'https://vfkkoacakiaulcjviyfe.supabase.co';
         const MIYU_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZma2tvYWNha2lhdWxjanZpeWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTQxNjAsImV4cCI6MjA4OTY5MDE2MH0.qlXPSD-31q-UrTDja9wN2QXp8Fazm2zORKaFuzJ1vq4';
+        
+        // Supabase channel initialization
         const miyuDB = window.supabase.createClient(MIYU_URL, MIYU_KEY, { realtime: { params: { eventsPerSecond: 10 } } });
 
         const App = {
@@ -481,6 +492,7 @@
                 
                 document.getElementById('upload-files').addEventListener('change', (e) => this.library.stageUploads(e));
 
+                // Dismiss Zen Mode cleanly by ignoring clicks on the expanded cover
                 document.addEventListener('click', (e) => {
                     const p = document.getElementById('player-container');
                     if (p.classList.contains('zen-active') && !e.target.closest('#expanded-cover')) {
@@ -857,10 +869,12 @@
                     const container = document.getElementById('users-list');
                     container.innerHTML = App.ui.getSkeletonHTML(3);
                     
-                    const { data } = await miyuDB.from('users').select(`id, handle, playlists ( name )`);
+                    const { data } = await miyuDB.from('users').select(`id, handle, songs ( file_size ), playlists ( name )`);
                     if(!data || !data.length) return container.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:40px 20px;">No signal found.</p>';
                     
                     container.innerHTML = data.map(u => {
+                        const tBytes = u.songs ? u.songs.reduce((a,b)=>a+(Number(b.file_size)||0), 0) : 0;
+                        const mb = (tBytes / 1024 / 1024).toFixed(1);
                         let plNames = u.playlists && u.playlists.length ? u.playlists.slice(0, 2).map(p=>p.name).join(', ') : 'No Collections';
                         if(u.playlists && u.playlists.length > 2) plNames += '...';
                         
@@ -870,7 +884,8 @@
                                 <div class="avatar" style="background: ${App.library.generateGradient(u.handle)}">${u.handle.charAt(0).toUpperCase()}</div>
                                 <div class="card-info" style="flex:1;">
                                     <h4 style="font-size: 16px; font-weight: 700; text-transform: capitalize;">${u.handle}</h4>
-                                    <p style="margin-top:2px;">${plNames}</p>
+                                    <span style="display:inline-block; font-size: 11px; font-weight: 700; color: var(--accent-invert); background: var(--text-main); padding: 2px 8px; border-radius: 8px; margin-top:2px;">${mb} MB Space</span>
+                                    <p style="margin-top:4px; font-size: 12px; opacity: 0.8; font-style: italic;">${plNames}</p>
                                 </div>
                                 <i class="ph ph-caret-right size-20" style="color:var(--text-muted)"></i>
                             </div>
@@ -923,7 +938,7 @@
             },
 
             sync: {
-                room: null, isHost: false, isRemoteAction: false,
+                room: null, isHost: false, isRemoteAction: false, lastSeekBroadcast: 0,
                 toggleMenu() { App.ui.toggleModal('sync-modal'); },
                 
                 hostSession() {
@@ -956,7 +971,10 @@
 
                 joinRoom(code) {
                     if(this.room) this.room.unsubscribe();
-                    this.room = miyuDB.channel(`sync-${code}`);
+                    
+                    this.room = miyuDB.channel(`sync-${code}`, {
+                        config: { broadcast: { ack: false } }
+                    });
                     
                     this.room.on('broadcast', { event: 'playback' }, ({ payload }) => {
                         if(payload.action === 'end_session') { this.leave(true); return; }
@@ -978,12 +996,20 @@
                         }
                         setTimeout(() => this.isRemoteAction = false, 200);
                     }).subscribe((status) => {
-                        if(status === 'SUBSCRIBED') App.ui.toast("Sync Uplink Established");
+                        if(status === 'SUBSCRIBED') {
+                            App.ui.toast("Sync Uplink Established");
+                        } else {
+                            console.warn("Sync error:", status);
+                        }
                     });
                 },
 
-                broadcast(action, time) {
+                broadcast(action, time, bypassThrottle = false) {
                     if(!this.room || !this.isHost) return;
+                    const now = Date.now();
+                    if (!bypassThrottle && action === 'play' && now - this.lastSeekBroadcast < 500) return; 
+                    
+                    this.lastSeekBroadcast = now;
                     this.room.send({ type: 'broadcast', event: 'playback', payload: { action, time }});
                 },
                 broadcastLoad(queueEncoded, index) {
@@ -1113,12 +1139,12 @@
                     const rect = e.currentTarget.getBoundingClientRect();
                     const percent = (e.clientX - rect.left) / rect.width;
                     App.audioElement.currentTime = percent * App.audioElement.duration;
-                    if(!App.sync.isRemoteAction) App.sync.broadcast('play', App.audioElement.currentTime);
+                    if(!App.sync.isRemoteAction) App.sync.broadcast('play', App.audioElement.currentTime, true);
                 },
                 seekBy(seconds) {
                     if(!App.audioElement.src || !App.audioElement.duration) return;
                     App.audioElement.currentTime = Math.max(0, Math.min(App.audioElement.duration, App.audioElement.currentTime + seconds));
-                    if(!App.sync.isRemoteAction) App.sync.broadcast('play', App.audioElement.currentTime);
+                    if(!App.sync.isRemoteAction) App.sync.broadcast('play', App.audioElement.currentTime, true);
                 },
                 toggleShuffle() {
                     App.state.shuffle = !App.state.shuffle;
@@ -1370,22 +1396,23 @@
                     
                     this.smoothBars = new Float32Array(64);
 
-                    for(let i=0; i<6; i++) {
+                    // Reduced blob count for cleaner visual, mapped strictly to cool colors
+                    for(let i=0; i<4; i++) {
                         this.blobs.push({
                             baseX: Math.random() * this.canvas.width, baseY: Math.random() * this.canvas.height,
                             speedX: (Math.random() - 0.5) * 0.001, speedY: (Math.random() - 0.5) * 0.001,
                             r: Math.random() * 150 + 100, 
-                            hueOffset: i * 15, offset: Math.random() * 100
+                            hueOffset: i * 20, offset: Math.random() * 100
                         });
                     }
 
-                    for(let i=0; i<40; i++) {
+                    for(let i=0; i<30; i++) {
                         this.embers.push({
                             x: Math.random() * 2000, 
                             y: Math.random() * 2000,
-                            speed: Math.random() * 0.3 + 0.1, 
-                            size: Math.random() * 2 + 1,
-                            opacity: Math.random() * 0.4 + 0.1
+                            speed: Math.random() * 0.15 + 0.05, // Ultra slow dust
+                            size: Math.random() * 1.5 + 0.5,
+                            opacity: Math.random() * 0.5 + 0.1
                         });
                     }
 
@@ -1420,60 +1447,65 @@
                         intensity = this.dataArray.reduce((a,b)=>a+b, 0) / this.dataArray.length; 
                     }
 
+                    // Strict Muted Cool mapping to avoid bright yellow/green artifacts
                     let targetHue = 230; 
-                    if (intensity > 130) targetHue = 350; 
+                    if (intensity > 130) targetHue = 340; 
                     else if (intensity > 80) targetHue = 280; 
                     
                     this.currentHue += (targetHue - this.currentHue) * 0.008;
 
                     this.ctx.globalCompositeOperation = 'screen';
-                    this.ctx.filter = 'blur(60px)'; 
 
+                    // Draw organic orbs natively with radial gradients instead of CSS blur filters
                     this.blobs.forEach((b) => {
-                        b.x = b.baseX + Math.sin(this.time * b.speedX + b.offset) * (this.canvas.width * 0.5);
-                        b.y = b.baseY + Math.cos(this.time * b.speedY + b.offset) * (this.canvas.height * 0.5);
+                        b.x = b.baseX + Math.sin(this.time * b.speedX + b.offset) * (this.canvas.width * 0.4);
+                        b.y = b.baseY + Math.cos(this.time * b.speedY + b.offset) * (this.canvas.height * 0.4);
                         
-                        const pulse = App.state.isPlaying ? (intensity / 255) * 40 : 0;
+                        const pulse = App.state.isPlaying ? (intensity / 255) * 30 : 0;
+                        const r = Math.max(1, b.r + pulse);
+                        
+                        const radGrad = this.ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, r);
+                        radGrad.addColorStop(0, `hsla(${(this.currentHue + b.hueOffset)%360}, 80%, ${App.state.theme === 'light' ? '65%' : '40%'}, 0.4)`);
+                        radGrad.addColorStop(1, `hsla(${(this.currentHue + b.hueOffset)%360}, 80%, ${App.state.theme === 'light' ? '65%' : '40%'}, 0)`);
                         
                         this.ctx.beginPath();
-                        this.ctx.arc(b.x, b.y, b.r + pulse, 0, Math.PI * 2);
-                        this.ctx.fillStyle = `hsla(${(this.currentHue + b.hueOffset)%360}, 75%, ${App.state.theme === 'light' ? '60%' : '35%'}, 0.35)`;
+                        this.ctx.arc(b.x, b.y, r, 0, Math.PI * 2);
+                        this.ctx.fillStyle = radGrad;
                         this.ctx.fill();
                     });
-
-                    this.ctx.filter = 'none'; 
                     
+                    // Draw Calm Embers (No blur, crisp)
                     if (App.state.isPlaying && !document.getElementById('player-container').classList.contains('mode-mini')) {
-                        this.ctx.fillStyle = `rgba(255,255,255,0.4)`;
                         this.embers.forEach(e => {
-                            e.y -= e.speed + (intensity * 0.002);
+                            e.y -= e.speed;
                             if(e.y < -10) {
                                 e.y = this.canvas.height + 10;
                                 e.x = Math.random() * this.canvas.width;
                             }
                             if(e.x > this.canvas.width) e.x = Math.random() * this.canvas.width;
 
-                            this.ctx.globalAlpha = e.opacity * (intensity > 30 ? 1 : 0.5);
+                            this.ctx.fillStyle = `rgba(255,255,255,${e.opacity * (intensity > 30 ? 1 : 0.5)})`;
                             this.ctx.beginPath();
                             this.ctx.arc(e.x, e.y, e.size, 0, Math.PI*2);
                             this.ctx.fill();
                         });
-                        this.ctx.globalAlpha = 1;
                     }
 
+                    // Flat, precise audio bars mapped only to active frequencies
                     if (!document.getElementById('player-container').classList.contains('mode-mini')) {
                         this.ctx.fillStyle = `rgba(255,255,255,0.3)`; 
-                        const barCount = 64; 
-                        const gap = 2;
-                        const barW = (this.canvas.width / barCount) - gap;
                         
-                        for(let i=0; i<barCount; i++) {
+                        const activeBins = 40; // Skip empty high frequencies
+                        const barW = (this.canvas.width / activeBins);
+                        
+                        for(let i=0; i<activeBins; i++) {
                             const targetVal = this.dataArray ? this.dataArray[i] : 0;
                             this.smoothBars[i] += (targetVal - this.smoothBars[i]) * 0.15; 
                             
                             const barH = (this.smoothBars[i] / 255) * (this.canvas.height * 0.35);
                             if(barH > 1) {
-                                this.ctx.fillRect(i * (barW + gap) + (gap/2), this.canvas.height - barH, barW, barH);
+                                // Draw flat bars
+                                this.ctx.fillRect(i * barW + 1, this.canvas.height - barH, barW - 2, barH);
                             }
                         }
                     }
