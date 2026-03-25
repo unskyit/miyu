@@ -79,7 +79,6 @@
         main { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding: 0 24px calc(env(safe-area-inset-bottom) + 180px) 24px; scroll-behavior: smooth; } 
         main::-webkit-scrollbar { display: none; }
 
-        /* Shimmering Skeleton Loader */
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         .skeleton-box { background: linear-gradient(90deg, var(--surface) 25%, var(--surface-hover) 50%, var(--surface) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; }
 
@@ -89,12 +88,12 @@
         .card-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-info p { font-size: 12px; color: var(--text-muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         
-        /* Currently Playing Highlight */
         .card.playing { border-color: var(--text-main); background: rgba(255,255,255,0.08); }
         .card.playing .btn-icon { background: var(--text-main); border-color: var(--text-main); color: var(--accent-invert); }
         .card.playing .card-info h4 { color: var(--text-main); font-weight: 800; }
         
         .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; margin-right: 16px; flex-shrink: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
+        .song-avatar { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-muted); }
         
         .playlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
         .pl-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; }
@@ -130,7 +129,7 @@
         #player-container.mode-semi .expanded-spacer { display: none; }
         #player-container.mode-semi .mini-controls { opacity: 0; pointer-events: none; position: absolute; }
         
-        /* MODE: FULL (Immersive) */
+        /* MODE: FULL (Immersive Zen) */
         #player-container.mode-full { 
             bottom: 0; left: 0; right: 0; top: 0; height: 100dvh;
             padding: calc(env(safe-area-inset-top, 40px) + 20px) 24px calc(env(safe-area-inset-bottom, 40px) + 40px) 24px; 
@@ -141,7 +140,7 @@
         #player-container.mode-full .song-cover-large { width: 60vw; max-width: 320px; height: auto; aspect-ratio: 1; margin: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
         #player-container.mode-full .mini-controls { opacity: 0; pointer-events: none; position: absolute; }
 
-        /* ZEN MODE HIDING (Click cover to hide UI) */
+        /* ZEN MODE HIDING */
         #player-container.zen-active .zen-hide { opacity: 0 !important; pointer-events: none !important; transform: translateY(20px); transition: all 0.5s cubic-bezier(0.25, 1, 0.2, 1) !important; }
         .zen-hide { transition: all 0.5s cubic-bezier(0.25, 1, 0.2, 1); }
 
@@ -173,7 +172,6 @@
         .modal-content { width: 100%; max-width: 500px; background: var(--bg); border: 1px solid var(--border); border-radius: 32px 32px 0 0; padding: 40px 24px calc(40px + env(safe-area-inset-bottom)) 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
         .modal.active .modal-content { transform: translateY(0); }
         
-        /* Z-INDEX 1000 FOR OVERLAY PROMPTS */
         #custom-dialog.modal { align-items: center; z-index: 1000 !important; }
         #custom-dialog .modal-content { border-radius: 24px; padding: 32px 24px; max-height: 80vh; transform: scale(0.9); opacity: 0; margin: 20px; box-shadow: 0 10px 50px rgba(0,0,0,0.8); }
         #custom-dialog.active .modal-content { transform: scale(1); opacity: 1; }
@@ -213,7 +211,7 @@
             </div>
             <div class="flex gap-4 items-center">
                 <button type="button" class="btn-icon" id="sync-btn-header" onclick="App.sync.toggleMenu()" title="Listen Together"><i class="ph ph-broadcast size-20"></i></button>
-                <button type="button" onclick="App.ui.toggleFullscreenMode()" title="Fullscreen"><i class="ph ph-corners-out size-24" id="icon-fullscreen"></i></button>
+                <button type="button" onclick="App.ui.toggleAppFullscreen()" title="Fullscreen"><i class="ph ph-corners-out size-24" id="icon-fullscreen-app"></i></button>
                 <button type="button" id="upload-btn-header" class="btn-icon hidden" onclick="App.ui.toggleModal('upload-modal')" title="Upload"><i class="ph ph-plus size-20"></i></button>
                 <button type="button" class="btn-icon" onclick="App.ui.toggleModal('settings-modal')" title="Settings"><i class="ph ph-sliders-horizontal size-20"></i></button>
             </div>
@@ -279,12 +277,12 @@
             </div>
         </main>
 
-        <div id="player-container" class="glass mode-mini" onclick="if(this.classList.contains('mode-mini')) App.ui.setPlayerMode('semi')">
+        <div id="player-container" class="glass mode-mini">
             <canvas id="visualizer-canvas"></canvas>
             
-            <div class="mini-controls" onclick="App.ui.togglePlayerExpand(event)">
-                <div class="flex items-center gap-3" style="max-width: 65%; min-width: 0;">
-                    <div class="song-avatar" id="mini-cover"><i class="ph ph-music-notes size-20"></i></div>
+            <div class="mini-controls" onclick="App.ui.expandPlayer(event)">
+                <div class="flex items-center gap-3" style="max-width: 70%; min-width: 0;">
+                    <div class="song-avatar" id="mini-cover" style="border:none;"><i class="ph ph-music-notes size-20"></i></div>
                     <div class="card-info">
                         <h4 id="mini-title" style="font-size: 15px; font-weight: 700;">MYR Space</h4>
                         <p id="mini-artist" style="font-size: 12px; opacity:0.8;">Idle</p>
@@ -296,14 +294,19 @@
             </div>
 
             <div class="expanded-only zen-hide flex justify-between items-center" style="margin-bottom: 12px; z-index: 2; width:100%;">
-                <button type="button" onclick="App.ui.setPlayerMode('mini')" style="background:rgba(255,255,255,0.1); padding:10px; border-radius:50%;"><i class="ph ph-caret-down size-20"></i></button>
+                <button type="button" onclick="App.ui.collapsePlayer(event)" style="background:rgba(255,255,255,0.1); padding:10px; border-radius:50%;"><i class="ph ph-caret-down size-20"></i></button>
                 <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">Now Playing</div>
-                <button type="button" onclick="App.audio.toggleVolume()" style="background:rgba(255,255,255,0.1); padding:10px; border-radius:50%;"><i class="ph ph-speaker-high size-20" id="icon-vol"></i></button>
+                <div class="flex gap-2">
+                    <button type="button" onclick="App.audio.toggleVolume()" style="background:rgba(255,255,255,0.1); padding:10px; border-radius:50%;"><i class="ph ph-speaker-high size-20" id="icon-vol"></i></button>
+                    <button type="button" onclick="App.ui.togglePlayerFullscreen()" style="background:rgba(255,255,255,0.1); padding:10px; border-radius:50%;"><i class="ph ph-corners-out size-20" id="icon-fs-player"></i></button>
+                </div>
             </div>
             
-            <div class="expanded-only song-cover-large" id="expanded-cover" title="Click to toggle Zen Mode" onclick="App.ui.toggleZenMode()"><i class="ph ph-music-notes size-48" style="color: rgba(255,255,255,0.4);"></i></div>
+            <div class="expanded-spacer zen-hide"></div>
+            
+            <div class="expanded-only song-cover-large zen-hide" id="expanded-cover" title="Click to toggle Zen Mode" onclick="App.ui.toggleZenMode()"><i class="ph ph-music-notes size-48" style="color: rgba(255,255,255,0.4);"></i></div>
 
-            <div class="expanded-spacer"></div>
+            <div class="expanded-spacer zen-hide"></div>
 
             <div class="expanded-only card-info zen-hide" style="text-align: center; margin-bottom: 24px; z-index: 2; width:100%;">
                 <h4 id="player-title" style="font-size: 22px; font-weight: 800; white-space: normal;">MYR Space</h4>
@@ -384,13 +387,18 @@
                     <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">Hotkeys: [Space] Play/Pause • [Arrows] Seek</span>
                 </div>
                 
-                <div id="settings-storage-block" class="setting-row flex-col items-start gap-3 hidden" style="border-bottom: none; padding-bottom: 0; margin-top:10px;">
-                    <div class="flex justify-between" style="width: 100%;">
-                        <span>Vault Allocation</span>
-                        <span id="storage-txt" style="font-size: 13px; color: var(--text-muted);">0.0 MB / 1000 MB</span>
+                <div id="settings-storage-block" class="setting-row flex-col items-start gap-3" style="border-bottom: none; padding-bottom: 0; margin-top:10px; position:relative;">
+                    <div id="storage-content" style="width:100%; transition: 0.3s;">
+                        <div class="flex justify-between" style="width: 100%;">
+                            <span>Vault Allocation</span>
+                            <span id="storage-txt" style="font-size: 13px; color: var(--text-muted);">0.0 MB / 1000 MB</span>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top:8px;">
+                            <div id="storage-bar" style="height: 100%; width: 0%; background: var(--text-main); transition: 0.5s;"></div>
+                        </div>
                     </div>
-                    <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-                        <div id="storage-bar" style="height: 100%; width: 0%; background: var(--text-main); transition: 0.5s;"></div>
+                    <div id="storage-guest-overlay" class="hidden" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; color:var(--text-main);" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">
+                        Authenticate to View Storage
                     </div>
                 </div>
 
@@ -473,12 +481,16 @@
                 
                 document.getElementById('upload-files').addEventListener('change', (e) => this.library.stageUploads(e));
 
-                // Dismiss Zen Mode cleanly
                 document.addEventListener('click', (e) => {
                     const p = document.getElementById('player-container');
-                    if (p.classList.contains('zen-active') && e.target.id !== 'expanded-cover') {
+                    if (p.classList.contains('zen-active') && !e.target.closest('#expanded-cover')) {
                         App.ui.toggleZenMode();
                     }
+                });
+
+                document.addEventListener('fullscreenchange', () => {
+                    const icon = document.getElementById('icon-fullscreen-app');
+                    if(icon) icon.classList.replace(document.fullscreenElement ? 'ph-corners-out' : 'ph-corners-in', document.fullscreenElement ? 'ph-corners-in' : 'ph-corners-out');
                 });
 
                 this.checkSession();
@@ -1164,14 +1176,22 @@
                     document.getElementById('upload-btn-header').classList.add('hidden');
                     document.getElementById('library-guest-msg').classList.remove('hidden');
                     document.getElementById('library-user-content').classList.add('hidden');
-                    document.getElementById('settings-storage-block').classList.add('hidden');
+                    
+                    const sc = document.getElementById('storage-content');
+                    if(sc) { sc.style.opacity = '0.3'; sc.style.pointerEvents = 'none'; }
+                    document.getElementById('storage-guest-overlay').classList.remove('hidden');
+                    
                     document.getElementById('auth-status-row').innerHTML = `<button type="button" class="btn-primary" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">Authenticate to Unlock</button>`;
                 },
                 setupUserMode() {
                     document.getElementById('upload-btn-header').classList.remove('hidden');
                     document.getElementById('library-guest-msg').classList.add('hidden');
                     document.getElementById('library-user-content').classList.remove('hidden');
-                    document.getElementById('settings-storage-block').classList.remove('hidden');
+                    
+                    const sc = document.getElementById('storage-content');
+                    if(sc) { sc.style.opacity = '1'; sc.style.pointerEvents = 'all'; }
+                    document.getElementById('storage-guest-overlay').classList.add('hidden');
+                    
                     document.getElementById('auth-status-row').innerHTML = `<button type="button" class="btn-primary" style="background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger);" onclick="App.auth.logout()">Terminate Session (@${App.state.userHandle})</button>`;
                 },
                 switchTab(tab) {
@@ -1211,15 +1231,16 @@
                         document.getElementById('zen-hint').classList.add('hidden');
                     }
                 },
-                togglePlayerExpand(e) {
+                expandPlayer(e) {
                     if(e) e.stopPropagation();
-                    if(App.state.playerMode === 'mini') {
-                        this.setPlayerMode('semi');
-                    } else {
-                        this.setPlayerMode('mini');
-                    }
+                    if(App.state.playerMode === 'mini') this.setPlayerMode('semi');
                 },
-                toggleFullscreenMode() {
+                collapsePlayer(e) {
+                    if(e) e.stopPropagation();
+                    if(App.state.playerMode === 'full') this.setPlayerMode('semi');
+                    else if(App.state.playerMode === 'semi') this.setPlayerMode('mini');
+                },
+                togglePlayerFullscreen() {
                     if(App.state.playerMode === 'full') this.setPlayerMode('semi');
                     else this.setPlayerMode('full');
                 },
@@ -1236,7 +1257,7 @@
                     }
                 },
 
-                toggleFullscreen() {
+                toggleAppFullscreen() {
                     if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
                     else if (document.exitFullscreen) document.exitFullscreen();
                 },
@@ -1362,7 +1383,7 @@
                         this.embers.push({
                             x: Math.random() * 2000, 
                             y: Math.random() * 2000,
-                            speed: Math.random() * 0.3 + 0.1, // Calm upward drift
+                            speed: Math.random() * 0.3 + 0.1, 
                             size: Math.random() * 2 + 1,
                             opacity: Math.random() * 0.4 + 0.1
                         });
@@ -1403,7 +1424,6 @@
                     if (intensity > 130) targetHue = 350; 
                     else if (intensity > 80) targetHue = 280; 
                     
-                    // Buttery smooth transition
                     this.currentHue += (targetHue - this.currentHue) * 0.008;
 
                     this.ctx.globalCompositeOperation = 'screen';
@@ -1423,7 +1443,6 @@
 
                     this.ctx.filter = 'none'; 
                     
-                    // Draw Calm Embers
                     if (App.state.isPlaying && !document.getElementById('player-container').classList.contains('mode-mini')) {
                         this.ctx.fillStyle = `rgba(255,255,255,0.4)`;
                         this.embers.forEach(e => {
