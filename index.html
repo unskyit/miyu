@@ -58,11 +58,18 @@
         button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
         
         .btn-primary { background: var(--text-main); color: var(--accent-invert); padding: 14px 24px; border-radius: 24px; font-weight: 700; font-size: 14px; width: 100%; transition: 0.3s; }
-        .btn-icon { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); }
+        .btn-icon { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
         
         input[type="text"], input[type="password"], textarea, select { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); padding: 14px 16px; border-radius: 14px; outline: none; width: 100%; transition: 0.2s; font-size: 14px; appearance: none; }
         input:focus, textarea:focus, select:focus { border-color: var(--text-muted); }
-        
+        select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23888888%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 16px auto; padding-right: 40px; }
+
+        .custom-cb-wrapper { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; transition: 0.2s; cursor: pointer; border: 1px solid transparent;}
+        .custom-cb-wrapper:hover { background: rgba(255,255,255,0.05); }
+        .custom-cb { appearance: none; width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 6px; background: transparent; cursor: pointer; transition: 0.2s; position: relative; flex-shrink: 0;}
+        .custom-cb:checked { background: var(--text-main); border-color: var(--text-main); }
+        .custom-cb:checked::after { content: ''; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; border: solid var(--accent-invert); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+
         header { padding: calc(env(safe-area-inset-top, 20px) + 20px) 24px 20px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; flex-shrink: 0;}
         .header-logo { width: 32px; height: 32px; border-radius: 8px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
         h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
@@ -78,23 +85,29 @@
 
         .card { padding: 12px 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
         .card:hover { background: var(--surface-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .card-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 220px;}
-        .card-info p { font-size: 12px; color: var(--text-muted); font-weight: 500;}
+        .card-info { min-width: 0; flex: 1; }
+        .card-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info p { font-size: 12px; color: var(--text-muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         
-        .song-avatar { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-muted); }
+        /* Currently Playing Highlight */
+        .card.playing { border-color: var(--text-main); background: rgba(255,255,255,0.08); }
+        .card.playing .btn-icon { background: var(--text-main); border-color: var(--text-main); color: var(--accent-invert); }
+        .card.playing .card-info h4 { color: var(--text-main); font-weight: 800; }
+        
+        .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; margin-right: 16px; flex-shrink: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
         
         .playlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
         .pl-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; }
         .pl-card:hover { transform: scale(1.03); }
         .pl-cover { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; position: relative; }
         .pl-info { padding: 12px; }
-        .pl-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-        .pl-info p { font-size: 11px; color: var(--text-muted); }
+        .pl-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .pl-info p { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* --- 3 TIER DYNAMIC ISLAND PLAYER --- */
         #player-container { 
             position: fixed; z-index: 40; overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.2, 1); /* Ultra smooth morph */
+            transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1); 
         }
         
         /* MODE: MINI (Pill) */
@@ -109,34 +122,42 @@
         /* MODE: SEMI (Expanded Box) */
         #player-container.mode-semi { 
             bottom: 85px; left: 16px; right: 16px; 
-            height: 380px; padding: 20px; 
+            height: 400px; padding: 20px; 
             border-radius: 28px; 
+            justify-content: flex-start;
         }
         #player-container.mode-semi .expanded-only { opacity: 1; pointer-events: all; transition: opacity 0.4s 0.1s; }
+        #player-container.mode-semi .expanded-spacer { display: none; }
         #player-container.mode-semi .mini-controls { opacity: 0; pointer-events: none; position: absolute; }
         
         /* MODE: FULL (Immersive) */
         #player-container.mode-full { 
             bottom: 0; left: 0; right: 0; top: 0; height: 100dvh;
-            padding: calc(env(safe-area-inset-top, 40px) + 20px) 24px calc(env(safe-area-inset-bottom, 40px) + 20px) 24px; 
-            border-radius: 0; border: none; justify-content: flex-end;
+            padding: calc(env(safe-area-inset-top, 40px) + 20px) 24px calc(env(safe-area-inset-bottom, 40px) + 40px) 24px; 
+            border-radius: 0; border: none; justify-content: flex-start;
         }
         #player-container.mode-full .expanded-only { opacity: 1; pointer-events: all; transition: opacity 0.4s 0.1s; }
+        #player-container.mode-full .expanded-spacer { display: block; flex: 1; min-height: 20px; pointer-events: none; }
+        #player-container.mode-full .song-cover-large { width: 60vw; max-width: 320px; height: auto; aspect-ratio: 1; margin: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
         #player-container.mode-full .mini-controls { opacity: 0; pointer-events: none; position: absolute; }
 
         /* ZEN MODE HIDING (Click cover to hide UI) */
-        #player-container.zen-active .zen-hide { opacity: 0 !important; pointer-events: none !important; transform: translateY(10px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important; }
-        .zen-hide { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        #player-container.zen-active .zen-hide { opacity: 0 !important; pointer-events: none !important; transform: translateY(20px); transition: all 0.5s cubic-bezier(0.25, 1, 0.2, 1) !important; }
+        .zen-hide { transition: all 0.5s cubic-bezier(0.25, 1, 0.2, 1); }
 
         .mini-controls { align-items: center; justify-content: space-between; width: 100%; z-index: 2; height: 100%; }
-        .song-cover-large { width: 100px; height: 100px; border-radius: 20px; margin: auto; background: var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
+        .song-cover { width: 44px; height: 44px; border-radius: 10px; background: var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .song-cover-large { width: 120px; height: 120px; border-radius: 20px; margin: 20px auto; background: var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .song-cover-large:hover { transform: scale(1.05); }
 
         #visualizer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 1; transition: opacity 0.4s; border-radius: inherit;}
         
+        .player-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .main-controls { display: flex; gap: 12px; align-items: center; }
+        
         .play-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); box-shadow: 0 6px 24px rgba(0,0,0,0.3); }
         .play-btn i { color: var(--accent-invert) !important; }
-        .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); display: flex; align-items: center; justify-content: center; }
+        .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .play-btn-mini i { color: var(--accent-invert) !important; }
         
         .progress-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 11px; color: var(--text-main); font-variant-numeric: tabular-nums; font-weight: 600;}
@@ -152,11 +173,18 @@
         .modal-content { width: 100%; max-width: 500px; background: var(--bg); border: 1px solid var(--border); border-radius: 32px 32px 0 0; padding: 40px 24px calc(40px + env(safe-area-inset-bottom)) 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
         .modal.active .modal-content { transform: translateY(0); }
         
+        /* Z-INDEX 1000 FOR OVERLAY PROMPTS */
         #custom-dialog.modal { align-items: center; z-index: 1000 !important; }
         #custom-dialog .modal-content { border-radius: 24px; padding: 32px 24px; max-height: 80vh; transform: scale(0.9); opacity: 0; margin: 20px; box-shadow: 0 10px 50px rgba(0,0,0,0.8); }
         #custom-dialog.active .modal-content { transform: scale(1); opacity: 1; }
 
         .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border); font-weight: 600;}
+        .sync-code-box { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; background: var(--text-main); color: var(--accent-invert); border-radius: 16px; padding: 16px 24px; text-align: center; margin: 20px auto; display: inline-block; box-shadow: 0 4px 20px rgba(255,255,255,0.15); }
+        
+        .stage-item { display: flex; flex-direction: column; gap: 8px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; }
+        .stage-prog-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+        .stage-prog-fill { height: 100%; background: var(--success); width: 0%; transition: 0.2s; }
+
         #toast { position: fixed; top: calc(env(safe-area-inset-top, 20px) + 20px); left: 50%; transform: translateX(-50%) translateY(-150px); padding: 14px 28px; border-radius: 30px; font-size: 13px; z-index: 2000; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); background: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border); text-align: center; max-width: 90%; box-shadow: var(--shadow); font-weight: 600; pointer-events: none; backdrop-filter: blur(10px);}
         #toast.show { transform: translateX(-50%) translateY(0); }
     </style>
@@ -185,6 +213,7 @@
             </div>
             <div class="flex gap-4 items-center">
                 <button type="button" class="btn-icon" id="sync-btn-header" onclick="App.sync.toggleMenu()" title="Listen Together"><i class="ph ph-broadcast size-20"></i></button>
+                <button type="button" onclick="App.ui.toggleFullscreenMode()" title="Fullscreen"><i class="ph ph-corners-out size-24" id="icon-fullscreen"></i></button>
                 <button type="button" id="upload-btn-header" class="btn-icon hidden" onclick="App.ui.toggleModal('upload-modal')" title="Upload"><i class="ph ph-plus size-20"></i></button>
                 <button type="button" class="btn-icon" onclick="App.ui.toggleModal('settings-modal')" title="Settings"><i class="ph ph-sliders-horizontal size-20"></i></button>
             </div>
@@ -241,10 +270,8 @@
                 <div id="library-detail" class="hidden">
                     <div class="flex justify-between items-center" style="margin-bottom: 24px;">
                         <button onclick="App.ui.navigateLibrary('home')" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
-                        <div class="flex gap-2">
-                            <button id="btn-edit-pl" style="color:var(--text-main); font-size:13px; font-weight:700; background:var(--surface); border:1px solid var(--border); padding:10px 18px; border-radius:24px;"><i class="ph ph-pencil-simple size-18" style="margin-right:4px;"></i> EDIT</button>
-                            <button id="btn-delete-pl" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:10px 18px; border-radius:24px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE</button>
-                        </div>
+                        <div class="flex gap-2" id="library-detail-actions">
+                            </div>
                     </div>
                     <h2 id="library-detail-title" style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px;">Collection</h2>
                     <div id="pl-view-songs" class="flex-col" style="margin-top:20px;"></div>
@@ -255,9 +282,9 @@
         <div id="player-container" class="glass mode-mini" onclick="if(this.classList.contains('mode-mini')) App.ui.setPlayerMode('semi')">
             <canvas id="visualizer-canvas"></canvas>
             
-            <div class="mini-controls">
-                <div class="flex items-center gap-3" style="max-width: 65%; overflow: hidden;">
-                    <div class="song-avatar" id="mini-cover" style="width:48px;height:48px;"><i class="ph ph-music-notes size-20"></i></div>
+            <div class="mini-controls" onclick="App.ui.togglePlayerExpand(event)">
+                <div class="flex items-center gap-3" style="max-width: 65%; min-width: 0;">
+                    <div class="song-avatar" id="mini-cover"><i class="ph ph-music-notes size-20"></i></div>
                     <div class="card-info">
                         <h4 id="mini-title" style="font-size: 15px; font-weight: 700;">MYR Space</h4>
                         <p id="mini-artist" style="font-size: 12px; opacity:0.8;">Idle</p>
@@ -268,23 +295,22 @@
                 </div>
             </div>
 
-            <div class="expanded-only zen-hide flex justify-between items-center" style="margin-bottom: 20px; z-index: 2;">
-                <button type="button" onclick="App.ui.setPlayerMode('mini')" style="background:rgba(255,255,255,0.1); padding:8px; border-radius:50%;"><i class="ph ph-caret-down size-20"></i></button>
-                <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">Now Playing</div>
-                <div class="flex gap-2">
-                    <button type="button" onclick="App.audio.toggleVolume()" style="background:rgba(255,255,255,0.1); padding:8px; border-radius:50%;"><i class="ph ph-speaker-high size-20" id="icon-vol"></i></button>
-                    <button type="button" onclick="App.ui.toggleFullscreenMode()" style="background:rgba(255,255,255,0.1); padding:8px; border-radius:50%;"><i class="ph ph-corners-out size-20" id="icon-fs-player"></i></button>
-                </div>
+            <div class="expanded-only zen-hide flex justify-between items-center" style="margin-bottom: 12px; z-index: 2; width:100%;">
+                <button type="button" onclick="App.ui.setPlayerMode('mini')" style="background:rgba(255,255,255,0.1); padding:10px; border-radius:50%;"><i class="ph ph-caret-down size-20"></i></button>
+                <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">Now Playing</div>
+                <button type="button" onclick="App.audio.toggleVolume()" style="background:rgba(255,255,255,0.1); padding:10px; border-radius:50%;"><i class="ph ph-speaker-high size-20" id="icon-vol"></i></button>
             </div>
             
-            <div class="expanded-only song-cover-large" id="expanded-cover" title="Click to toggle Zen Mode" onclick="App.ui.toggleZenMode()"><i class="ph ph-music-notes size-32" style="color: rgba(255,255,255,0.4);"></i></div>
+            <div class="expanded-only song-cover-large" id="expanded-cover" title="Click to toggle Zen Mode" onclick="App.ui.toggleZenMode()"><i class="ph ph-music-notes size-48" style="color: rgba(255,255,255,0.4);"></i></div>
 
-            <div class="expanded-only card-info zen-hide" style="text-align: center; margin-bottom: 24px; z-index: 2;">
+            <div class="expanded-spacer"></div>
+
+            <div class="expanded-only card-info zen-hide" style="text-align: center; margin-bottom: 24px; z-index: 2; width:100%;">
                 <h4 id="player-title" style="font-size: 22px; font-weight: 800; white-space: normal;">MYR Space</h4>
                 <p id="player-artist" style="font-size: 14px; font-weight: 600; opacity: 0.7; margin-top: 6px;">Idle</p>
             </div>
 
-            <div class="expanded-only progress-wrapper zen-hide" style="z-index: 2; margin-bottom: 8px;">
+            <div class="expanded-only progress-wrapper zen-hide" style="z-index: 2; margin-bottom: 16px;">
                 <span id="time-current">0:00</span>
                 <div class="progress-container" onclick="App.audio.seek(event)">
                     <div class="progress-bar" id="player-progress"></div>
@@ -292,7 +318,7 @@
                 <span id="time-total">0:00</span>
             </div>
 
-            <div class="expanded-only flex justify-between items-center zen-hide" style="z-index: 2; padding: 0 10px;">
+            <div class="expanded-only player-controls zen-hide" style="z-index: 2; padding: 0 10px;">
                 <button type="button" onclick="App.audio.toggleShuffle()"><i class="ph ph-shuffle size-24" id="icon-shuffle" style="color:var(--text-muted);"></i></button>
                 <div class="main-controls">
                     <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back-fill size-28"></i></button>
@@ -303,7 +329,7 @@
                 </div>
                 <button type="button" onclick="App.audio.toggleLoop()"><i class="ph ph-repeat size-24" id="icon-loop" style="color:var(--text-muted);"></i><span id="loop-indicator" style="font-size:10px; font-weight:800; margin-left:2px; display:none;">1</span></button>
             </div>
-            
+
             <div id="zen-hint" class="expanded-only hidden" style="position:absolute; bottom:40px; left:0; width:100%; text-align:center; font-size:12px; color:rgba(255,255,255,0.5); z-index:5; pointer-events:none; font-weight:600; letter-spacing:1px;">Tap anywhere to exit Zen Mode</div>
         </div>
 
@@ -357,15 +383,17 @@
                 <div class="setting-row flex-col items-start gap-1" style="border-bottom: none; padding-bottom: 0;">
                     <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">Hotkeys: [Space] Play/Pause • [Arrows] Seek</span>
                 </div>
-                <div class="setting-row flex-col items-start gap-3" style="border-bottom: none; padding-bottom: 0; margin-top:10px;">
+                
+                <div id="settings-storage-block" class="setting-row flex-col items-start gap-3 hidden" style="border-bottom: none; padding-bottom: 0; margin-top:10px;">
                     <div class="flex justify-between" style="width: 100%;">
                         <span>Vault Allocation</span>
-                        <span id="storage-txt" style="font-size: 13px; color: var(--text-muted);">0.0 MB / 1GB</span>
+                        <span id="storage-txt" style="font-size: 13px; color: var(--text-muted);">0.0 MB / 1000 MB</span>
                     </div>
                     <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
                         <div id="storage-bar" style="height: 100%; width: 0%; background: var(--text-main); transition: 0.5s;"></div>
                     </div>
                 </div>
+
                 <div id="auth-status-row" class="setting-row" style="border-bottom: none; margin-top: 16px;"></div>
             </div>
         </div>
@@ -400,6 +428,23 @@
                 <button type="button" class="btn-primary" onclick="App.library.updatePlaylist()">Save Changes</button>
             </div>
         </div>
+
+        <div id="sync-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('sync-modal')">
+            <div class="modal-content flex-col gap-4" style="text-align: center;">
+                <h2 style="margin-top: 0;">Listen Together</h2>
+                <p style="font-size: 14px; color: var(--text-muted); font-weight: 500; margin-bottom: 10px;">Lock playback seamlessly across devices anywhere in the world.</p>
+                
+                <div class="flex gap-4">
+                    <button type="button" class="btn-primary" onclick="App.sync.hostSession()">Create Room</button>
+                    <button type="button" class="btn-primary" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);" onclick="App.sync.joinPrompt()">Join Code</button>
+                </div>
+                
+                <div id="sync-status" class="sync-code-box hidden"></div>
+                <p id="sync-subtitle" style="color:var(--success); font-weight:600; font-size:13px;" class="hidden">Session Live</p>
+                
+                <button type="button" id="sync-leave-btn" class="btn-primary hidden" style="background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger); margin-top: 10px;" onclick="App.sync.leave()">End Session</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -412,7 +457,7 @@
         const App = {
             state: {
                 user: null, userHandle: '', theme: 'ips', caching: false, visEnabled: true,
-                songs: [], playlists: [], queue: [], currentIndex: -1,
+                songs: [], playlists: [], queue: [], currentIndex: -1, currentSongId: null,
                 isPlaying: false, loopMode: 0, shuffle: false, volume: 1, playerMode: 'mini'
             },
             audioElement: new Audio(),
@@ -428,7 +473,7 @@
                 
                 document.getElementById('upload-files').addEventListener('change', (e) => this.library.stageUploads(e));
 
-                // Global click listener to exit zen mode
+                // Dismiss Zen Mode cleanly
                 document.addEventListener('click', (e) => {
                     const p = document.getElementById('player-container');
                     if (p.classList.contains('zen-active') && e.target.id !== 'expanded-cover') {
@@ -458,6 +503,7 @@
                     this.state.isPlaying = true; 
                     document.getElementById('icon-play').classList.replace('ph-play-fill', 'ph-pause-fill'); 
                     document.getElementById('icon-play-mini').classList.replace('ph-play-fill', 'ph-pause-fill'); 
+                    App.ui.highlightPlayingSong();
                     
                     if(!this.sync.isRemoteAction) this.sync.broadcast('play', aud.currentTime);
                     if(this.visualizer.audioCtx && this.visualizer.audioCtx.state === 'suspended') this.visualizer.audioCtx.resume();
@@ -467,6 +513,7 @@
                     this.state.isPlaying = false; 
                     document.getElementById('icon-play').classList.replace('ph-pause-fill', 'ph-play-fill'); 
                     document.getElementById('icon-play-mini').classList.replace('ph-pause-fill', 'ph-play-fill'); 
+                    App.ui.highlightPlayingSong();
                     
                     if(!this.sync.isRemoteAction) this.sync.broadcast('pause', aud.currentTime);
                 });
@@ -539,17 +586,19 @@
                     
                     const safeQueue = btoa(encodeURIComponent(JSON.stringify(songsArray)));
                     container.innerHTML = songsArray.map((song, i) => `
-                        <div class="card">
-                            <div class="flex items-center gap-4" style="flex:1; overflow:hidden;" onclick="App.audio.playQueue('${safeQueue}', ${i})">
-                                <div class="song-avatar"><i class="ph ph-music-notes size-20"></i></div>
+                        <div class="card" data-song-id="${song.id}" onclick="App.audio.playQueue('${safeQueue}', ${i})">
+                            <div class="flex items-center gap-4" style="flex:1; min-width:0;">
+                                <div class="song-avatar btn-icon" style="border:none;"><i class="ph ph-music-notes size-20"></i></div>
                                 <div class="card-info">
                                     <h4>${song.title}</h4>
                                     <p>${(song.file_size / 1024 / 1024).toFixed(2)} MB</p>
                                 </div>
                             </div>
-                            ${isOwner ? `<button onclick="App.library.deleteSong('${song.id}', '${song.file_path}')" style="color:var(--danger); padding:10px;"><i class="ph ph-trash size-20"></i></button>` : ''}
+                            ${isOwner ? `<button onclick="event.stopPropagation(); App.library.deleteSong('${song.id}', '${song.file_path}')" style="color:var(--danger); padding:10px; flex-shrink:0;"><i class="ph ph-trash size-20"></i></button>` : ''}
                         </div>
                     `).join('');
+                    
+                    App.ui.highlightPlayingSong();
                 },
 
                 renderPlaylists() {
@@ -577,8 +626,8 @@
 
                 generateGradient(str) {
                     let hash = 0; for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-                    const c1 = `hsl(${Math.abs(hash) % 360}, 70%, 40%)`;
-                    const c2 = `hsl(${Math.abs(hash * 2) % 360}, 80%, 20%)`;
+                    const c1 = `hsl(${Math.abs(hash) % 360}, 70%, 45%)`;
+                    const c2 = `hsl(${Math.abs(hash * 2) % 360}, 80%, 25%)`;
                     return `linear-gradient(135deg, ${c1}, ${c2})`;
                 },
 
@@ -776,10 +825,16 @@
                     }
                     
                     const pl = App.state.playlists.find(p => p.id === plId);
-                    const btnEdit = document.getElementById('btn-edit-pl');
-                    if(btnEdit && pl) btnEdit.onclick = () => App.library.openEditPlaylist(pl, sIds);
+                    const actionContainer = document.getElementById('library-detail-actions');
                     
-                    document.getElementById('btn-delete-pl').onclick = () => App.library.deletePlaylist(plId);
+                    actionContainer.innerHTML = '';
+                    if(pl) {
+                        actionContainer.innerHTML += `<button id="btn-edit-pl" style="color:var(--text-main); font-size:13px; font-weight:700; background:var(--surface); border:1px solid var(--border); padding:10px 18px; border-radius:24px;"><i class="ph ph-pencil-simple size-18" style="margin-right:4px;"></i> EDIT</button>`;
+                        setTimeout(() => document.getElementById('btn-edit-pl').onclick = () => App.library.openEditPlaylist(pl, sIds), 10);
+                    }
+                    
+                    actionContainer.innerHTML += `<button id="btn-delete-pl" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:10px 18px; border-radius:24px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE</button>`;
+                    setTimeout(() => document.getElementById('btn-delete-pl').onclick = () => App.library.deletePlaylist(plId), 10);
                     
                     App.library.renderSongs(songs, 'pl-view-songs', false); 
                 }
@@ -821,7 +876,7 @@
                     const { data: playlists } = await miyuDB.from('playlists').select('*').eq('user_id', userId);
                     
                     if(!playlists || !playlists.length) {
-                        container.innerHTML = '<p style="color:var(--text-muted); font-size:13px; grid-column: 1 / -1;">No public collections yet.</p>';
+                        container.innerHTML = '<p style="color:var(--text-muted); font-size:13px; grid-column: 1 / -1; padding:20px 0;">No public collections yet.</p>';
                     } else {
                         container.innerHTML = playlists.map(pl => `
                             <div class="pl-card" onclick="App.explore.viewExplorePlaylist('${pl.id}', '${pl.name}')">
@@ -951,6 +1006,8 @@
                 },
 
                 async loadAndPlay(song) {
+                    App.state.currentSongId = song.id;
+                    
                     document.getElementById('player-title').innerText = song.title;
                     document.getElementById('mini-title').innerText = song.title;
                     document.getElementById('player-artist').innerText = "Establishing stream...";
@@ -1008,6 +1065,8 @@
                     
                     App.audioElement.src = url;
                     
+                    App.ui.highlightPlayingSong();
+
                     if(App.state.playerMode === 'mini') {
                         App.ui.setPlayerMode('semi'); 
                     }
@@ -1083,16 +1142,36 @@
                         </div>
                     `).join('');
                 },
+                highlightPlayingSong() {
+                    document.querySelectorAll('.card.playing').forEach(el => {
+                        el.classList.remove('playing');
+                        const icon = el.querySelector('.btn-icon i');
+                        if(icon && icon.classList.contains('ph-speaker-high')) {
+                            icon.classList.replace('ph-speaker-high', 'ph-music-notes');
+                        }
+                    });
+                    if(App.state.currentSongId) {
+                        document.querySelectorAll(`.card[data-song-id="${App.state.currentSongId}"]`).forEach(card => {
+                            card.classList.add('playing');
+                            const icon = card.querySelector('.btn-icon i');
+                            if(icon && icon.classList.contains('ph-music-notes')) {
+                                icon.classList.replace('ph-music-notes', 'ph-speaker-high');
+                            }
+                        });
+                    }
+                },
                 setupGuestMode() {
                     document.getElementById('upload-btn-header').classList.add('hidden');
                     document.getElementById('library-guest-msg').classList.remove('hidden');
                     document.getElementById('library-user-content').classList.add('hidden');
+                    document.getElementById('settings-storage-block').classList.add('hidden');
                     document.getElementById('auth-status-row').innerHTML = `<button type="button" class="btn-primary" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">Authenticate to Unlock</button>`;
                 },
                 setupUserMode() {
                     document.getElementById('upload-btn-header').classList.remove('hidden');
                     document.getElementById('library-guest-msg').classList.add('hidden');
                     document.getElementById('library-user-content').classList.remove('hidden');
+                    document.getElementById('settings-storage-block').classList.remove('hidden');
                     document.getElementById('auth-status-row').innerHTML = `<button type="button" class="btn-primary" style="background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger);" onclick="App.auth.logout()">Terminate Session (@${App.state.userHandle})</button>`;
                 },
                 switchTab(tab) {
@@ -1117,7 +1196,6 @@
                 },
                 toggleModal(id) { document.getElementById(id).classList.toggle('active'); },
                 
-                // NEW 3-TIER PLAYER MODE ENGINE
                 setPlayerMode(mode) {
                     const p = document.getElementById('player-container');
                     p.classList.remove('mode-mini', 'mode-semi', 'mode-full', 'zen-active');
@@ -1152,7 +1230,7 @@
                     const hint = document.getElementById('zen-hint');
                     if(p.classList.contains('zen-active')) {
                         hint.classList.remove('hidden');
-                        setTimeout(() => hint.classList.add('hidden'), 3000); // Fade hint after 3s
+                        setTimeout(() => hint.classList.add('hidden'), 3000);
                     } else {
                         hint.classList.add('hidden');
                     }
@@ -1271,7 +1349,6 @@
                     
                     this.smoothBars = new Float32Array(64);
 
-                    // Organic, slow moving blobs
                     for(let i=0; i<6; i++) {
                         this.blobs.push({
                             baseX: Math.random() * this.canvas.width, baseY: Math.random() * this.canvas.height,
@@ -1281,14 +1358,13 @@
                         });
                     }
 
-                    // Shooting Embers (Flowing dust)
                     for(let i=0; i<40; i++) {
                         this.embers.push({
-                            x: Math.random() * 2000, // Will be constrained in draw
+                            x: Math.random() * 2000, 
                             y: Math.random() * 2000,
-                            speed: Math.random() * 1.5 + 0.5,
+                            speed: Math.random() * 0.3 + 0.1, // Calm upward drift
                             size: Math.random() * 2 + 1,
-                            opacity: Math.random() * 0.5 + 0.1
+                            opacity: Math.random() * 0.4 + 0.1
                         });
                     }
 
@@ -1323,19 +1399,17 @@
                         intensity = this.dataArray.reduce((a,b)=>a+b, 0) / this.dataArray.length; 
                     }
 
-                    // Strict Cool to Warm Mapping without Yellow
                     let targetHue = 230; 
-                    if (intensity > 130) targetHue = 350; // Phonk Red
-                    else if (intensity > 80) targetHue = 280; // Deep Purple
+                    if (intensity > 130) targetHue = 350; 
+                    else if (intensity > 80) targetHue = 280; 
                     
-                    // Ultra-slow Lerp for soothing transition
+                    // Buttery smooth transition
                     this.currentHue += (targetHue - this.currentHue) * 0.008;
 
                     this.ctx.globalCompositeOperation = 'screen';
                     this.ctx.filter = 'blur(60px)'; 
 
                     this.blobs.forEach((b) => {
-                        // Natural wandering using complex sine/cosine
                         b.x = b.baseX + Math.sin(this.time * b.speedX + b.offset) * (this.canvas.width * 0.5);
                         b.y = b.baseY + Math.cos(this.time * b.speedY + b.offset) * (this.canvas.height * 0.5);
                         
@@ -1343,26 +1417,24 @@
                         
                         this.ctx.beginPath();
                         this.ctx.arc(b.x, b.y, b.r + pulse, 0, Math.PI * 2);
-                        // Saturation and Lightness dialed down for more relaxed aesthetic
                         this.ctx.fillStyle = `hsla(${(this.currentHue + b.hueOffset)%360}, 75%, ${App.state.theme === 'light' ? '60%' : '35%'}, 0.35)`;
                         this.ctx.fill();
                     });
 
-                    this.ctx.filter = 'none'; // Reset blur for embers and bars
+                    this.ctx.filter = 'none'; 
                     
-                    // Draw Shooting Embers
+                    // Draw Calm Embers
                     if (App.state.isPlaying && !document.getElementById('player-container').classList.contains('mode-mini')) {
                         this.ctx.fillStyle = `rgba(255,255,255,0.4)`;
                         this.embers.forEach(e => {
-                            e.y -= e.speed + (intensity * 0.01); // Move up, faster if loud
+                            e.y -= e.speed + (intensity * 0.002);
                             if(e.y < -10) {
                                 e.y = this.canvas.height + 10;
                                 e.x = Math.random() * this.canvas.width;
                             }
-                            // Keep x in bounds if resized
                             if(e.x > this.canvas.width) e.x = Math.random() * this.canvas.width;
 
-                            this.ctx.globalAlpha = e.opacity * (intensity > 50 ? 1 : 0.5);
+                            this.ctx.globalAlpha = e.opacity * (intensity > 30 ? 1 : 0.5);
                             this.ctx.beginPath();
                             this.ctx.arc(e.x, e.y, e.size, 0, Math.PI*2);
                             this.ctx.fill();
@@ -1370,9 +1442,8 @@
                         this.ctx.globalAlpha = 1;
                     }
 
-                    // Draw Audio Bars
                     if (!document.getElementById('player-container').classList.contains('mode-mini')) {
-                        this.ctx.fillStyle = `rgba(255,255,255,0.3)`; // Locked 30% opacity
+                        this.ctx.fillStyle = `rgba(255,255,255,0.3)`; 
                         const barCount = 64; 
                         const gap = 2;
                         const barW = (this.canvas.width / barCount) - gap;
@@ -1383,7 +1454,6 @@
                             
                             const barH = (this.smoothBars[i] / 255) * (this.canvas.height * 0.35);
                             if(barH > 1) {
-                                // Strictly flat, no rounded corners
                                 this.ctx.fillRect(i * (barW + gap) + (gap/2), this.canvas.height - barH, barW, barH);
                             }
                         }
