@@ -98,14 +98,17 @@
         .card.playing .btn-icon { background: var(--text-main); border-color: var(--text-main); color: var(--accent-invert); }
         .card.playing .card-info h4 { color: var(--text-main); font-weight: 800; }
         
-        /* New Windows-Style Builder Controls */
+        /* Windows-Style Builder Controls */
         .builder-btn { padding: 6px; border-radius: 6px; color: var(--text-muted); border: 1px solid transparent; transition: 0.2s; background: rgba(255,255,255,0.03); }
         .builder-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.1); border-color: var(--border); }
         .builder-btn.danger:hover { color: var(--danger); border-color: var(--danger); background: rgba(255,59,48,0.1); }
 
-        .folder-header { padding: 12px 16px; background: rgba(255,255,255,0.05); border-radius: 12px; margin: 16px 0 8px 0; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); }
-        .folder-header h4 { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
-        .folder-content { padding-left: 16px; border-left: 2px solid var(--border); margin-left: 8px; margin-bottom: 16px; }
+        /* Folder Toggle UI */
+        .folder-collapsed .folder-content { display: none !important; }
+        .folder-toggle { cursor: pointer; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; transition: 0.2s; background: rgba(255,255,255,0.05); }
+        .folder-toggle:hover { background: rgba(255,255,255,0.15); }
+        .folder-toggle i { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .folder-collapsed .folder-toggle i { transform: rotate(-90deg); }
 
         .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; margin-right: 16px; flex-shrink: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
         .song-avatar { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-muted); }
@@ -888,7 +891,6 @@
                     this.loadLibrary();
                 },
 
-                /* ====== NEW WINDOWS-STYLE STRUCTURE BUILDER ====== */
                 openBuilder(plId, plName, songsData) {
                     const pl = App.state.playlists.find(p => p.id === plId);
                     if(!pl) return;
@@ -965,8 +967,9 @@
                             const renameBtn = `<button class="builder-btn" onclick="App.library.builderRenameFolder('${path}')" title="Rename"><i class="ph ph-pencil-simple size-16"></i></button>`;
 
                             return `
-                                <div style="margin-bottom:8px; border: 1px solid var(--border); border-radius:12px; overflow:hidden;">
+                                <div class="folder-container folder-collapsed" style="margin-bottom:8px; border: 1px solid var(--border); border-radius:12px; overflow:hidden;">
                                     <div class="folder-header flex items-center" style="margin:0; border:none; border-bottom:1px solid var(--border);">
+                                        <div class="folder-toggle" onclick="App.ui.toggleFolder(this)" style="margin-right:8px;"><i class="ph ph-caret-down size-16"></i></div>
                                         <i class="ph ph-folder-notch-open size-18" style="margin-right:8px; color:var(--text-muted);"></i>
                                         <h4 style="flex:1;">${node.name}</h4>
                                         <div class="flex items-center gap-2">
@@ -1040,7 +1043,6 @@
                         items.forEach((n, i) => {
                             if(n.type === 'folder') {
                                 const p = currentPath + '-' + i;
-                                // Prevent moving a folder into itself or its own children
                                 if(!pathStr.startsWith(p)) {
                                     folders.push({name: `📁 ${n.name}`, path: p});
                                     gatherFolders(n.items, p);
@@ -1061,11 +1063,11 @@
                     const btnYes = document.getElementById('cd-confirm');
                     const btnNo = document.getElementById('cd-cancel');
                     
-                    btnYes.classList.add('hidden'); // Hide default confirm
+                    btnYes.classList.add('hidden'); 
                     
                     const clean = () => { 
                         m.classList.remove('active'); 
-                        btnYes.classList.remove('hidden'); // Reset
+                        btnYes.classList.remove('hidden'); 
                         msg.innerHTML = ''; 
                     };
                     
@@ -1077,7 +1079,7 @@
                 executeMove(sourcePath, targetPath) {
                     const m = document.getElementById('custom-dialog');
                     m.classList.remove('active');
-                    document.getElementById('cd-confirm').classList.remove('hidden'); // Reset UI
+                    document.getElementById('cd-confirm').classList.remove('hidden'); 
 
                     const srcParent = this.getParentByPath(sourcePath);
                     const srcParts = sourcePath.split('-');
@@ -1092,7 +1094,7 @@
                         if(!targetNode.items) targetNode.items = [];
                         targetNode.items.push(nodeToMove);
                     } else {
-                        srcParent.items.splice(srcIndex, 0, nodeToMove); // Safety revert
+                        srcParent.items.splice(srcIndex, 0, nodeToMove); 
                     }
                     this.renderBuilderCanvas();
                 },
@@ -1104,7 +1106,6 @@
                     const node = parent.items[idx];
                     
                     if(node.type === 'folder') {
-                        // Extract songs safely to root before destroying folder
                         const extractSongs = (n) => n.items.forEach(child => {
                             if(child.type==='song') this.builderState.items.push(child);
                             else if(child.type==='folder') extractSongs(child);
@@ -1136,7 +1137,6 @@
                     this.viewPlaylist(this.builderState.plId, newName);
                 },
 
-                /* ====== NEW ISOLATED PLAYBACK LOGIC ====== */
                 async viewPlaylist(plId, plName) {
                     document.getElementById('library-detail-title').innerText = plName;
                     const container = document.getElementById('pl-view-songs');
@@ -1171,18 +1171,15 @@
                         return;
                     }
 
-                    // Scopes queue generation directly to the immediate folder level
                     const renderNested = (items, path) => {
                         const currentQueue = [];
                         let html = '';
                         
-                        // Pass 1: Gather songs for THIS specific folder layer
                         items.forEach(node => {
                             if(node.type === 'song' && songMap[node.id]) currentQueue.push(songMap[node.id]);
                         });
                         const safeQueue = btoa(encodeURIComponent(JSON.stringify(currentQueue)));
                         
-                        // Pass 2: Generate UI with isolated queue execution
                         let songIdx = 0;
                         items.forEach((node, i) => {
                             if(node.type === 'song' && songMap[node.id]) {
@@ -1200,8 +1197,16 @@
                                 `;
                             } else if(node.type === 'folder') {
                                 html += `
-                                    <div class="folder-header"><i class="ph ph-folder size-18" style="margin-right:8px; color:var(--text-muted);"></i><h4>${node.name}</h4></div>
-                                    <div class="folder-content">${renderNested(node.items || [], path + '-' + i)}</div>
+                                    <div class="folder-container folder-collapsed" style="margin-bottom:8px; border: 1px solid var(--border); border-radius:12px; overflow:hidden;">
+                                        <div class="folder-header flex items-center" style="margin:0; border:none; border-bottom:1px solid var(--border); cursor:pointer;" onclick="App.ui.toggleFolder(this)">
+                                            <div class="folder-toggle"><i class="ph ph-caret-down size-16"></i></div>
+                                            <i class="ph ph-folder-notch-open size-18" style="margin:0 8px; color:var(--text-muted);"></i>
+                                            <h4 style="flex:1;">${node.name}</h4>
+                                        </div>
+                                        <div class="folder-content" style="padding:8px 8px 8px 16px; background:rgba(0,0,0,0.2);">
+                                            ${renderNested(node.items || [], path + '-' + i)}
+                                        </div>
+                                    </div>
                                 `;
                             }
                         });
@@ -1285,15 +1290,70 @@
                     container.innerHTML = App.ui.getSkeletonHTML();
                     App.ui.navigateExplore('playlist');
 
+                    const { data: pl } = await miyuDB.from('playlists').select('*').eq('id', plId).single();
                     const { data: joins } = await miyuDB.from('playlist_songs').select('song_id').eq('playlist_id', plId);
                     const sIds = joins ? joins.map(j => j.song_id) : [];
-                    let songs = [];
+                    let songsData = [];
                     if (sIds.length > 0) {
                         const { data } = await miyuDB.from('songs').select('*').in('id', sIds);
-                        songs = data || [];
+                        songsData = data || [];
                     }
                     
-                    App.library.renderSongs(songs, 'explore-pl-songs', false);
+                    const songMap = {}; songsData.forEach(s => songMap[s.id] = s);
+                    const parsed = App.library.parseDescription(pl ? pl.description : '');
+
+                    if(!parsed.isStruct) {
+                        App.library.renderSongs(songsData, 'explore-pl-songs', false);
+                        return;
+                    }
+
+                    const renderNested = (items, path) => {
+                        const currentQueue = [];
+                        let html = '';
+                        
+                        items.forEach(node => {
+                            if(node.type === 'song' && songMap[node.id]) currentQueue.push(songMap[node.id]);
+                        });
+                        const safeQueue = btoa(encodeURIComponent(JSON.stringify(currentQueue)));
+                        
+                        let songIdx = 0;
+                        items.forEach((node, i) => {
+                            if(node.type === 'song' && songMap[node.id]) {
+                                const song = songMap[node.id];
+                                html += `
+                                    <div class="card" data-song-id="${song.id}" onclick="App.audio.playQueue('${safeQueue}', ${songIdx++})">
+                                        <div class="flex items-center gap-4" style="flex:1; min-width:0;">
+                                            <div class="song-avatar btn-icon" style="border:none;"><i class="ph ph-music-notes size-20"></i></div>
+                                            <div class="card-info">
+                                                <h4>${song.title}</h4>
+                                                <p>${(song.file_size / 1024 / 1024).toFixed(2)} MB</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            } else if(node.type === 'folder') {
+                                html += `
+                                    <div class="folder-container folder-collapsed" style="margin-bottom:8px; border: 1px solid var(--border); border-radius:12px; overflow:hidden;">
+                                        <div class="folder-header flex items-center" style="margin:0; border:none; border-bottom:1px solid var(--border); cursor:pointer;" onclick="App.ui.toggleFolder(this)">
+                                            <div class="folder-toggle"><i class="ph ph-caret-down size-16"></i></div>
+                                            <i class="ph ph-folder-notch-open size-18" style="margin:0 8px; color:var(--text-muted);"></i>
+                                            <h4 style="flex:1;">${node.name}</h4>
+                                        </div>
+                                        <div class="folder-content" style="padding:8px 8px 8px 16px; background:rgba(0,0,0,0.2);">
+                                            ${renderNested(node.items || [], path + '-' + i)}
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
+                        return html;
+                    };
+
+                    let finalHtml = renderNested(parsed.data.items || [], 'root');
+                    if(finalHtml.trim() === '') finalHtml = '<p style="color:var(--text-muted); font-size:13px; text-align:center;">Empty Collection</p>';
+                    
+                    container.innerHTML = finalHtml;
+                    App.ui.highlightPlayingSong();
                 }
             },
 
@@ -1520,6 +1580,10 @@
             },
 
             ui: {
+                toggleFolder(btn) {
+                    const folderDiv = btn.closest('.folder-container');
+                    if(folderDiv) folderDiv.classList.toggle('folder-collapsed');
+                },
                 getSkeletonHTML(count = 3) {
                     return Array(count).fill(`
                         <div class="card" style="padding:16px;">
