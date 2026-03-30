@@ -442,8 +442,13 @@
                     <button type="button" class="btn-primary" style="background:var(--surface); color:var(--text-main); border:1px solid var(--border); padding:10px; flex:1;" onclick="App.library.builderAddFolder()"><i class="ph ph-folder-plus size-20"></i> Add Folder</button>
                 </div>
                 
+                <div class="flex gap-2" style="margin-top: 4px;">
+                    <select id="builder-song-select" style="flex: 2; padding: 10px; font-size: 13px;"></select>
+                    <button type="button" class="btn-primary" style="background:var(--surface); color:var(--text-main); border:1px solid var(--border); padding:10px; flex:1;" onclick="App.library.builderAddSong()"><i class="ph ph-music-notes-plus size-20"></i> Add Track</button>
+                </div>
+                
                 <p style="font-size: 12px; color: var(--text-muted); margin-bottom:-5px; text-align:center;">Use the action icons to manage structure.</p>
-                <div id="builder-canvas" class="flex-col gap-2" style="max-height: 45vh; overflow-y: auto; overflow-x:hidden; border: 1px solid var(--border); padding: 12px; border-radius: 14px;"></div>
+                <div id="builder-canvas" class="flex-col gap-2" style="max-height: 40vh; overflow-y: auto; overflow-x:hidden; border: 1px solid var(--border); padding: 12px; border-radius: 14px;"></div>
                 
                 <button type="button" class="btn-primary" onclick="App.library.saveStructure()">Save Changes</button>
             </div>
@@ -922,7 +927,10 @@
                     });
 
                     this.builderState.songMap = {};
-                    songsData.forEach(s => this.builderState.songMap[s.id] = s);
+                    App.state.songs.forEach(s => this.builderState.songMap[s.id] = s);
+
+                    const songSelect = document.getElementById('builder-song-select');
+                    songSelect.innerHTML = '<option value="">Select a track...</option>' + App.state.songs.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
 
                     this.renderBuilderCanvas();
                     App.ui.toggleModal('edit-structure-modal');
@@ -934,6 +942,16 @@
                         this.builderState.items.unshift({ type: 'folder', name, items: [] });
                         this.renderBuilderCanvas();
                     }
+                },
+
+                builderAddSong() {
+                    const select = document.getElementById('builder-song-select');
+                    const songId = select.value;
+                    if(!songId) return App.ui.toast("Select a track first");
+                    
+                    this.builderState.items.unshift({ type: 'song', id: songId });
+                    this.renderBuilderCanvas();
+                    App.ui.toast("Track added to root folder");
                 },
 
                 renderBuilderCanvas() {
@@ -1128,6 +1146,20 @@
                     if (plIndex > -1) {
                         App.state.playlists[plIndex].name = newName;
                         App.state.playlists[plIndex].description = payload;
+                    }
+
+                    const allSongIds = new Set();
+                    const extractIds = (items) => items.forEach(i => { 
+                        if(i.type === 'song') allSongIds.add(i.id); 
+                        else if(i.type === 'folder') extractIds(i.items); 
+                    });
+                    extractIds(this.builderState.items);
+                    const finalSongIds = Array.from(allSongIds);
+
+                    await miyuDB.from('playlist_songs').delete().eq('playlist_id', this.builderState.plId);
+                    if(finalSongIds.length > 0) {
+                        const inserts = finalSongIds.map(sid => ({ playlist_id: this.builderState.plId, song_id: sid }));
+                        await miyuDB.from('playlist_songs').insert(inserts);
                     }
                     
                     App.ui.toggleModal('edit-structure-modal');
