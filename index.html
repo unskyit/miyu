@@ -80,7 +80,6 @@
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         .skeleton-box { background: linear-gradient(90deg, var(--surface) 25%, var(--surface-hover) 50%, var(--surface) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; }
 
-        /* Polish: Page Transitions */
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .tab-content:not(.hidden) { animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
@@ -121,7 +120,6 @@
         .pl-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .pl-info p { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Player UI Omitted for brevity, assuming standard Miyu UI */
         #player-container { position: fixed; z-index: 40; overflow: hidden; transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1); }
         #player-container.mode-mini { bottom: 85px; left: 16px; right: 16px; height: 72px; padding: 12px 20px; border-radius: 36px; cursor: pointer; }
         #player-container.mode-mini .expanded-only { opacity: 0; pointer-events: none; transition: opacity 0.2s; display: none; }
@@ -245,6 +243,13 @@
                         <h2>Library</h2>
                     </div>
                     
+                    <div id="stash-section" class="hidden" style="margin-bottom: 24px;">
+                        <div class="flex justify-between items-center">
+                            <h3 style="color: var(--stash);">Local Stashes</h3>
+                        </div>
+                        <div id="stash-list" class="playlist-grid"></div>
+                    </div>
+
                     <div id="library-guest-msg" class="flex-col items-center justify-center" style="padding: 60px 20px; text-align: center;">
                         <i class="ph ph-lock-key size-48" style="margin-bottom: 20px; color: var(--text-muted);"></i>
                         <p style="color: var(--text-muted); font-weight: 500; margin-bottom: 24px;">Log in to orchestrate your personal space.</p>
@@ -252,14 +257,6 @@
                     </div>
 
                     <div id="library-user-content" class="hidden">
-                        
-                        <div id="stash-section" class="hidden" style="margin-bottom: 24px;">
-                            <div class="flex justify-between items-center">
-                                <h3 style="color: var(--stash);">Local Stashes</h3>
-                            </div>
-                            <div id="stash-list" class="playlist-grid"></div>
-                        </div>
-
                         <div class="flex justify-between items-center">
                             <h3>Playlists</h3>
                             <button type="button" onclick="App.ui.toggleModal('create-pl-modal')" style="color:var(--text-muted); font-size: 12px; font-weight: 700;"><i class="ph ph-plus" style="margin-right: 4px;"></i> NEW</button>
@@ -369,7 +366,7 @@
                 <h2 style="margin-top: 0;">Preferences</h2>
                 <div class="setting-row">
                     <span>Theme</span>
-                    <select id="theme-select" onchange="App.settings.setTheme(this.value)">
+                    <select id="theme-select" onchange="App.settings.setTheme(this.value)" style="width: 150px; flex-shrink: 0;">
                         <option value="dark">AMOLED Dark</option>
                         <option value="ips">IPS Premium</option>
                         <option value="light">Crisp Light</option>
@@ -385,7 +382,7 @@
                 </div>
                 <div class="setting-row">
                     <span>Seek Interval</span>
-                    <select id="seek-select" onchange="App.settings.setSeekStep(this.value)">
+                    <select id="seek-select" onchange="App.settings.setSeekStep(this.value)" style="width: 150px; flex-shrink: 0;">
                         <option value="5">5 Secs</option>
                         <option value="10">10 Secs</option>
                         <option value="15">15 Secs</option>
@@ -436,15 +433,19 @@
 
         <div id="edit-structure-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('edit-structure-modal')">
             <div class="modal-content flex-col gap-4" style="max-height: 95vh;">
-                <h2 style="margin-top: 0;">Arrange Structure</h2>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top:-10px;">Drag using the grip to reorder. Group unassigned songs into folders.</p>
+                <h2 style="margin-top: 0;">Playlist Editor</h2>
                 
-                <div class="flex gap-2">
+                <input type="text" id="builder-pl-name" placeholder="Playlist Name" maxlength="20">
+                <textarea id="builder-pl-desc" placeholder="Playlist Description" maxlength="100" rows="2"></textarea>
+
+                <div class="flex gap-2" style="margin-top: 8px;">
                     <button type="button" class="btn-primary" style="background:var(--surface); color:var(--text-main); border:1px solid var(--border); padding:10px; flex:1;" onclick="App.library.builderAddFolder()"><i class="ph ph-folder-plus size-20"></i> Add Folder</button>
                 </div>
                 
-                <div id="builder-canvas" class="flex-col gap-2" style="max-height: 50vh; overflow-y: auto; overflow-x:hidden; border: 1px solid var(--border); padding: 12px; border-radius: 14px;"></div>
-                <button type="button" class="btn-primary" onclick="App.library.saveStructure()">Save Structure</button>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom:-5px; text-align:center;">Drag using the grip to reorder.</p>
+                <div id="builder-canvas" class="flex-col gap-2" style="max-height: 45vh; overflow-y: auto; overflow-x:hidden; border: 1px solid var(--border); padding: 12px; border-radius: 14px;"></div>
+                
+                <button type="button" class="btn-primary" onclick="App.library.saveStructure()">Save Changes</button>
             </div>
         </div>
 
@@ -488,7 +489,7 @@
                 user: null, userHandle: '', theme: 'ips', caching: false, visEnabled: true,
                 songs: [], playlists: [], queue: [], currentIndex: -1, currentSongId: null,
                 isPlaying: false, loopMode: 0, shuffle: false, volume: 1, playerMode: 'mini',
-                activeProfileUser: null, // Used for stashing
+                activeProfileUser: null
             },
             audioElement: new Audio(),
             stagedFiles: [],
@@ -500,11 +501,10 @@
                 this.setupAudioBindings();
                 this.setupHotkeys();
                 this.visualizer.init();
-                this.stash.load(); // Init Local Stashes
+                this.stash.load();
                 
                 document.getElementById('upload-files').addEventListener('change', (e) => this.library.stageUploads(e));
 
-                // Zen Mode Exiter
                 document.addEventListener('click', (e) => {
                     const p = document.getElementById('player-container');
                     if (p.classList.contains('zen-active')) {
@@ -602,7 +602,6 @@
                 async logout() { await miyuDB.auth.signOut(); window.location.reload(); }
             },
 
-            /* ====== LOCAL STASH MODULE ====== */
             stash: {
                 stashes: [],
                 load() {
@@ -679,7 +678,7 @@
             },
 
             library: {
-                builderState: { items: [], plId: null, plName: null, draggedEl: null },
+                builderState: { items: [], plId: null, draggedPath: null, songMap: {} },
                 
                 async loadLibrary() {
                     if (!App.state.user) return;
@@ -696,7 +695,6 @@
                     } catch (err) { App.ui.toast("Library Error"); }
                 },
 
-                // Parses custom JSON payload hidden in description for nested playlists
                 parseDescription(desc) {
                     if(desc && desc.startsWith('__MIYU_STRUCT__')) {
                         try { return { isStruct: true, data: JSON.parse(desc.replace('__MIYU_STRUCT__', '')) }; } 
@@ -732,7 +730,7 @@
                         const parsed = this.parseDescription(pl.description);
                         const descText = parsed.isStruct ? "Structured Collection" : (parsed.text || 'Collection');
                         return `
-                        <div class="pl-card" onclick="App.library.viewPlaylist('${pl.id}', '${pl.name}')">
+                        <div class="pl-card" onclick="App.library.viewPlaylist('${pl.id}', '${pl.name.replace(/'/g, "\\'")}')">
                             <div class="pl-cover" style="background: ${this.generateGradient(pl.name)}">
                                 <span style="font-size: 48px; font-weight: 800; color: rgba(255,255,255,0.3);">${pl.name.charAt(0).toUpperCase()}</span>
                             </div>
@@ -760,14 +758,12 @@
                     return `linear-gradient(135deg, ${c1}, ${c2})`;
                 },
 
-                /* FIX 1: Robust Bulk Upload handler */
                 stageUploads(e) {
                     if(!e.target.files.length) return;
                     const newFiles = Array.from(e.target.files).slice(0, 50 - App.stagedFiles.length);
                     const newStaged = newFiles.map(f => ({ file: f, title: f.name.replace(/\.[^/.]+$/, "") }));
                     App.stagedFiles = App.stagedFiles.concat(newStaged);
                     
-                    // Reset input so re-selecting same files triggers event again
                     e.target.value = ''; 
                     this.renderStagingArea();
                 },
@@ -875,7 +871,6 @@
 
                     if(App.state.playlists.length >= 15) return App.ui.toast("Storage limit reached");
 
-                    // Init default structure flat
                     const initStructure = { desc, items: songIds.map(sid => ({ type: 'song', id: sid })) };
                     const payload = `__MIYU_STRUCT__${JSON.stringify(initStructure)}`;
 
@@ -896,20 +891,21 @@
                     this.loadLibrary();
                 },
 
-                /* ====== DRAG & DROP STRUCTURE BUILDER ====== */
+                /* ====== UNIFIED PLAYLIST / STRUCTURE EDITOR ====== */
                 openBuilder(plId, plName, songsData) {
                     const pl = App.state.playlists.find(p => p.id === plId);
                     if(!pl) return;
                     this.builderState.plId = plId;
-                    this.builderState.plName = plName;
                     
+                    // Populate Name and Description inputs
+                    document.getElementById('builder-pl-name').value = pl.name;
                     const parsed = this.parseDescription(pl.description);
+                    document.getElementById('builder-pl-desc').value = parsed.isStruct ? (parsed.data.desc || '') : (parsed.text || '');
+
                     let items = [];
-                    
                     if(parsed.isStruct) { items = parsed.data.items || []; } 
                     else { items = songsData.map(s => ({ type: 'song', id: s.id })); }
 
-                    // Validate: ensure all DB songs exist in structure, remove missing
                     const validSongIds = songsData.map(s=>s.id);
                     const validateTree = (nodes) => {
                         return nodes.map(node => {
@@ -919,7 +915,6 @@
                     };
                     this.builderState.items = validateTree(items);
                     
-                    // Add any songs missing from structure (e.g. added elsewhere)
                     const existingInStruct = new Set();
                     const checkExist = (nodes) => nodes.forEach(n => { if(n.type==='song') existingInStruct.add(n.id); else if(n.type==='folder') checkExist(n.items); });
                     checkExist(this.builderState.items);
@@ -928,7 +923,6 @@
                         if(!existingInStruct.has(s.id)) this.builderState.items.push({ type:'song', id:s.id });
                     });
 
-                    // Attach full song data for rendering
                     this.builderState.songMap = {};
                     songsData.forEach(s => this.builderState.songMap[s.id] = s);
 
@@ -988,10 +982,13 @@
                     this.attachDragEvents(canvas);
                 },
 
+                // FIXED MATHEMATICS FOR SAFE SPLICE & NATIVE MOBILE TOUCH POLYFILL
                 attachDragEvents(canvas) {
                     const items = canvas.querySelectorAll('.drag-item');
                     const zones = canvas.querySelectorAll('.folder-dropzone');
+                    const grips = canvas.querySelectorAll('.drag-grip');
 
+                    // --- 1. HTML5 Drag & Drop (Desktop) ---
                     items.forEach(item => {
                         item.addEventListener('dragstart', (e) => {
                             e.stopPropagation();
@@ -1001,10 +998,9 @@
                         item.addEventListener('dragend', (e) => {
                             e.stopPropagation();
                             item.classList.remove('dragging');
-                            zones.forEach(z => z.classList.remove('drag-over'));
+                            zones.forEach(z => z.classList.remove('drag-over', 'drag-over-zone'));
                             items.forEach(i => i.classList.remove('drag-over'));
                         });
-                        // Allow dragging BETWEEN items
                         item.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); item.classList.add('drag-over'); });
                         item.addEventListener('dragleave', (e) => { e.preventDefault(); e.stopPropagation(); item.classList.remove('drag-over'); });
                         item.addEventListener('drop', (e) => {
@@ -1022,38 +1018,151 @@
                             this.handleDrop(this.builderState.draggedPath, zone.dataset.targetPath, 'inside');
                         });
                     });
+
+                    // --- 2. Touch Polyfill for Mobile Drag & Drop ---
+                    let dragSrcEl = null;
+                    let touchClone = null;
+                    let lastTarget = null;
+                    let offsetX = 0, offsetY = 0;
+
+                    const clearTouchState = () => {
+                        if(touchClone) { touchClone.remove(); touchClone = null; }
+                        if(dragSrcEl) { dragSrcEl.classList.remove('dragging'); dragSrcEl.style.opacity = ''; }
+                        canvas.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                        canvas.querySelectorAll('.folder-dropzone').forEach(el => el.style.background = '');
+                        dragSrcEl = null; lastTarget = null;
+                    };
+
+                    grips.forEach(grip => {
+                        grip.addEventListener('touchstart', (e) => {
+                            const item = grip.closest('.drag-item');
+                            if(!item) return;
+                            
+                            dragSrcEl = item;
+                            this.builderState.draggedPath = item.dataset.path;
+                            
+                            const rect = item.getBoundingClientRect();
+                            const touch = e.touches[0];
+                            offsetX = touch.clientX - rect.left;
+                            offsetY = touch.clientY - rect.top;
+
+                            touchClone = item.cloneNode(true);
+                            touchClone.style.position = 'fixed';
+                            touchClone.style.left = rect.left + 'px';
+                            touchClone.style.top = rect.top + 'px';
+                            touchClone.style.width = rect.width + 'px';
+                            touchClone.style.zIndex = '9999';
+                            touchClone.style.opacity = '0.9';
+                            touchClone.style.pointerEvents = 'none'; // Critical: Let touches pass through
+                            touchClone.style.boxShadow = '0 20px 40px rgba(0,0,0,0.6)';
+                            document.body.appendChild(touchClone);
+
+                            item.style.opacity = '0.3';
+                            item.classList.add('dragging');
+                        }, {passive: false});
+                    });
+
+                    canvas.addEventListener('touchmove', (e) => {
+                        if(!dragSrcEl || !touchClone) return;
+                        e.preventDefault(); // Stop screen from scrolling
+
+                        const touch = e.touches[0];
+                        touchClone.style.left = (touch.clientX - offsetX) + 'px';
+                        touchClone.style.top = (touch.clientY - offsetY) + 'px';
+
+                        const elUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+                        if(!elUnder) return;
+
+                        const overItem = elUnder.closest('.drag-item');
+                        const overZone = elUnder.closest('.folder-dropzone');
+
+                        canvas.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                        canvas.querySelectorAll('.folder-dropzone').forEach(el => el.style.background = '');
+
+                        lastTarget = null;
+
+                        if (overItem && overItem !== dragSrcEl && !overItem.contains(dragSrcEl)) {
+                            overItem.classList.add('drag-over');
+                            lastTarget = { type: 'item', el: overItem };
+                        } else if (overZone && !dragSrcEl.contains(overZone)) {
+                            overZone.style.background = 'rgba(255,255,255,0.05)';
+                            lastTarget = { type: 'zone', el: overZone };
+                        }
+                    }, {passive: false});
+
+                    canvas.addEventListener('touchend', (e) => {
+                        if(!dragSrcEl) return;
+                        
+                        const srcPath = this.builderState.draggedPath;
+                        let tgtPath = null;
+                        let pos = null;
+
+                        if(lastTarget) {
+                            if(lastTarget.type === 'item') { tgtPath = lastTarget.el.dataset.path; pos = 'before'; } 
+                            else if(lastTarget.type === 'zone') { tgtPath = lastTarget.el.dataset.targetPath; pos = 'inside'; }
+                        }
+
+                        clearTouchState();
+
+                        if(tgtPath && pos) { this.handleDrop(srcPath, tgtPath, pos); }
+                    });
                 },
 
                 getNodeByPath(pathStr) {
                     if(pathStr === 'root') return { items: this.builderState.items };
                     const parts = pathStr.split('-').slice(1).map(Number);
                     let curr = { items: this.builderState.items };
-                    for(let i=0; i<parts.length; i++) curr = curr.items[parts[i]];
+                    for(let i=0; i<parts.length; i++) {
+                        if (!curr.items) return null;
+                        curr = curr.items[parts[i]];
+                    }
                     return curr;
                 },
                 getParentByPath(pathStr) {
+                    if(pathStr === 'root') return null;
                     const parts = pathStr.split('-');
                     parts.pop();
                     return this.getNodeByPath(parts.join('-'));
                 },
 
                 handleDrop(sourcePath, targetPath, position) {
-                    if(!sourcePath || sourcePath === targetPath || targetPath.startsWith(sourcePath)) return;
+                    // Prevent dropping on itself or into its own nested children
+                    if(!sourcePath || sourcePath === targetPath || targetPath.startsWith(sourcePath + '-')) return;
                     
+                    const srcParent = this.getParentByPath(sourcePath);
                     const srcParts = sourcePath.split('-');
                     const srcIndex = parseInt(srcParts.pop());
-                    const srcParent = this.getParentByPath(sourcePath);
+
+                    // Failsafe 
+                    if (!srcParent || !srcParent.items) return; 
+
+                    // Remove node from original location
                     const nodeToMove = srcParent.items.splice(srcIndex, 1)[0];
 
+                    const tgtParentPath = targetPath.substring(0, targetPath.lastIndexOf('-'));
+                    const srcParentPath = sourcePath.substring(0, sourcePath.lastIndexOf('-'));
+                    
                     if(position === 'inside') {
                         const targetNode = this.getNodeByPath(targetPath);
-                        if(targetNode.type === 'folder' || targetPath === 'root') targetNode.items.push(nodeToMove);
-                        else srcParent.items.splice(srcIndex, 0, nodeToMove); // Revert
+                        if(targetNode && (targetNode.type === 'folder' || targetPath === 'root')) {
+                            if(!targetNode.items) targetNode.items = [];
+                            targetNode.items.push(nodeToMove);
+                        } else {
+                            srcParent.items.splice(srcIndex, 0, nodeToMove); // Revert
+                        }
                     } else if(position === 'before') {
-                        const targetParts = targetPath.split('-');
-                        const targetIndex = parseInt(targetParts.pop());
-                        const targetParent = this.getParentByPath(targetPath);
-                        targetParent.items.splice(targetIndex, 0, nodeToMove);
+                        let targetParts = targetPath.split('-');
+                        let targetIndex = parseInt(targetParts[targetParts.length - 1]);
+                        
+                        // Fix index shift logic for drops within the same parent
+                        if (srcParentPath === tgtParentPath && targetIndex > srcIndex) { targetIndex -= 1; }
+
+                        const actualTargetParent = this.getNodeByPath(tgtParentPath);
+                        if (actualTargetParent && actualTargetParent.items) {
+                            actualTargetParent.items.splice(targetIndex, 0, nodeToMove);
+                        } else {
+                             srcParent.items.splice(srcIndex, 0, nodeToMove); // Revert
+                        }
                     }
                     this.renderBuilderCanvas();
                 },
@@ -1065,7 +1174,6 @@
                     const node = parent.items[idx];
                     
                     if(node.type === 'folder') {
-                        // Extract songs back to root to prevent deletion
                         const extractSongs = (n) => n.items.forEach(child => {
                             if(child.type==='song') this.builderState.items.push(child);
                             else if(child.type==='folder') extractSongs(child);
@@ -1077,21 +1185,27 @@
                 },
 
                 async saveStructure() {
-                    const pl = App.state.playlists.find(p => p.id === this.builderState.plId);
-                    const parsed = this.parseDescription(pl.description);
-                    const descText = parsed.isStruct ? parsed.data.desc : parsed.text;
+                    const newName = document.getElementById('builder-pl-name').value.trim() || 'Untitled';
+                    const newDesc = document.getElementById('builder-pl-desc').value.trim();
                     
-                    const payload = `__MIYU_STRUCT__${JSON.stringify({ desc: descText, items: this.builderState.items })}`;
+                    const payload = `__MIYU_STRUCT__${JSON.stringify({ desc: newDesc, items: this.builderState.items })}`;
                     
-                    await miyuDB.from('playlists').update({ description: payload }).eq('id', this.builderState.plId);
+                    await miyuDB.from('playlists').update({ name: newName, description: payload }).eq('id', this.builderState.plId);
+                    
+                    // Update state locally so UI is snappy
+                    const plIndex = App.state.playlists.findIndex(p => p.id === this.builderState.plId);
+                    if (plIndex > -1) {
+                        App.state.playlists[plIndex].name = newName;
+                        App.state.playlists[plIndex].description = payload;
+                    }
+                    
                     App.ui.toggleModal('edit-structure-modal');
-                    App.ui.toast("Structure Applied");
+                    App.ui.toast("Changes Saved");
                     
                     await this.loadLibrary();
-                    this.viewPlaylist(this.builderState.plId, this.builderState.plName);
+                    this.viewPlaylist(this.builderState.plId, newName);
                 },
 
-                /* Render nested playlist view */
                 async viewPlaylist(plId, plName) {
                     document.getElementById('library-detail-title').innerText = plName;
                     const container = document.getElementById('pl-view-songs');
@@ -1111,26 +1225,23 @@
                     
                     actionContainer.innerHTML = '';
                     if(pl) {
-                        actionContainer.innerHTML += `<button id="btn-edit-pl" style="color:var(--text-main); font-size:13px; font-weight:700; background:var(--surface); border:1px solid var(--border); padding:10px 18px; border-radius:24px;"><i class="ph ph-pencil-simple size-18" style="margin-right:4px;"></i> REORDER</button>`;
+                        actionContainer.innerHTML += `<button id="btn-edit-pl" style="color:var(--text-main); font-size:13px; font-weight:700; background:var(--surface); border:1px solid var(--border); padding:10px 18px; border-radius:24px;"><i class="ph ph-pencil-simple size-18" style="margin-right:4px;"></i> EDIT</button>`;
                         setTimeout(() => document.getElementById('btn-edit-pl').onclick = () => App.library.openBuilder(plId, plName, songsData), 10);
                     }
                     
                     actionContainer.innerHTML += `<button id="btn-delete-pl" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:10px 18px; border-radius:24px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE</button>`;
                     setTimeout(() => document.getElementById('btn-delete-pl').onclick = () => App.library.deletePlaylist(plId), 10);
                     
-                    // Flatten structure for continuous playback queue
                     const flatQueue = [];
                     const songMap = {}; songsData.forEach(s => songMap[s.id] = s);
 
                     const parsed = this.parseDescription(pl.description);
                     
                     if(!parsed.isStruct) {
-                        // Standard flat render
                         App.library.renderSongs(songsData, 'pl-view-songs', false);
                         return;
                     }
 
-                    // Render nested
                     const renderNested = (items) => {
                         let html = '';
                         items.forEach(node => {
@@ -1163,7 +1274,6 @@
                     let finalHtml = renderNested(parsed.data.items || []);
                     if(flatQueue.length === 0) finalHtml = '<p style="color:var(--text-muted); font-size:13px; text-align:center;">Empty Collection</p>';
                     
-                    // Replace dynamic queue placeholder
                     const safeQueue = btoa(encodeURIComponent(JSON.stringify(flatQueue)));
                     container.innerHTML = finalHtml.replace(/'DYNAMIC_QUEUE'/g, `'${safeQueue}'`);
                     App.ui.highlightPlayingSong();
@@ -1184,7 +1294,6 @@
                         let plNames = u.playlists && u.playlists.length ? u.playlists.slice(0, 2).map(p=>p.name).join(', ') : 'No Collections';
                         if(u.playlists && u.playlists.length > 2) plNames += '...';
                         
-                        // Pass full object to global state for fast Local Stash access
                         const safeObjStr = encodeURIComponent(JSON.stringify(u));
 
                         return `
@@ -1205,7 +1314,7 @@
                 
                 async viewUserProfile(userJsonStr) {
                     const u = JSON.parse(userJsonStr);
-                    App.state.activeProfileUser = u; // Setup for Stash
+                    App.state.activeProfileUser = u;
                     
                     document.getElementById('explore-profile-title').innerText = `${u.handle}'s Collections`;
                     const container = document.getElementById('explore-playlists-list');
@@ -1221,7 +1330,7 @@
                             const parsed = App.library.parseDescription(pl.description);
                             const descText = parsed.isStruct ? "Structured Collection" : (parsed.text || 'Collection');
                             return `
-                            <div class="pl-card" onclick="App.explore.viewExplorePlaylist('${pl.id}', '${pl.name}')">
+                            <div class="pl-card" onclick="App.explore.viewExplorePlaylist('${pl.id}', '${pl.name.replace(/'/g, "\\'")}')">
                                 <div class="pl-cover" style="background: ${App.library.generateGradient(pl.name)}">
                                     <span style="font-size: 48px; font-weight: 800; color: rgba(255,255,255,0.3);">${pl.name.charAt(0).toUpperCase()}</span>
                                 </div>
