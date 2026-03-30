@@ -98,12 +98,10 @@
         .card.playing .btn-icon { background: var(--text-main); border-color: var(--text-main); color: var(--accent-invert); }
         .card.playing .card-info h4 { color: var(--text-main); font-weight: 800; }
         
-        /* Drag & Drop Styles */
-        .drag-item { transition: transform 0.2s, box-shadow 0.2s; }
-        .drag-item.dragging { opacity: 0.5; transform: scale(0.98); box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 100; border-color: var(--text-main); }
-        .drag-item.drag-over { border-top: 2px solid var(--text-main); margin-top: 10px; }
-        .drag-grip { padding: 10px; cursor: grab; color: var(--text-muted); touch-action: none; display: flex; align-items: center; justify-content: center; }
-        .drag-grip:active { cursor: grabbing; }
+        /* New Windows-Style Builder Controls */
+        .builder-btn { padding: 6px; border-radius: 6px; color: var(--text-muted); border: 1px solid transparent; transition: 0.2s; background: rgba(255,255,255,0.03); }
+        .builder-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.1); border-color: var(--border); }
+        .builder-btn.danger:hover { color: var(--danger); border-color: var(--danger); background: rgba(255,59,48,0.1); }
 
         .folder-header { padding: 12px 16px; background: rgba(255,255,255,0.05); border-radius: 12px; margin: 16px 0 8px 0; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); }
         .folder-header h4 { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
@@ -271,8 +269,7 @@
                 <div id="library-detail" class="hidden">
                     <div class="flex justify-between items-center" style="margin-bottom: 24px;">
                         <button onclick="App.ui.navigateLibrary('home')" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
-                        <div class="flex gap-2" id="library-detail-actions">
-                            </div>
+                        <div class="flex gap-2" id="library-detail-actions"></div>
                     </div>
                     <h2 id="library-detail-title" style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px;">Collection</h2>
                     <div id="pl-view-songs" class="flex-col" style="margin-top:20px;"></div>
@@ -442,7 +439,7 @@
                     <button type="button" class="btn-primary" style="background:var(--surface); color:var(--text-main); border:1px solid var(--border); padding:10px; flex:1;" onclick="App.library.builderAddFolder()"><i class="ph ph-folder-plus size-20"></i> Add Folder</button>
                 </div>
                 
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom:-5px; text-align:center;">Drag using the grip to reorder.</p>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom:-5px; text-align:center;">Use the action icons to manage structure.</p>
                 <div id="builder-canvas" class="flex-col gap-2" style="max-height: 45vh; overflow-y: auto; overflow-x:hidden; border: 1px solid var(--border); padding: 12px; border-radius: 14px;"></div>
                 
                 <button type="button" class="btn-primary" onclick="App.library.saveStructure()">Save Changes</button>
@@ -678,7 +675,7 @@
             },
 
             library: {
-                builderState: { items: [], plId: null, draggedPath: null, songMap: {} },
+                builderState: { items: [], plId: null, songMap: {} },
                 
                 async loadLibrary() {
                     if (!App.state.user) return;
@@ -891,13 +888,12 @@
                     this.loadLibrary();
                 },
 
-                /* ====== UNIFIED PLAYLIST / STRUCTURE EDITOR ====== */
+                /* ====== NEW WINDOWS-STYLE STRUCTURE BUILDER ====== */
                 openBuilder(plId, plName, songsData) {
                     const pl = App.state.playlists.find(p => p.id === plId);
                     if(!pl) return;
                     this.builderState.plId = plId;
                     
-                    // Populate Name and Description inputs
                     document.getElementById('builder-pl-name').value = pl.name;
                     const parsed = this.parseDescription(pl.description);
                     document.getElementById('builder-pl-desc').value = parsed.isStruct ? (parsed.data.desc || '') : (parsed.text || '');
@@ -930,8 +926,8 @@
                     App.ui.toggleModal('edit-structure-modal');
                 },
 
-                builderAddFolder() {
-                    const name = prompt("Folder Name:");
+                async builderAddFolder() {
+                    const name = await App.ui.prompt("New Folder", "Enter folder name...");
                     if(name) {
                         this.builderState.items.unshift({ type: 'folder', name, items: [] });
                         this.renderBuilderCanvas();
@@ -941,32 +937,44 @@
                 renderBuilderCanvas() {
                     const canvas = document.getElementById('builder-canvas');
                     
-                    const renderNode = (node, path) => {
+                    const renderNode = (node, path, isFirst, isLast) => {
+                        const moveUpBtn = !isFirst ? `<button class="builder-btn" onclick="App.library.builderMoveNode('${path}', -1)" title="Move Up"><i class="ph ph-caret-up size-16"></i></button>` : `<div style="width:28px;"></div>`;
+                        const moveDownBtn = !isLast ? `<button class="builder-btn" onclick="App.library.builderMoveNode('${path}', 1)" title="Move Down"><i class="ph ph-caret-down size-16"></i></button>` : `<div style="width:28px;"></div>`;
+                        const delBtn = `<button class="builder-btn danger" onclick="App.library.builderDeleteNode('${path}')" title="Delete"><i class="ph ph-x size-16"></i></button>`;
+
                         if(node.type === 'song') {
                             const song = this.builderState.songMap[node.id];
                             if(!song) return '';
+                            const moveFolderBtn = `<button class="builder-btn" onclick="App.library.builderMoveToFolderPrompt('${path}')" title="Move to Folder"><i class="ph ph-folder-dashed size-16"></i></button>`;
+                            
                             return `
-                                <div class="card drag-item" draggable="true" data-path="${path}" style="padding: 8px; margin-bottom: 4px; border: 1px solid var(--border);">
+                                <div class="card" style="padding: 8px; margin-bottom: 4px; border: 1px solid var(--border); cursor:default;">
                                     <div class="flex items-center" style="width:100%;">
-                                        <div class="drag-grip"><i class="ph ph-dots-six-vertical size-20"></i></div>
                                         <div class="song-avatar" style="width:32px; height:32px; border-radius:8px;"><i class="ph ph-music-notes size-16"></i></div>
-                                        <div class="card-info" style="margin-left: 12px;">
+                                        <div class="card-info" style="margin-left: 12px; flex:1;">
                                             <h4 style="font-size: 13px;">${song.title}</h4>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            ${moveUpBtn}${moveDownBtn}${moveFolderBtn}${delBtn}
                                         </div>
                                     </div>
                                 </div>
                             `;
                         } else if(node.type === 'folder') {
+                            const moveFolderBtn = `<button class="builder-btn" onclick="App.library.builderMoveToFolderPrompt('${path}')" title="Move to Folder"><i class="ph ph-folder-dashed size-16"></i></button>`;
+                            const renameBtn = `<button class="builder-btn" onclick="App.library.builderRenameFolder('${path}')" title="Rename"><i class="ph ph-pencil-simple size-16"></i></button>`;
+
                             return `
-                                <div class="drag-item" draggable="true" data-path="${path}" style="margin-bottom:8px; border: 1px solid var(--border); border-radius:12px; overflow:hidden;">
-                                    <div class="folder-header flex items-center drag-grip" style="margin:0; border:none; border-bottom:1px solid var(--border);">
-                                        <i class="ph ph-dots-six-vertical size-20" style="margin-right:8px;"></i>
+                                <div style="margin-bottom:8px; border: 1px solid var(--border); border-radius:12px; overflow:hidden;">
+                                    <div class="folder-header flex items-center" style="margin:0; border:none; border-bottom:1px solid var(--border);">
                                         <i class="ph ph-folder-notch-open size-18" style="margin-right:8px; color:var(--text-muted);"></i>
-                                        <h4>${node.name}</h4>
-                                        <button onclick="App.library.builderDeleteNode('${path}')" style="margin-left:auto; color:var(--danger);"><i class="ph ph-x size-16"></i></button>
+                                        <h4 style="flex:1;">${node.name}</h4>
+                                        <div class="flex items-center gap-2">
+                                            ${moveUpBtn}${moveDownBtn}${moveFolderBtn}${renameBtn}${delBtn}
+                                        </div>
                                     </div>
-                                    <div class="folder-dropzone" data-target-path="${path}" style="min-height:40px; padding:8px; background:rgba(0,0,0,0.2);">
-                                        ${node.items.length ? node.items.map((child, i) => renderNode(child, `${path}-${i}`)).join('') : '<div style="text-align:center; color:var(--text-muted); font-size:11px; padding:10px;">Empty (Drag songs here)</div>'}
+                                    <div class="folder-content" style="padding:8px 8px 8px 16px; background:rgba(0,0,0,0.2);">
+                                        ${node.items.length ? node.items.map((child, i) => renderNode(child, `${path}-${i}`, i === 0, i === node.items.length - 1)).join('') : '<div style="text-align:center; color:var(--text-muted); font-size:11px; padding:10px;">Empty Folder</div>'}
                                     </div>
                                 </div>
                             `;
@@ -974,138 +982,10 @@
                     };
 
                     canvas.innerHTML = `
-                        <div class="folder-dropzone" data-target-path="root" style="min-height:100px; padding-bottom:40px;">
-                            ${this.builderState.items.map((n, i) => renderNode(n, `root-${i}`)).join('')}
+                        <div style="padding-bottom:20px;">
+                            ${this.builderState.items.map((n, i) => renderNode(n, `root-${i}`, i === 0, i === this.builderState.items.length - 1)).join('')}
                         </div>
                     `;
-
-                    this.attachDragEvents(canvas);
-                },
-
-                // FIXED MATHEMATICS FOR SAFE SPLICE & NATIVE MOBILE TOUCH POLYFILL
-                attachDragEvents(canvas) {
-                    const items = canvas.querySelectorAll('.drag-item');
-                    const zones = canvas.querySelectorAll('.folder-dropzone');
-                    const grips = canvas.querySelectorAll('.drag-grip');
-
-                    // --- 1. HTML5 Drag & Drop (Desktop) ---
-                    items.forEach(item => {
-                        item.addEventListener('dragstart', (e) => {
-                            e.stopPropagation();
-                            this.builderState.draggedPath = item.dataset.path;
-                            setTimeout(() => item.classList.add('dragging'), 0);
-                        });
-                        item.addEventListener('dragend', (e) => {
-                            e.stopPropagation();
-                            item.classList.remove('dragging');
-                            zones.forEach(z => z.classList.remove('drag-over', 'drag-over-zone'));
-                            items.forEach(i => i.classList.remove('drag-over'));
-                        });
-                        item.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); item.classList.add('drag-over'); });
-                        item.addEventListener('dragleave', (e) => { e.preventDefault(); e.stopPropagation(); item.classList.remove('drag-over'); });
-                        item.addEventListener('drop', (e) => {
-                            e.preventDefault(); e.stopPropagation();
-                            item.classList.remove('drag-over');
-                            this.handleDrop(this.builderState.draggedPath, item.dataset.path, 'before');
-                        });
-                    });
-
-                    zones.forEach(zone => {
-                        zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.style.background = 'rgba(255,255,255,0.05)'; });
-                        zone.addEventListener('dragleave', (e) => { e.preventDefault(); zone.style.background = ''; });
-                        zone.addEventListener('drop', (e) => {
-                            e.preventDefault(); zone.style.background = '';
-                            this.handleDrop(this.builderState.draggedPath, zone.dataset.targetPath, 'inside');
-                        });
-                    });
-
-                    // --- 2. Touch Polyfill for Mobile Drag & Drop ---
-                    let dragSrcEl = null;
-                    let touchClone = null;
-                    let lastTarget = null;
-                    let offsetX = 0, offsetY = 0;
-
-                    const clearTouchState = () => {
-                        if(touchClone) { touchClone.remove(); touchClone = null; }
-                        if(dragSrcEl) { dragSrcEl.classList.remove('dragging'); dragSrcEl.style.opacity = ''; }
-                        canvas.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
-                        canvas.querySelectorAll('.folder-dropzone').forEach(el => el.style.background = '');
-                        dragSrcEl = null; lastTarget = null;
-                    };
-
-                    grips.forEach(grip => {
-                        grip.addEventListener('touchstart', (e) => {
-                            const item = grip.closest('.drag-item');
-                            if(!item) return;
-                            
-                            dragSrcEl = item;
-                            this.builderState.draggedPath = item.dataset.path;
-                            
-                            const rect = item.getBoundingClientRect();
-                            const touch = e.touches[0];
-                            offsetX = touch.clientX - rect.left;
-                            offsetY = touch.clientY - rect.top;
-
-                            touchClone = item.cloneNode(true);
-                            touchClone.style.position = 'fixed';
-                            touchClone.style.left = rect.left + 'px';
-                            touchClone.style.top = rect.top + 'px';
-                            touchClone.style.width = rect.width + 'px';
-                            touchClone.style.zIndex = '9999';
-                            touchClone.style.opacity = '0.9';
-                            touchClone.style.pointerEvents = 'none'; // Critical: Let touches pass through
-                            touchClone.style.boxShadow = '0 20px 40px rgba(0,0,0,0.6)';
-                            document.body.appendChild(touchClone);
-
-                            item.style.opacity = '0.3';
-                            item.classList.add('dragging');
-                        }, {passive: false});
-                    });
-
-                    canvas.addEventListener('touchmove', (e) => {
-                        if(!dragSrcEl || !touchClone) return;
-                        e.preventDefault(); // Stop screen from scrolling
-
-                        const touch = e.touches[0];
-                        touchClone.style.left = (touch.clientX - offsetX) + 'px';
-                        touchClone.style.top = (touch.clientY - offsetY) + 'px';
-
-                        const elUnder = document.elementFromPoint(touch.clientX, touch.clientY);
-                        if(!elUnder) return;
-
-                        const overItem = elUnder.closest('.drag-item');
-                        const overZone = elUnder.closest('.folder-dropzone');
-
-                        canvas.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
-                        canvas.querySelectorAll('.folder-dropzone').forEach(el => el.style.background = '');
-
-                        lastTarget = null;
-
-                        if (overItem && overItem !== dragSrcEl && !overItem.contains(dragSrcEl)) {
-                            overItem.classList.add('drag-over');
-                            lastTarget = { type: 'item', el: overItem };
-                        } else if (overZone && !dragSrcEl.contains(overZone)) {
-                            overZone.style.background = 'rgba(255,255,255,0.05)';
-                            lastTarget = { type: 'zone', el: overZone };
-                        }
-                    }, {passive: false});
-
-                    canvas.addEventListener('touchend', (e) => {
-                        if(!dragSrcEl) return;
-                        
-                        const srcPath = this.builderState.draggedPath;
-                        let tgtPath = null;
-                        let pos = null;
-
-                        if(lastTarget) {
-                            if(lastTarget.type === 'item') { tgtPath = lastTarget.el.dataset.path; pos = 'before'; } 
-                            else if(lastTarget.type === 'zone') { tgtPath = lastTarget.el.dataset.targetPath; pos = 'inside'; }
-                        }
-
-                        clearTouchState();
-
-                        if(tgtPath && pos) { this.handleDrop(srcPath, tgtPath, pos); }
-                    });
                 },
 
                 getNodeByPath(pathStr) {
@@ -1125,44 +1005,94 @@
                     return this.getNodeByPath(parts.join('-'));
                 },
 
-                handleDrop(sourcePath, targetPath, position) {
-                    // Prevent dropping on itself or into its own nested children
-                    if(!sourcePath || sourcePath === targetPath || targetPath.startsWith(sourcePath + '-')) return;
+                builderMoveNode(pathStr, direction) {
+                    const parent = this.getParentByPath(pathStr);
+                    const parts = pathStr.split('-');
+                    const idx = parseInt(parts.pop());
+                    const newIdx = idx + direction;
                     
+                    if(parent && newIdx >= 0 && newIdx < parent.items.length) {
+                        const temp = parent.items[idx];
+                        parent.items[idx] = parent.items[newIdx];
+                        parent.items[newIdx] = temp;
+                        this.renderBuilderCanvas();
+                    }
+                },
+
+                async builderRenameFolder(pathStr) {
+                    const node = this.getNodeByPath(pathStr);
+                    if(node && node.type === 'folder') {
+                        const newName = await App.ui.prompt("Rename Folder", "Enter new name...");
+                        if(newName) {
+                            node.name = newName;
+                            this.renderBuilderCanvas();
+                        }
+                    }
+                },
+
+                builderMoveToFolderPrompt(pathStr) {
+                    const m = document.getElementById('custom-dialog');
+                    document.getElementById('cd-title').innerText = "Move To...";
+                    const msg = document.getElementById('cd-msg');
+                    
+                    const folders = [{name: 'Root Context', path: 'root'}];
+                    const gatherFolders = (items, currentPath) => {
+                        items.forEach((n, i) => {
+                            if(n.type === 'folder') {
+                                const p = currentPath + '-' + i;
+                                // Prevent moving a folder into itself or its own children
+                                if(!pathStr.startsWith(p)) {
+                                    folders.push({name: `📁 ${n.name}`, path: p});
+                                    gatherFolders(n.items, p);
+                                }
+                            }
+                        });
+                    };
+                    gatherFolders(this.builderState.items, 'root');
+                    
+                    let html = '<div class="flex-col gap-2" style="margin-top:10px; max-height:300px; overflow-y:auto; text-align:left;">';
+                    folders.forEach(f => {
+                        html += `<button type="button" class="btn-primary" style="background:var(--surface-hover); color:var(--text-main); border:1px solid var(--border); text-align:left; justify-content:flex-start;" onclick="App.library.executeMove('${pathStr}', '${f.path}')">${f.name}</button>`;
+                    });
+                    html += '</div>';
+                    msg.innerHTML = html;
+                    
+                    document.getElementById('cd-input').classList.add('hidden');
+                    const btnYes = document.getElementById('cd-confirm');
+                    const btnNo = document.getElementById('cd-cancel');
+                    
+                    btnYes.classList.add('hidden'); // Hide default confirm
+                    
+                    const clean = () => { 
+                        m.classList.remove('active'); 
+                        btnYes.classList.remove('hidden'); // Reset
+                        msg.innerHTML = ''; 
+                    };
+                    
+                    btnNo.onclick = clean;
+                    m.onclick = (e) => { if(e.target === m) clean(); };
+                    m.classList.add('active');
+                },
+
+                executeMove(sourcePath, targetPath) {
+                    const m = document.getElementById('custom-dialog');
+                    m.classList.remove('active');
+                    document.getElementById('cd-confirm').classList.remove('hidden'); // Reset UI
+
                     const srcParent = this.getParentByPath(sourcePath);
                     const srcParts = sourcePath.split('-');
                     const srcIndex = parseInt(srcParts.pop());
-
-                    // Failsafe 
-                    if (!srcParent || !srcParent.items) return; 
-
-                    // Remove node from original location
-                    const nodeToMove = srcParent.items.splice(srcIndex, 1)[0];
-
-                    const tgtParentPath = targetPath.substring(0, targetPath.lastIndexOf('-'));
-                    const srcParentPath = sourcePath.substring(0, sourcePath.lastIndexOf('-'));
                     
-                    if(position === 'inside') {
-                        const targetNode = this.getNodeByPath(targetPath);
-                        if(targetNode && (targetNode.type === 'folder' || targetPath === 'root')) {
-                            if(!targetNode.items) targetNode.items = [];
-                            targetNode.items.push(nodeToMove);
-                        } else {
-                            srcParent.items.splice(srcIndex, 0, nodeToMove); // Revert
-                        }
-                    } else if(position === 'before') {
-                        let targetParts = targetPath.split('-');
-                        let targetIndex = parseInt(targetParts[targetParts.length - 1]);
-                        
-                        // Fix index shift logic for drops within the same parent
-                        if (srcParentPath === tgtParentPath && targetIndex > srcIndex) { targetIndex -= 1; }
-
-                        const actualTargetParent = this.getNodeByPath(tgtParentPath);
-                        if (actualTargetParent && actualTargetParent.items) {
-                            actualTargetParent.items.splice(targetIndex, 0, nodeToMove);
-                        } else {
-                             srcParent.items.splice(srcIndex, 0, nodeToMove); // Revert
-                        }
+                    if(!srcParent || !srcParent.items) return;
+                    
+                    const nodeToMove = srcParent.items.splice(srcIndex, 1)[0];
+                    const targetNode = this.getNodeByPath(targetPath);
+                    
+                    if(targetNode) {
+                        if(!targetNode.items) targetNode.items = [];
+                        targetNode.items.push(nodeToMove);
+                    } else {
+                        srcParent.items.splice(srcIndex, 0, nodeToMove); // Safety revert
                     }
                     this.renderBuilderCanvas();
                 },
@@ -1174,6 +1104,7 @@
                     const node = parent.items[idx];
                     
                     if(node.type === 'folder') {
+                        // Extract songs safely to root before destroying folder
                         const extractSongs = (n) => n.items.forEach(child => {
                             if(child.type==='song') this.builderState.items.push(child);
                             else if(child.type==='folder') extractSongs(child);
@@ -1192,7 +1123,6 @@
                     
                     await miyuDB.from('playlists').update({ name: newName, description: payload }).eq('id', this.builderState.plId);
                     
-                    // Update state locally so UI is snappy
                     const plIndex = App.state.playlists.findIndex(p => p.id === this.builderState.plId);
                     if (plIndex > -1) {
                         App.state.playlists[plIndex].name = newName;
@@ -1206,6 +1136,7 @@
                     this.viewPlaylist(this.builderState.plId, newName);
                 },
 
+                /* ====== NEW ISOLATED PLAYBACK LOGIC ====== */
                 async viewPlaylist(plId, plName) {
                     document.getElementById('library-detail-title').innerText = plName;
                     const container = document.getElementById('pl-view-songs');
@@ -1232,9 +1163,7 @@
                     actionContainer.innerHTML += `<button id="btn-delete-pl" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:10px 18px; border-radius:24px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE</button>`;
                     setTimeout(() => document.getElementById('btn-delete-pl').onclick = () => App.library.deletePlaylist(plId), 10);
                     
-                    const flatQueue = [];
                     const songMap = {}; songsData.forEach(s => songMap[s.id] = s);
-
                     const parsed = this.parseDescription(pl.description);
                     
                     if(!parsed.isStruct) {
@@ -1242,16 +1171,24 @@
                         return;
                     }
 
-                    const renderNested = (items) => {
+                    // Scopes queue generation directly to the immediate folder level
+                    const renderNested = (items, path) => {
+                        const currentQueue = [];
                         let html = '';
+                        
+                        // Pass 1: Gather songs for THIS specific folder layer
                         items.forEach(node => {
+                            if(node.type === 'song' && songMap[node.id]) currentQueue.push(songMap[node.id]);
+                        });
+                        const safeQueue = btoa(encodeURIComponent(JSON.stringify(currentQueue)));
+                        
+                        // Pass 2: Generate UI with isolated queue execution
+                        let songIdx = 0;
+                        items.forEach((node, i) => {
                             if(node.type === 'song' && songMap[node.id]) {
                                 const song = songMap[node.id];
-                                const queueIdx = flatQueue.length;
-                                flatQueue.push(song);
-                                
                                 html += `
-                                    <div class="card" data-song-id="${song.id}" onclick="App.audio.playQueue('DYNAMIC_QUEUE', ${queueIdx})">
+                                    <div class="card" data-song-id="${song.id}" onclick="App.audio.playQueue('${safeQueue}', ${songIdx++})">
                                         <div class="flex items-center gap-4" style="flex:1; min-width:0;">
                                             <div class="song-avatar btn-icon" style="border:none;"><i class="ph ph-music-notes size-20"></i></div>
                                             <div class="card-info">
@@ -1264,18 +1201,17 @@
                             } else if(node.type === 'folder') {
                                 html += `
                                     <div class="folder-header"><i class="ph ph-folder size-18" style="margin-right:8px; color:var(--text-muted);"></i><h4>${node.name}</h4></div>
-                                    <div class="folder-content">${renderNested(node.items || [])}</div>
+                                    <div class="folder-content">${renderNested(node.items || [], path + '-' + i)}</div>
                                 `;
                             }
                         });
                         return html;
                     };
 
-                    let finalHtml = renderNested(parsed.data.items || []);
-                    if(flatQueue.length === 0) finalHtml = '<p style="color:var(--text-muted); font-size:13px; text-align:center;">Empty Collection</p>';
+                    let finalHtml = renderNested(parsed.data.items || [], 'root');
+                    if(finalHtml.trim() === '') finalHtml = '<p style="color:var(--text-muted); font-size:13px; text-align:center;">Empty Collection</p>';
                     
-                    const safeQueue = btoa(encodeURIComponent(JSON.stringify(flatQueue)));
-                    container.innerHTML = finalHtml.replace(/'DYNAMIC_QUEUE'/g, `'${safeQueue}'`);
+                    container.innerHTML = finalHtml;
                     App.ui.highlightPlayingSong();
                 }
             },
@@ -1703,6 +1639,7 @@
                         
                         const btnYes = document.getElementById('cd-confirm');
                         const btnNo = document.getElementById('cd-cancel');
+                        btnYes.classList.remove('hidden');
                         
                         const clean = () => { m.classList.remove('active'); btnYes.onclick = null; btnNo.onclick = null; };
                         btnYes.onclick = () => { clean(); resolve(true); };
@@ -1721,6 +1658,7 @@
                         
                         const btnYes = document.getElementById('cd-confirm');
                         const btnNo = document.getElementById('cd-cancel');
+                        btnYes.classList.remove('hidden');
                         
                         const clean = () => { m.classList.remove('active'); btnYes.onclick = null; btnNo.onclick = null; };
                         btnYes.onclick = () => { clean(); resolve(inp.value.trim()); };
