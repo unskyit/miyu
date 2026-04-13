@@ -73,7 +73,6 @@ Miyu is a masterclass in modern web capabilities, strictly avoiding bloated fram
 <div align="center">
   <img src="./docs/img_01.png" width="30%">
   <img src="./docs/img_02.png" width="30%">
-  <img src="./docs/img_03.png" width="30%">
   <img src="./docs/img_04.png" width="30%">
 </div>
 
