@@ -12,7 +12,10 @@
 
   <br />
   
-  ![Miyu Hero Mockup](https://via.placeholder.com/1000x500/121212/FFFFFF?text=Miyu+App+Hero+Screenshot)
+  <div align="center">
+  <img src="logo.png" width="30%">
+  
+</div>
 
 </div>
 
