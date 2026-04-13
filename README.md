@@ -13,7 +13,7 @@
   <br />
   
   <div align="center">
-  <img src="logo.jpg" width="30%">
+  <img src="logo.jpg" width="10%">
   
 </div>
 
