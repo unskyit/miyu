@@ -71,9 +71,10 @@ Miyu is a masterclass in modern web capabilities, strictly avoiding bloated fram
 ## 📸 Showcase
 
 <div align="center">
-  <img src="https://via.placeholder.com/300x600/121212/FFFFFF?text=Zen+Mode" width="30%">
-  <img src="https://via.placeholder.com/300x600/121212/FFFFFF?text=Library+View" width="30%">
-  <img src="https://via.placeholder.com/300x600/121212/FFFFFF?text=Sync+Room" width="30%">
+  <img src="./docs/img_01.png" width="30%">
+  <img src="./docs/img_02.png" width="30%">
+  <img src="./docs/img_03.png" width="30%">
+  <img src="./docs/img_04.png" width="30%">
 </div>
 
 ---
