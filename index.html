@@ -1280,7 +1280,8 @@
                     document.getElementById('explore-profile-title').innerText = `${u.handle}'s Collections`;
                     const container = document.getElementById('explore-playlists-list');
                     container.innerHTML = `<div style="grid-column: 1 / -1">${App.ui.getSkeletonHTML(1)}</div>`;
-                    App.ui.pushView('explore-profile'); 
+                    
+                    App.ui.pushView('explore-user-profile'); // Bulletproof ID fix
 
                     const { data: playlists } = await miyuDB.from('playlists').select('*').eq('user_id', u.id);
                     
@@ -1308,7 +1309,8 @@
                     document.getElementById('explore-pl-title').innerText = plName;
                     const container = document.getElementById('explore-pl-songs');
                     container.innerHTML = App.ui.getSkeletonHTML();
-                    App.ui.pushView('explore-playlist'); 
+                    
+                    App.ui.pushView('explore-playlist-detail'); // Bulletproof ID fix
 
                     const { data: pl } = await miyuDB.from('playlists').select('*').eq('id', plId).single();
                     const { data: joins } = await miyuDB.from('playlist_songs').select('song_id').eq('playlist_id', plId);
@@ -1699,32 +1701,39 @@
                 getCurrentVisibleView() {
                     const views = ['explore-home', 'explore-user-profile', 'explore-playlist-detail', 'library-home', 'library-detail'];
                     for(let v of views) {
-                        if(!document.getElementById(v).classList.contains('hidden')) return v;
+                        const el = document.getElementById(v);
+                        if(el && !el.classList.contains('hidden')) return v;
                     }
                     return 'explore-home';
                 },
 
                 renderView(viewId) {
-                    // Hide all primary views
-                    document.getElementById('explore-home').classList.add('hidden');
-                    document.getElementById('explore-user-profile').classList.add('hidden');
-                    document.getElementById('explore-playlist-detail').classList.add('hidden');
-                    document.getElementById('library-home').classList.add('hidden');
-                    document.getElementById('library-detail').classList.add('hidden');
+                    // Bulletproof array mapping to hide all primary views
+                    const views = ['explore-home', 'explore-user-profile', 'explore-playlist-detail', 'library-home', 'library-detail'];
+                    views.forEach(v => {
+                        const el = document.getElementById(v);
+                        if(el) el.classList.add('hidden');
+                    });
                     
                     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
 
-                    if(viewId.startsWith('explore')) {
-                        document.getElementById('tab-people').classList.remove('hidden');
+                    // Check which tab root needs to be shown based on the view prefix
+                    if(viewId && viewId.startsWith('explore')) {
+                        const tab = document.getElementById('tab-people');
+                        if(tab) tab.classList.remove('hidden');
                         document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-                        document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+                        const nav = document.querySelector('.nav-item:nth-child(1)');
+                        if(nav) nav.classList.add('active');
                     } else {
-                        document.getElementById('tab-library').classList.remove('hidden');
+                        const tab = document.getElementById('tab-library');
+                        if(tab) tab.classList.remove('hidden');
                         document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-                        document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+                        const nav = document.querySelector('.nav-item:nth-child(2)');
+                        if(nav) nav.classList.add('active');
                     }
                     
-                    document.getElementById(viewId).classList.remove('hidden');
+                    const targetEl = document.getElementById(viewId);
+                    if(targetEl) targetEl.classList.remove('hidden');
                 },
 
                 switchTab(tab) {
