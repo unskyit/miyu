@@ -37,12 +37,13 @@
         
         body { 
             background-color: var(--bg); color: var(--text-main); 
-            position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; 
+            position: fixed; inset: 0; 
+            width: 100vw; height: 100vh; height: 100dvh; 
             overflow: hidden; display: flex; flex-direction: column; 
             transition: background-color 0.4s ease; 
         }
 
-        /* --- SPLASH SCREEN ANIMATION --- */
+        /* --- SPLASH SCREEN --- */
         #splash-screen {
             position: fixed; inset: 0; z-index: 9999; background: var(--bg);
             display: flex; align-items: center; justify-content: center;
@@ -114,8 +115,8 @@
         .card.playing { border-color: var(--text-main); background: rgba(255,255,255,0.15); }
         .card.playing .btn-icon { background: var(--text-main); border-color: var(--text-main); color: var(--accent-invert); }
         .card.playing .card-info h4 { color: var(--text-main); font-weight: 800; }
-        
-        /* --- FILE MANAGER UI UPDATES --- */
+
+        /* --- NEW FILE MANAGER CSS --- */
         .fm-breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 16px; overflow-x: auto; white-space: nowrap; padding-bottom: 4px; }
         .fm-breadcrumb span { cursor: pointer; transition: 0.2s; }
         .fm-breadcrumb span:hover { color: var(--text-main); }
@@ -132,6 +133,18 @@
         .fm-bottom-bar { display: flex; justify-content: space-around; padding: 12px; background: var(--surface); border-top: 1px solid var(--border); border-radius: 16px; margin-top: 12px; }
         .fm-action-btn { flex-direction: column; gap: 4px; font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
         .fm-action-btn i { font-size: 20px; color: var(--text-main); margin-bottom: 2px;}
+
+        /* Windows-Style Builder Controls (Kept for fallback/legacy functions) */
+        .builder-btn { padding: 6px; border-radius: 6px; color: var(--text-muted); border: 1px solid transparent; transition: 0.2s; background: rgba(255,255,255,0.03); }
+        .builder-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.1); border-color: var(--border); }
+        .builder-btn.danger:hover { color: var(--danger); border-color: var(--danger); background: rgba(255,59,48,0.1); }
+
+        /* Folder Toggle UI */
+        .folder-collapsed .folder-content { display: none !important; }
+        .folder-toggle { cursor: pointer; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; transition: 0.2s; background: rgba(255,255,255,0.05); }
+        .folder-toggle:hover { background: rgba(255,255,255,0.15); }
+        .folder-toggle i { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .folder-collapsed .folder-toggle i { transform: rotate(-90deg); }
 
         .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; margin-right: 16px; flex-shrink: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
         .song-avatar { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-muted); }
@@ -173,11 +186,12 @@
         .player-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-shrink: 0;}
         .main-controls { display: flex; gap: 12px; align-items: center; }
         
-        .play-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); box-shadow: 0 6px 24px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
+        .play-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); box-shadow: 0 6px 24px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;}
         .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         
         /* MORPHING PLAY/PAUSE SVG */
         .morph-icon { width: 28px; height: 28px; fill: var(--accent-invert); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .play-btn-mini .morph-icon { width: 20px; height: 20px; }
         .is-playing .morph-icon { d: path('M 6 6 L 10 6 L 10 26 L 6 26 Z M 22 6 L 26 6 L 26 26 L 22 26 Z'); } /* Pause Bars */
         .is-paused .morph-icon { d: path('M 8 5 L 28 16 L 28 16 L 8 27 Z M 8 5 L 28 16 L 28 16 L 8 27 Z'); } /* Play Triangle */
 
@@ -198,7 +212,14 @@
         #custom-dialog .modal-content { border-radius: 24px; padding: 32px 24px; max-height: 80vh; transform: scale(0.9); opacity: 0; margin: 20px; box-shadow: 0 10px 50px rgba(0,0,0,0.8); }
         #custom-dialog.active .modal-content { transform: scale(1); opacity: 1; }
 
-        /* --- RADAR UI FOR SYNC --- */
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border); font-weight: 600;}
+        .sync-code-box { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; background: var(--text-main); color: var(--accent-invert); border-radius: 16px; padding: 16px 24px; text-align: center; margin: 20px auto; display: inline-block; box-shadow: 0 4px 20px rgba(255,255,255,0.15); }
+        
+        .stage-item { display: flex; flex-direction: column; gap: 8px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; }
+        .stage-prog-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+        .stage-prog-fill { height: 100%; background: var(--success); width: 0%; transition: 0.2s; }
+
+        /* RADAR UI */
         .radar-container { position: relative; width: 100%; height: 200px; margin: 20px 0; border-radius: 24px; background: rgba(0,0,0,0.2); overflow: hidden; border: 1px solid var(--border); }
         .radar-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; background: var(--success); border-radius: 50%; box-shadow: 0 0 20px var(--success); z-index: 2; }
         .radar-sweep { position: absolute; top: 50%; left: 50%; width: 200%; height: 200%; transform-origin: 0 0; background: conic-gradient(from 0deg, transparent 70%, var(--radar) 100%); animation: sweep 4s linear infinite; z-index: 1; pointer-events: none;}
@@ -208,9 +229,7 @@
         .radar-dot { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 3; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         .radar-dot .dot { width: 12px; height: 12px; background: var(--text-main); border-radius: 50%; box-shadow: 0 0 10px var(--text-main); }
         .radar-dot .name { font-size: 10px; font-weight: 700; color: var(--text-main); margin-top: 4px; background: var(--surface); padding: 2px 6px; border-radius: 8px; border: 1px solid var(--border); }
-        
-        .sync-code-box { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; background: var(--text-main); color: var(--accent-invert); border-radius: 16px; padding: 16px 24px; text-align: center; margin: 20px auto; display: inline-block; box-shadow: 0 4px 20px rgba(255,255,255,0.15); }
-        
+
         #toast { position: fixed; top: calc(env(safe-area-inset-top, 20px) + 20px); left: 50%; transform: translateX(-50%) translateY(-150px); padding: 14px 28px; border-radius: 30px; font-size: 13px; z-index: 2000; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); background: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border); text-align: center; max-width: 90%; box-shadow: var(--shadow); font-weight: 600; pointer-events: none; backdrop-filter: blur(10px);}
         #toast.show { transform: translateX(-50%) translateY(0); }
     </style>
@@ -239,7 +258,7 @@
     <div id="app-screen">
         <header>
             <div class="flex items-center gap-3">
-                <div style="width:32px; height:32px; border-radius:8px; background:var(--text-main); color:var(--accent-invert); display:flex; align-items:center; justify-content:center; font-weight:800;">M</div>
+                <div style="width:32px; height:32px; border-radius:8px; background:var(--text-main); color:var(--accent-invert); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px;">M</div>
                 <h1>Miyu</h1>
             </div>
             <div class="flex gap-4 items-center">
@@ -260,7 +279,7 @@
                 </div>
                 <div id="explore-user-profile" class="hidden">
                     <div class="flex justify-between items-center" style="margin-bottom: 24px;">
-                        <button onclick="App.ui.navigateBack()" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
+                        <button onclick="history.back()" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
                         <button onclick="App.stash.openCommunitySelector()" style="background:rgba(10, 132, 255, 0.1); color:var(--stash); padding:10px 18px; border-radius:24px; border:1px solid var(--stash); font-weight:700; font-size: 13px;"><i class="ph ph-download-simple size-18" style="margin-right:6px;"></i> LOCAL STASH</button>
                     </div>
                     <h2 id="explore-profile-title" style="margin-top:0; font-size:28px; font-weight:800; letter-spacing:-1px;">Collections</h2>
@@ -268,7 +287,7 @@
                 </div>
                 <div id="explore-playlist-detail" class="hidden">
                     <div class="flex justify-between items-center" style="margin-bottom: 24px;">
-                        <button onclick="App.ui.navigateBack()" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
+                        <button onclick="history.back()" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
                     </div>
                     <h2 id="explore-pl-title" style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px;">Playlist</h2>
                     <div id="explore-pl-songs" class="flex-col" style="margin-top:20px;"></div>
@@ -308,7 +327,7 @@
                 
                 <div id="library-detail" class="hidden">
                     <div class="flex justify-between items-center" style="margin-bottom: 24px;">
-                        <button onclick="App.ui.navigateBack()" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
+                        <button onclick="history.back()" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i></button>
                         <div class="flex gap-2" id="library-detail-actions"></div>
                     </div>
                     <h2 id="library-detail-title" style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px;">Collection</h2>
@@ -417,9 +436,37 @@
                     <span>Beat Visualizer</span>
                     <button type="button" id="vis-toggle" onclick="App.settings.toggleVis()" style="font-weight: 700; color: var(--success);">ON</button>
                 </div>
+                <div class="setting-row">
+                    <span>Offline Engine</span>
+                    <button type="button" id="cache-toggle" onclick="App.settings.toggleCache()" style="font-weight: 700; color: var(--text-muted);">OFF</button>
+                </div>
+                <div class="setting-row">
+                    <span>Seek Interval</span>
+                    <select id="seek-select" onchange="App.settings.setSeekStep(this.value)" style="width: 150px; flex-shrink: 0;">
+                        <option value="5">5 Secs</option>
+                        <option value="10">10 Secs</option>
+                        <option value="15">15 Secs</option>
+                    </select>
+                </div>
                 <div class="setting-row flex-col items-start gap-1" style="border-bottom: none; padding-bottom: 0;">
                     <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">Hotkeys: [Space] Play/Pause • [Arrows] Seek</span>
                 </div>
+                
+                <div id="settings-storage-block" class="setting-row flex-col items-start gap-3" style="border-bottom: none; padding-bottom: 0; margin-top:10px; position:relative;">
+                    <div id="storage-content" style="width:100%; transition: 0.3s;">
+                        <div class="flex justify-between" style="width: 100%;">
+                            <span>Vault Allocation</span>
+                            <span id="storage-txt" style="font-size: 13px; color: var(--text-muted);">0.0 MB / 1000 MB</span>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top:8px;">
+                            <div id="storage-bar" style="height: 100%; width: 0%; background: var(--text-main); transition: 0.5s;"></div>
+                        </div>
+                    </div>
+                    <div id="storage-guest-overlay" class="hidden" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; color:var(--text-main);" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">
+                        Authenticate to View Storage
+                    </div>
+                </div>
+
                 <div id="auth-status-row" class="setting-row" style="border-bottom: none; margin-top: 16px;"></div>
             </div>
         </div>
@@ -436,9 +483,10 @@
 
         <div id="create-pl-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('create-pl-modal')">
             <div class="modal-content flex-col gap-4">
-                <h2 style="margin-top: 0;">New Collection</h2>
+                <h2 style="margin-top: 0;">New Playlist</h2>
                 <input type="text" id="pl-name" placeholder="Name (Max 20 chars)" maxlength="20">
                 <textarea id="pl-desc" placeholder="Description (Max 100 chars)" maxlength="100" rows="2"></textarea>
+                <div id="pl-song-selector" class="flex-col gap-2" style="max-height: 220px; overflow-y: auto; border: 1px solid var(--border); padding: 12px; border-radius: 14px;"></div>
                 <button type="button" class="btn-primary" onclick="App.library.savePlaylist()">Forge Collection</button>
             </div>
         </div>
@@ -469,6 +517,7 @@
         <div id="stash-builder-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('stash-builder-modal')">
             <div class="modal-content flex-col gap-4">
                 <h2 style="margin-top: 0; color:var(--stash);">Forge Stash</h2>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top:-10px;">Local curation. Doesn't use cloud storage.</p>
                 <input type="text" id="stash-name" placeholder="Stash Name" maxlength="20">
                 <div id="stash-song-selector" class="flex-col gap-2" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); padding: 12px; border-radius: 14px;"></div>
                 <button type="button" class="btn-primary" style="background:var(--stash); color:white;" onclick="App.stash.saveStash()">Pin to Stash</button>
@@ -483,7 +532,7 @@
                 </div>
                 
                 <div id="sync-init-view">
-                    <p style="font-size: 14px; color: var(--text-muted); font-weight: 500; margin-bottom: 20px;">Connect globally via secure signaling.</p>
+                    <p style="font-size: 14px; color: var(--text-muted); font-weight: 500; margin-bottom: 20px;">Lock playback seamlessly across devices globally.</p>
                     <input type="text" id="sync-alias" placeholder="Your Alias..." maxlength="15" style="margin-bottom: 16px; text-align:center;">
                     <div class="flex gap-4">
                         <button type="button" class="btn-primary" onclick="App.sync.hostSession()">Create Room</button>
@@ -512,7 +561,6 @@
     <script>
         window.onerror = function(m, s, l) { console.error("ERR:", m, "L:", l); return true; };
 
-        // SUPABASE INIT
         const MIYU_URL = 'https://vfkkoacakiaulcjviyfe.supabase.co';
         const MIYU_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZma2tvYWNha2lhdWxjanZpeWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTQxNjAsImV4cCI6MjA4OTY5MDE2MH0.qlXPSD-31q-UrTDja9wN2QXp8Fazm2zORKaFuzJ1vq4';
         const miyuDB = window.supabase.createClient(MIYU_URL, MIYU_KEY, { realtime: { params: { eventsPerSecond: 10 } } });
@@ -522,7 +570,7 @@
                 user: null, userHandle: '', theme: 'ips', caching: false, visEnabled: true,
                 songs: [], playlists: [], queue: [], currentIndex: -1, currentSongId: null,
                 isPlaying: false, loopMode: 0, shuffle: false, volume: 1, playerMode: 'mini',
-                activeProfileUser: null, historyStack: ['home']
+                activeProfileUser: null
             },
             audioElement: new Audio(),
             stagedFiles: [],
@@ -536,35 +584,48 @@
                 this.visualizer.init();
                 this.stash.load();
                 
-                // Hardware Back Button Routing
+                document.getElementById('upload-files').addEventListener('change', (e) => this.library.stageUploads(e));
+
+                // Hardware Back button routing injection - strictly mapped to existing robust functions
                 window.addEventListener('popstate', (e) => {
-                    if(e.state && e.state.view) this.ui.handlePopState(e.state.view);
-                    else this.ui.handlePopState('home');
+                    if (e.state) {
+                        if (e.state.scope === 'explore') App.ui.navigateExplore(e.state.view, true);
+                        else if (e.state.scope === 'library') App.ui.navigateLibrary(e.state.view, true);
+                    } else {
+                        App.ui.navigateExplore('home', true);
+                        App.ui.navigateLibrary('home', true);
+                    }
                 });
 
-                // Audio Context Pre-warm mechanism for tricky mobile autoplay
-                document.body.addEventListener('touchstart', () => {
-                    if(this.visualizer.audioCtx && this.visualizer.audioCtx.state === 'suspended') {
-                        this.visualizer.audioCtx.resume();
+                document.addEventListener('click', (e) => {
+                    const p = document.getElementById('player-container');
+                    if (p.classList.contains('zen-active')) {
+                        if(!e.target.closest('.player-controls') && !e.target.closest('.progress-wrapper')) {
+                            App.ui.toggleZenMode();
+                        }
                     }
+                });
+
+                document.addEventListener('fullscreenchange', () => {
+                    const icon = document.getElementById('icon-fullscreen-app');
+                    if(icon) icon.classList.replace(document.fullscreenElement ? 'ph-corners-out' : 'ph-corners-in', document.fullscreenElement ? 'ph-corners-in' : 'ph-corners-out');
+                });
+
+                // Audio Context pre-warmers
+                document.body.addEventListener('touchstart', () => {
+                    if(this.visualizer.audioCtx && this.visualizer.audioCtx.state === 'suspended') this.visualizer.audioCtx.resume();
                 }, { once: true });
                 document.body.addEventListener('click', () => {
-                    if(this.visualizer.audioCtx && this.visualizer.audioCtx.state === 'suspended') {
-                        this.visualizer.audioCtx.resume();
-                    }
+                    if(this.visualizer.audioCtx && this.visualizer.audioCtx.state === 'suspended') this.visualizer.audioCtx.resume();
                 }, { once: true });
 
-                // App interactions
-                document.getElementById('upload-files')?.addEventListener('change', (e) => this.library.stageUploads(e));
-
-                // Loading routine
-                Promise.all([this.checkSession(), this.explore.loadUsers()])
-                    .finally(() => {
-                        setTimeout(() => {
-                            document.getElementById('splash-screen').classList.add('hidden-splash');
-                            document.getElementById('app-screen').classList.add('visible');
-                        }, 1800); // Cinematic delay
-                    });
+                this.checkSession();
+                this.explore.loadUsers().finally(() => {
+                    setTimeout(() => {
+                        document.getElementById('splash-screen').classList.add('hidden-splash');
+                        document.getElementById('app-screen').classList.add('visible');
+                    }, 1800); 
+                });
             },
 
             setupHotkeys() {
@@ -580,20 +641,20 @@
                 const aud = this.audioElement;
                 aud.addEventListener('timeupdate', () => this.ui.updateProgress());
                 aud.addEventListener('ended', () => this.audio.handleEnd());
-                
-                // Buffering State Handlers
+
+                // Buffering State Handlers for robust playback
                 aud.addEventListener('waiting', () => {
-                    document.getElementById('player-artist').innerText = "Buffering...";
+                    document.getElementById('player-artist').innerText = "Buffering stream...";
                 });
                 aud.addEventListener('playing', () => {
                     document.getElementById('player-artist').innerText = "Streaming HQ";
                 });
                 aud.addEventListener('error', (e) => {
                     console.error("Audio Error:", e);
-                    App.ui.toast("Playback failed. Reconnecting...");
+                    App.ui.toast("Stream interrupted. Recovering...");
                     setTimeout(() => { if(App.state.isPlaying) aud.play(); }, 1500);
                 });
-
+                
                 aud.addEventListener('play', () => { 
                     this.state.isPlaying = true; 
                     document.querySelectorAll('.btn-morph').forEach(btn => btn.classList.replace('is-paused', 'is-playing'));
@@ -612,10 +673,12 @@
                 });
 
                 if ('mediaSession' in navigator) {
-                    navigator.mediaSession.setActionHandler('play', () => { if(!this.state.isPlaying) this.audio.togglePlay(); });
-                    navigator.mediaSession.setActionHandler('pause', () => { if(this.state.isPlaying) this.audio.togglePlay(); });
+                    navigator.mediaSession.setActionHandler('play', () => this.audio.togglePlay());
+                    navigator.mediaSession.setActionHandler('pause', () => this.audio.togglePlay());
                     navigator.mediaSession.setActionHandler('previoustrack', () => this.audio.prev());
                     navigator.mediaSession.setActionHandler('nexttrack', () => this.audio.next());
+                    navigator.mediaSession.setActionHandler('seekbackward', () => this.audio.seekBy(-this.settings.seekStep));
+                    navigator.mediaSession.setActionHandler('seekforward', () => this.audio.seekBy(this.settings.seekStep));
                 }
             },
 
@@ -644,6 +707,7 @@
                     } catch (err) { App.ui.toast(err.message); } 
                     finally { btn.innerText = "Access"; }
                 },
+                
                 async handleSession(authUser) {
                     const { data } = await miyuDB.from('users').select('handle').eq('id', authUser.id).single();
                     App.state.user = authUser;
@@ -661,7 +725,10 @@
                     if(s) this.stashes = JSON.parse(s);
                     this.renderStashes();
                 },
-                saveToStorage() { localStorage.setItem('miyu_stashes', JSON.stringify(this.stashes)); this.renderStashes(); },
+                saveToStorage() {
+                    localStorage.setItem('miyu_stashes', JSON.stringify(this.stashes));
+                    this.renderStashes();
+                },
                 renderStashes() {
                     const sec = document.getElementById('stash-section');
                     const list = document.getElementById('stash-list');
@@ -681,18 +748,49 @@
                     `).join('');
                 },
                 openCommunitySelector() {
-                    // Logic unchanged
+                    if(!App.state.activeProfileUser || !App.state.activeProfileUser.songs) return App.ui.toast("No tracks available");
+                    const sel = document.getElementById('stash-song-selector');
+                    
+                    sel.innerHTML = App.state.activeProfileUser.songs.map(s => `
+                        <label class="custom-cb-wrapper">
+                            <input type="checkbox" value='${JSON.stringify(s)}' class="custom-cb stash-song-cb"> 
+                            <span style="font-size: 14px; font-weight: 500;">${s.title}</span>
+                        </label>
+                    `).join('');
+
+                    document.getElementById('stash-name').value = `Stash - ${App.state.activeProfileUser.handle}`;
+                    App.ui.toggleModal('stash-builder-modal');
+                },
+                saveStash() {
+                    const name = document.getElementById('stash-name').value.trim();
+                    if(!name) return App.ui.toast("Name needed");
+                    
+                    const cbs = document.querySelectorAll('.stash-song-cb:checked');
+                    if(cbs.length === 0) return App.ui.toast("Select songs");
+                    
+                    const songs = Array.from(cbs).map(cb => JSON.parse(cb.value));
+                    this.stashes.push({ id: Date.now(), name, songs });
+                    this.saveToStorage();
+                    
+                    App.ui.toggleModal('stash-builder-modal');
+                    App.ui.toast("Saved to Local Stash");
                 },
                 viewStash(index) {
                     const st = this.stashes[index];
                     document.getElementById('library-detail-title').innerText = st.name;
-                    App.ui.pushHistory('library-detail');
+                    App.ui.navigateLibrary('detail');
                     
                     const actionContainer = document.getElementById('library-detail-actions');
-                    actionContainer.innerHTML = `<button onclick="App.stash.deleteStash(${index})" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:10px 18px; border-radius:24px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE</button>`;
+                    actionContainer.innerHTML = `<button onclick="App.stash.deleteStash(${index})" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:10px 18px; border-radius:24px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE STASH</button>`;
+                    
                     App.library.renderSongs(st.songs, 'pl-view-songs', false);
                 },
-                deleteStash(index) { this.stashes.splice(index, 1); this.saveToStorage(); history.back(); App.ui.toast("Stash Purged"); }
+                deleteStash(index) {
+                    this.stashes.splice(index, 1);
+                    this.saveToStorage();
+                    history.back(); // Use hardware routing to go back safely
+                    App.ui.toast("Stash Purged");
+                }
             },
 
             library: {
@@ -703,11 +801,13 @@
                     try {
                         const { data: songs } = await miyuDB.from('songs').select('*').eq('user_id', App.state.user.id).order('created_at', { ascending: false });
                         App.state.songs = songs || [];
+                        
                         const { data: playlists } = await miyuDB.from('playlists').select('*').eq('user_id', App.state.user.id);
                         App.state.playlists = playlists || [];
 
                         this.renderSongs(App.state.songs, 'songs-list', true);
                         this.renderPlaylists();
+                        App.settings.calculateStorage();
                     } catch (err) { App.ui.toast("Library Error"); }
                 },
 
@@ -736,6 +836,7 @@
                             ${isOwner ? `<button onclick="event.stopPropagation(); App.library.deleteSong('${song.id}', '${song.file_path}')" style="color:var(--danger); padding:10px; flex-shrink:0;"><i class="ph ph-trash size-20"></i></button>` : ''}
                         </div>
                     `).join('');
+                    
                     App.ui.highlightPlayingSong();
                 },
 
@@ -755,6 +856,14 @@
                             </div>
                         </div>
                     `}).join('');
+
+                    const sel = document.getElementById('pl-song-selector');
+                    sel.innerHTML = App.state.songs.map(s => `
+                        <label class="custom-cb-wrapper">
+                            <input type="checkbox" value="${s.id}" class="custom-cb pl-song-cb"> 
+                            <span style="font-size: 14px; font-weight: 500;">${s.title}</span>
+                        </label>
+                    `).join('');
                 },
 
                 generateGradient(str) {
@@ -765,8 +874,140 @@
                     return `linear-gradient(135deg, ${c1}, ${c2})`;
                 },
 
-                /* --- NEW FILE MANAGER LOGIC --- */
-                
+                stageUploads(e) {
+                    if(!e.target.files.length) return;
+                    const newFiles = Array.from(e.target.files).slice(0, 50 - App.stagedFiles.length);
+                    const newStaged = newFiles.map(f => ({ file: f, title: f.name.replace(/\.[^/.]+$/, "") }));
+                    App.stagedFiles = App.stagedFiles.concat(newStaged);
+                    
+                    e.target.value = ''; 
+                    this.renderStagingArea();
+                },
+
+                removeStage(i) {
+                    App.stagedFiles.splice(i, 1);
+                    this.renderStagingArea();
+                },
+
+                renderStagingArea() {
+                    const btn = document.getElementById('upload-submit-btn');
+                    btn.innerText = `Upload ${App.stagedFiles.length} Tracks`;
+                    btn.disabled = App.stagedFiles.length === 0;
+
+                    const container = document.getElementById('upload-staging-area');
+                    container.innerHTML = App.stagedFiles.map((sf, i) => `
+                        <div class="stage-item" id="stage-${i}">
+                            <div class="flex gap-2">
+                                <input type="text" value="${sf.title}" onchange="App.stagedFiles[${i}].title = this.value" style="padding:10px; font-size:13px; font-weight:600;">
+                                <button onclick="App.library.removeStage(${i})" style="color:var(--danger); padding:0 8px;"><i class="ph ph-x-circle size-24"></i></button>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="stage-prog-bg"><div class="stage-prog-fill" id="prog-${i}"></div></div>
+                                <span style="font-size:11px; width:35px; font-weight:700;" id="perc-${i}">0%</span>
+                            </div>
+                        </div>
+                    `).join('');
+                },
+
+                async processUploads() {
+                    const btn = document.getElementById('upload-submit-btn');
+                    btn.disabled = true; btn.innerText = "Processing Data...";
+
+                    const { data: { session } } = await miyuDB.auth.getSession();
+                    if (!session) return App.ui.toast("Auth lost");
+
+                    let successCount = 0;
+
+                    for (let i = 0; i < App.stagedFiles.length; i++) {
+                        const { file, title } = App.stagedFiles[i];
+                        const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+                        const filePath = `${App.state.user.id}/${Date.now()}_${i}_${safeFileName}`;
+                        const bar = document.getElementById(`prog-${i}`);
+                        const perc = document.getElementById(`perc-${i}`);
+
+                        try {
+                            await new Promise((resolve, reject) => {
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', `${MIYU_URL}/storage/v1/object/music/${filePath}`, true);
+                                xhr.setRequestHeader('Authorization', `Bearer ${session.access_token}`);
+                                xhr.setRequestHeader('apikey', MIYU_KEY);
+                                xhr.setRequestHeader('Content-Type', file.type || 'audio/mpeg');
+
+                                xhr.upload.onprogress = (e) => {
+                                    if(e.lengthComputable) {
+                                        const p = Math.floor((e.loaded / e.total) * 98);
+                                        bar.style.width = p + '%'; perc.innerText = p + '%';
+                                    }
+                                };
+                                xhr.onload = async () => {
+                                    if (xhr.status >= 200 && xhr.status < 300) {
+                                        await miyuDB.from('songs').insert([{ user_id: App.state.user.id, title, file_path: filePath, file_size: file.size }]);
+                                        bar.style.width = '100%'; perc.innerText = '100%'; successCount++;
+                                        resolve();
+                                    } else reject(new Error());
+                                };
+                                xhr.onerror = () => reject();
+                                xhr.send(file);
+                            });
+                        } catch (err) { bar.style.background = 'var(--danger)'; perc.innerText = 'ERR'; }
+                    }
+
+                    App.ui.toast(`Stored ${successCount}/${App.stagedFiles.length} tracks`);
+                    setTimeout(() => {
+                        App.ui.toggleModal('upload-modal');
+                        App.stagedFiles = [];
+                        this.renderStagingArea();
+                        this.loadLibrary();
+                    }, 1000);
+                },
+
+                async deleteSong(id, path) {
+                    const confirm = await App.ui.confirm("Eradicate Track", "Delete this track forever?");
+                    if(!confirm) return;
+                    await miyuDB.storage.from('music').remove([path]);
+                    await miyuDB.from('songs').delete().eq('id', id);
+                    App.ui.toast("Track eradicated");
+                    this.loadLibrary();
+                },
+                async deletePlaylist(id) {
+                    const confirm = await App.ui.confirm("Destroy Playlist", "Delete this playlist forever?");
+                    if(!confirm) return;
+                    await miyuDB.from('playlists').delete().eq('id', id);
+                    history.back(); // Safely go back using history API
+                    App.ui.toast("Playlist destroyed");
+                    this.loadLibrary();
+                },
+
+                async savePlaylist() {
+                    const name = document.getElementById('pl-name').value.trim();
+                    if(!name) { App.ui.toast("Name required"); return; }
+                    const desc = document.getElementById('pl-desc').value.trim();
+                    const cbs = document.querySelectorAll('.pl-song-cb:checked');
+                    const songIds = Array.from(cbs).map(cb => cb.value);
+
+                    if(App.state.playlists.length >= 15) return App.ui.toast("Storage limit reached");
+
+                    const initStructure = { desc, items: songIds.map(sid => ({ type: 'song', id: sid })) };
+                    const payload = `__MIYU_STRUCT__${JSON.stringify(initStructure)}`;
+
+                    let { data, error } = await miyuDB.from('playlists').insert([{ user_id: App.state.user.id, name, description: payload }]).select();
+                    
+                    if (error) { App.ui.toast("Error: " + error.message); return; }
+                    const pl = data ? data[0] : null;
+
+                    if (songIds.length > 0 && pl) {
+                        const inserts = songIds.map(sid => ({ playlist_id: pl.id, song_id: sid }));
+                        await miyuDB.from('playlist_songs').insert(inserts);
+                    }
+
+                    App.ui.toggleModal('create-pl-modal');
+                    App.ui.toast("Collection Forged");
+                    document.getElementById('pl-name').value = ''; document.getElementById('pl-desc').value = '';
+                    cbs.forEach(c => c.checked = false);
+                    this.loadLibrary();
+                },
+
+                /* --- NEW FULL-SCREEN FILE MANAGER BUILDER --- */
                 openBuilder(plId, plName, songsData) {
                     const pl = App.state.playlists.find(p => p.id === plId);
                     if(!pl) return;
@@ -822,7 +1063,6 @@
                     indices.forEach(idx => {
                         const item = node.items[idx];
                         if(item.type === 'folder') {
-                            // Extract songs to root so they aren't lost
                             const extract = (n) => n.items.forEach(c => {
                                 if(c.type==='song') this.builderState.items.push(c);
                                 else if(c.type==='folder') extract(c);
@@ -848,15 +1088,14 @@
 
                 async builderAddSongPrompt() {
                     const available = App.state.songs.map(s => ({id: s.id, title: s.title}));
-                    // A simple quick-picker dialog (Simulated for speed, but functionally using our prompt logic)
-                    App.ui.toast("Feature under review. Drag from library coming soon.");
-                    // In a full implementation, you'd show a modal list of songs to add. 
-                    // For this strict fix, we use a simple input mapping or add the first available.
+                    // Fast abstraction for picking tracks. In future versions a full modal selector is ideal.
                     if(available.length > 0) {
                         const node = this.fmGetCurrentNode();
                         node.items.push({ type: 'song', id: available[0].id });
                         this.fmRender();
-                        App.ui.toast("Added latest track to folder.");
+                        App.ui.toast("Added latest library track to current folder.");
+                    } else {
+                        App.ui.toast("Your library is empty.");
                     }
                 },
 
@@ -933,7 +1172,7 @@
                     document.getElementById('library-detail-title').innerText = plName;
                     const container = document.getElementById('pl-view-songs');
                     container.innerHTML = App.ui.getSkeletonHTML();
-                    App.ui.pushHistory('library-detail');
+                    App.ui.navigateLibrary('detail');
 
                     const { data: joins } = await miyuDB.from('playlist_songs').select('song_id').eq('playlist_id', plId);
                     const sIds = joins ? joins.map(j => j.song_id) : [];
@@ -952,6 +1191,9 @@
                         setTimeout(() => document.getElementById('btn-edit-pl').onclick = () => App.library.openBuilder(plId, plName, songsData), 10);
                     }
                     
+                    actionContainer.innerHTML += `<button id="btn-delete-pl" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:10px 18px; border-radius:24px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE</button>`;
+                    setTimeout(() => document.getElementById('btn-delete-pl').onclick = () => App.library.deletePlaylist(plId), 10);
+                    
                     const songMap = {}; songsData.forEach(s => songMap[s.id] = s);
                     const parsed = this.parseDescription(pl.description);
                     
@@ -960,9 +1202,8 @@
                         return;
                     }
 
-                    // Render for view (flat list with folder headers for simplicity in playback view)
+                    // Native-like Folder View Render
                     let finalHtml = '';
-                    let globalIdx = 0;
                     const renderFlat = (items, depthPrefix) => {
                         const queue = items.filter(n => n.type === 'song' && songMap[n.id]).map(n => songMap[n.id]);
                         const safeQueue = btoa(encodeURIComponent(JSON.stringify(queue)));
@@ -995,34 +1236,141 @@
             explore: {
                 async loadUsers() {
                     const container = document.getElementById('users-list');
+                    container.innerHTML = App.ui.getSkeletonHTML(3);
+                    
                     const { data } = await miyuDB.from('users').select(`id, handle, songs ( id, title, file_path, file_size ), playlists ( name )`);
                     if(!data || !data.length) return container.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:40px 20px;">No signal found.</p>';
                     
                     container.innerHTML = data.map(u => {
+                        const tBytes = u.songs ? u.songs.reduce((a,b)=>a+(Number(b.file_size)||0), 0) : 0;
+                        const mb = (tBytes / 1024 / 1024).toFixed(1);
+                        let plNames = u.playlists && u.playlists.length ? u.playlists.slice(0, 2).map(p=>p.name).join(', ') : 'No Collections';
+                        if(u.playlists && u.playlists.length > 2) plNames += '...';
+                        
                         const safeObjStr = encodeURIComponent(JSON.stringify(u));
+
                         return `
                         <div class="card" onclick="App.explore.viewUserProfile(decodeURIComponent('${safeObjStr}'))" style="padding: 16px;">
                             <div class="flex items-center" style="width: 100%; min-width:0;">
                                 <div class="avatar" style="background: ${App.library.generateGradient(u.handle)}">${u.handle.charAt(0).toUpperCase()}</div>
                                 <div class="card-info">
                                     <h4 style="font-size: 16px; font-weight: 700; text-transform: capitalize;">${u.handle}</h4>
+                                    <span style="display:inline-block; font-size: 11px; font-weight: 700; color: var(--accent-invert); background: var(--text-main); padding: 2px 8px; border-radius: 8px; margin-top:2px;">${mb} MB Space</span>
+                                    <p style="margin-top:4px; font-size: 12px; opacity: 0.8; font-style: italic;">${plNames}</p>
                                 </div>
                                 <i class="ph ph-caret-right size-20" style="color:var(--text-muted); margin-left:auto;"></i>
                             </div>
-                        </div>`;
+                        </div>
+                        `;
                     }).join('');
                 },
+                
                 async viewUserProfile(userJsonStr) {
                     const u = JSON.parse(userJsonStr);
                     App.state.activeProfileUser = u;
+                    
                     document.getElementById('explore-profile-title').innerText = `${u.handle}'s Collections`;
-                    App.ui.pushHistory('explore-profile');
-                    // Logic unchanged
+                    const container = document.getElementById('explore-playlists-list');
+                    container.innerHTML = `<div style="grid-column: 1 / -1">${App.ui.getSkeletonHTML(1)}</div>`;
+                    App.ui.navigateExplore('profile'); // Pushes history state
+
+                    const { data: playlists } = await miyuDB.from('playlists').select('*').eq('user_id', u.id);
+                    
+                    if(!playlists || !playlists.length) {
+                        container.innerHTML = '<p style="color:var(--text-muted); font-size:13px; grid-column: 1 / -1; padding:20px 0;">No public collections yet.</p>';
+                    } else {
+                        container.innerHTML = playlists.map(pl => {
+                            const parsed = App.library.parseDescription(pl.description);
+                            const descText = parsed.isStruct ? "Structured Collection" : (parsed.text || 'Collection');
+                            return `
+                            <div class="pl-card" onclick="App.explore.viewExplorePlaylist('${pl.id}', '${pl.name.replace(/'/g, "\\'")}')">
+                                <div class="pl-cover" style="background: ${App.library.generateGradient(pl.name)}">
+                                    <span style="font-size: 48px; font-weight: 800; color: rgba(255,255,255,0.3);">${pl.name.charAt(0).toUpperCase()}</span>
+                                </div>
+                                <div class="pl-info">
+                                    <h4>${pl.name}</h4>
+                                    <p>${descText}</p>
+                                </div>
+                            </div>
+                        `}).join('');
+                    }
+                },
+
+                async viewExplorePlaylist(plId, plName) {
+                    document.getElementById('explore-pl-title').innerText = plName;
+                    const container = document.getElementById('explore-pl-songs');
+                    container.innerHTML = App.ui.getSkeletonHTML();
+                    App.ui.navigateExplore('playlist'); // Pushes history state
+
+                    const { data: pl } = await miyuDB.from('playlists').select('*').eq('id', plId).single();
+                    const { data: joins } = await miyuDB.from('playlist_songs').select('song_id').eq('playlist_id', plId);
+                    const sIds = joins ? joins.map(j => j.song_id) : [];
+                    let songsData = [];
+                    if (sIds.length > 0) {
+                        const { data } = await miyuDB.from('songs').select('*').in('id', sIds);
+                        songsData = data || [];
+                    }
+                    
+                    const songMap = {}; songsData.forEach(s => songMap[s.id] = s);
+                    const parsed = App.library.parseDescription(pl ? pl.description : '');
+
+                    if(!parsed.isStruct) {
+                        App.library.renderSongs(songsData, 'explore-pl-songs', false);
+                        return;
+                    }
+
+                    const renderNested = (items, path) => {
+                        const currentQueue = [];
+                        let html = '';
+                        
+                        items.forEach(node => {
+                            if(node.type === 'song' && songMap[node.id]) currentQueue.push(songMap[node.id]);
+                        });
+                        const safeQueue = btoa(encodeURIComponent(JSON.stringify(currentQueue)));
+                        
+                        let songIdx = 0;
+                        items.forEach((node, i) => {
+                            if(node.type === 'song' && songMap[node.id]) {
+                                const song = songMap[node.id];
+                                html += `
+                                    <div class="card" data-song-id="${song.id}" onclick="App.audio.playQueue('${safeQueue}', ${songIdx++})">
+                                        <div class="flex items-center gap-4" style="flex:1; min-width:0;">
+                                            <div class="song-avatar btn-icon" style="border:none;"><i class="ph ph-music-notes size-20"></i></div>
+                                            <div class="card-info">
+                                                <h4>${song.title}</h4>
+                                                <p>${(song.file_size / 1024 / 1024).toFixed(2)} MB</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            } else if(node.type === 'folder') {
+                                html += `
+                                    <div class="folder-container folder-collapsed" style="margin-bottom:8px; border: 1px solid var(--border); border-radius:12px; overflow:hidden;">
+                                        <div class="folder-header flex items-center" style="margin:0; border:none; border-bottom:1px solid var(--border); cursor:pointer;" onclick="App.ui.toggleFolder(this)">
+                                            <div class="folder-toggle"><i class="ph ph-caret-down size-16"></i></div>
+                                            <i class="ph ph-folder-notch-open size-18" style="margin:0 8px; color:var(--text-muted);"></i>
+                                            <h4 style="flex:1;">${node.name}</h4>
+                                        </div>
+                                        <div class="folder-content" style="padding:8px 8px 8px 16px; background:rgba(0,0,0,0.2);">
+                                            ${renderNested(node.items || [], path + '-' + i)}
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
+                        return html;
+                    };
+
+                    let finalHtml = renderNested(parsed.data.items || [], 'root');
+                    if(finalHtml.trim() === '') finalHtml = '<p style="color:var(--text-muted); font-size:13px; text-align:center;">Empty Collection</p>';
+                    
+                    container.innerHTML = finalHtml;
+                    App.ui.highlightPlayingSong();
                 }
             },
 
             sync: {
-                room: null, isHost: false, isRemoteAction: false, peers: [], myName: '',
+                room: null, isHost: false, isRemoteAction: false, lastSeekBroadcast: 0, peers: [], myName: '',
                 
                 toggleMenu() { 
                     document.getElementById('sync-init-view').classList.remove('hidden');
@@ -1063,11 +1411,10 @@
                     const container = document.getElementById('radar-dots');
                     container.innerHTML = '';
                     
-                    // Host always in center
                     const w = 200, h = 200;
                     this.peers.forEach((peer, i) => {
                         const angle = (i / Math.max(1, this.peers.length)) * Math.PI * 2;
-                        const dist = 50 + Math.random() * 30; // Random distance on ring
+                        const dist = 50 + Math.random() * 30; // Random distance on radar ring
                         const x = (w/2) + dist * Math.cos(angle);
                         const y = (h/2) + dist * Math.sin(angle);
                         
@@ -1083,22 +1430,24 @@
                 joinRoom(code, name) {
                     if(this.room) this.room.unsubscribe();
                     
-                    this.room = miyuDB.channel(`sync-${code}`, { config: { broadcast: { ack: false } } });
+                    this.room = miyuDB.channel(`sync-${code}`, {
+                        config: { broadcast: { ack: false } }
+                    });
                     
                     this.room.on('broadcast', { event: 'playback' }, ({ payload }) => {
                         if(payload.action === 'end_session') { this.leave(true); return; }
+                        
                         if(payload.action === 'ping') {
-                            if(this.isHost) {
-                                if(!this.peers.find(p => p.name === payload.name)) {
-                                    this.peers.push({name: payload.name});
-                                    this.renderRadar();
-                                    App.ui.toast(`${payload.name} joined the frequency`);
-                                }
+                            if(this.isHost && !this.peers.find(p => p.name === payload.name)) {
+                                this.peers.push({name: payload.name});
+                                this.renderRadar();
+                                App.ui.toast(`${payload.name} joined the frequency`);
                             }
                             return;
                         }
 
                         if(this.isHost) return; 
+                        
                         this.isRemoteAction = true;
                         const aud = App.audioElement;
                         
@@ -1124,6 +1473,10 @@
 
                 broadcast(action, time, bypassThrottle = false) {
                     if(!this.room || !this.isHost) return;
+                    const now = Date.now();
+                    if (!bypassThrottle && action === 'play' && now - this.lastSeekBroadcast < 500) return; 
+                    
+                    this.lastSeekBroadcast = now;
                     this.room.send({ type: 'broadcast', event: 'playback', payload: { action, time }});
                 },
                 broadcastLoad(queueEncoded, index) {
@@ -1137,9 +1490,12 @@
                         this.room.unsubscribe();
                     }
                     this.room = null; this.isHost = false; this.peers = [];
-                    App.ui.toggleModal('sync-modal');
-                    if(kicked) { App.audio.audioElement.pause(); App.ui.toast("Host closed the frequency."); } 
-                    else { App.ui.toast("Sync Link Severed"); }
+                    
+                    if(kicked) {
+                        App.audioElement.pause();
+                        App.ui.toast("Host has ended the session.");
+                        App.ui.toggleModal('sync-modal'); 
+                    } else { App.ui.toast("Sync Link Severed"); }
                 }
             },
 
@@ -1153,30 +1509,73 @@
 
                 async loadAndPlay(song) {
                     App.state.currentSongId = song.id;
+                    
                     document.getElementById('player-title').innerText = song.title;
                     document.getElementById('mini-title').innerText = song.title;
                     document.getElementById('player-artist').innerText = "Establishing stream...";
+                    document.getElementById('mini-artist').innerText = "Loading...";
                     
                     const bgHash = App.library.generateGradient(song.title);
-                    document.getElementById('mini-cover').style.background = bgHash;
-                    document.getElementById('expanded-cover').style.background = bgHash;
+                    const firstLetter = song.title.charAt(0).toUpperCase();
+
+                    const miniCover = document.getElementById('mini-cover');
+                    miniCover.style.background = bgHash;
+                    miniCover.innerHTML = `<span style="font-size: 20px; font-weight: 800; color: rgba(255,255,255,0.8);">${firstLetter}</span>`;
+                    
+                    const expCover = document.getElementById('expanded-cover');
+                    expCover.style.background = bgHash;
+                    expCover.innerHTML = `<span style="font-size: 36px; font-weight: 800; color: rgba(255,255,255,0.8);">${firstLetter}</span>`;
 
                     const { data } = miyuDB.storage.from('music').getPublicUrl(song.file_path);
-                    App.audioElement.src = data.publicUrl;
-                    
+                    let url = data.publicUrl;
+
                     if ('mediaSession' in navigator) {
-                        navigator.mediaSession.metadata = new MediaMetadata({ title: song.title, artist: 'MYR Space' });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 512; canvas.height = 512;
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#111'; ctx.fillRect(0,0,512,512);
+                        const grd = ctx.createLinearGradient(0,0,512,512);
+                        grd.addColorStop(0, '#555'); grd.addColorStop(1, '#000');
+                        ctx.fillStyle = grd; ctx.fillRect(0,0,512,512);
+                        
+                        navigator.mediaSession.metadata = new MediaMetadata({ 
+                            title: song.title, artist: 'MYR Space',
+                            artwork: [{ src: canvas.toDataURL(), sizes: '512x512', type: 'image/png' }]
+                        });
                     }
 
+                    if (App.state.caching && 'caches' in window) {
+                        try {
+                            const cache = await caches.open('miyu-cache-v1');
+                            const res = await cache.match(url);
+                            if (res) {
+                                const blob = await res.blob();
+                                url = URL.createObjectURL(blob);
+                                document.getElementById('player-artist').innerText = "Offline Cached";
+                                document.getElementById('mini-artist').innerText = "Offline Cached";
+                            } else {
+                                document.getElementById('player-artist').innerText = "Caching...";
+                                fetch(url).then(r => cache.put(url, r.clone()));
+                                document.getElementById('player-artist').innerText = "Streaming HQ";
+                                document.getElementById('mini-artist').innerText = "Streaming HQ";
+                            }
+                        } catch(e) { document.getElementById('player-artist').innerText = "Streaming HQ"; }
+                    } else {
+                        document.getElementById('player-artist').innerText = "Streaming HQ";
+                        document.getElementById('mini-artist').innerText = "Streaming HQ";
+                    }
+                    
+                    App.audioElement.src = url;
                     App.ui.highlightPlayingSong();
+
                     if(App.state.playerMode === 'mini') { App.ui.setPlayerMode('semi'); }
 
                     try {
                         await App.audioElement.play();
                         App.visualizer.connectContext();
                     } catch(e) {
-                        console.warn("Autoplay blocked, waiting for interaction", e);
-                        App.ui.toast("Tap play to begin audio context");
+                        console.warn("Autoplay block. Waiting for user interaction...", e);
+                        App.ui.toast("Tap play to initiate Audio");
                     }
                 },
 
@@ -1185,88 +1584,191 @@
                     if(App.state.isPlaying) App.audioElement.pause();
                     else App.audioElement.play();
                 },
-                next() { /* Unchanged */ }, prev() { /* Unchanged */ }, handleEnd() { /* Unchanged */ },
-                seek(e) {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    App.audioElement.currentTime = ((e.clientX - rect.left) / rect.width) * App.audioElement.duration;
+                next() {
+                    if (!App.state.queue.length) return;
+                    let nextIdx = App.state.shuffle ? Math.floor(Math.random() * App.state.queue.length) : App.state.currentIndex + 1;
+                    if (nextIdx >= App.state.queue.length) nextIdx = 0;
+                    this.playQueue(btoa(encodeURIComponent(JSON.stringify(App.state.queue))), nextIdx);
                 },
-                seekBy(s) { App.audioElement.currentTime += s; }
+                prev() {
+                    if (App.audioElement.currentTime > 3) { App.audioElement.currentTime = 0; return; }
+                    let prevIdx = App.state.currentIndex - 1;
+                    if (prevIdx < 0) prevIdx = App.state.queue.length - 1;
+                    this.playQueue(btoa(encodeURIComponent(JSON.stringify(App.state.queue))), prevIdx);
+                },
+                handleEnd() {
+                    if (App.state.loopMode === 2) { App.audioElement.play(); } 
+                    else if (App.state.loopMode === 1 || App.state.currentIndex < App.state.queue.length - 1 || App.state.shuffle) { this.next(); }
+                },
+                seek(e) {
+                    if(!App.audioElement.src || !App.audioElement.duration) return;
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    App.audioElement.currentTime = percent * App.audioElement.duration;
+                    if(!App.sync.isRemoteAction) App.sync.broadcast('play', App.audioElement.currentTime, true);
+                },
+                seekBy(seconds) {
+                    if(!App.audioElement.src || !App.audioElement.duration) return;
+                    App.audioElement.currentTime = Math.max(0, Math.min(App.audioElement.duration, App.audioElement.currentTime + seconds));
+                    if(!App.sync.isRemoteAction) App.sync.broadcast('play', App.audioElement.currentTime, true);
+                },
+                toggleShuffle() {
+                    App.state.shuffle = !App.state.shuffle;
+                    document.getElementById('icon-shuffle').style.color = App.state.shuffle ? 'var(--text-main)' : 'var(--text-muted)';
+                    App.ui.toast(`Shuffle: ${App.state.shuffle ? 'ON' : 'OFF'}`);
+                },
+                toggleLoop() {
+                    App.state.loopMode = (App.state.loopMode + 1) % 3;
+                    const icon = document.getElementById('icon-loop');
+                    const ind = document.getElementById('loop-indicator');
+                    if(App.state.loopMode === 0) { icon.style.color = 'var(--text-muted)'; ind.style.display = 'none'; App.ui.toast("Loop: OFF"); }
+                    if(App.state.loopMode === 1) { icon.style.color = 'var(--text-main)'; ind.style.display = 'none'; App.ui.toast("Loop: PLAYLIST"); }
+                    if(App.state.loopMode === 2) { icon.style.color = 'var(--text-main)'; ind.style.display = 'inline-block'; App.ui.toast("Loop: TRACK"); }
+                },
+                toggleVolume() {
+                    App.state.volume = App.state.volume === 1 ? 0 : 1;
+                    App.audioElement.volume = App.state.volume;
+                    document.getElementById('icon-vol').classList.replace(App.state.volume ? 'ph-speaker-x' : 'ph-speaker-high', App.state.volume ? 'ph-speaker-high' : 'ph-speaker-x');
+                }
             },
 
             ui: {
-                pushHistory(viewName) {
-                    App.state.historyStack.push(viewName);
-                    history.pushState({ view: viewName }, '');
-                    this.renderView(viewName);
-                },
-                navigateBack() { history.back(); },
-                handlePopState(viewName) {
-                    App.state.historyStack.pop();
-                    this.renderView(viewName);
-                },
-                renderView(view) {
-                    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                /* Hardware back button safe routing wrappers */
+                navigateExplore(view, skipHistory = false) {
+                    if(!skipHistory) history.pushState({ scope: 'explore', view }, '');
                     document.getElementById('explore-home').classList.add('hidden');
                     document.getElementById('explore-user-profile').classList.add('hidden');
                     document.getElementById('explore-playlist-detail').classList.add('hidden');
+                    if (view === 'home') document.getElementById('explore-home').classList.remove('hidden');
+                    if (view === 'profile') document.getElementById('explore-user-profile').classList.remove('hidden');
+                    if (view === 'playlist') document.getElementById('explore-playlist-detail').classList.remove('hidden');
+                },
+                navigateLibrary(view, skipHistory = false) {
+                    if(!skipHistory) history.pushState({ scope: 'library', view }, '');
                     document.getElementById('library-home').classList.add('hidden');
                     document.getElementById('library-detail').classList.add('hidden');
+                    if (view === 'home') document.getElementById('library-home').classList.remove('hidden');
+                    if (view === 'detail') document.getElementById('library-detail').classList.remove('hidden');
+                },
 
-                    if(view === 'home') { this.switchTab('people', true); }
-                    else if(view.startsWith('explore-')) {
-                        document.getElementById('tab-people').classList.remove('hidden');
-                        document.getElementById(view).classList.remove('hidden');
-                    } else if(view.startsWith('library-')) {
-                        document.getElementById('tab-library').classList.remove('hidden');
-                        document.getElementById(view).classList.remove('hidden');
+                toggleFolder(btn) {
+                    const folderDiv = btn.closest('.folder-container');
+                    if(folderDiv) folderDiv.classList.toggle('folder-collapsed');
+                },
+                getSkeletonHTML(count = 3) {
+                    return Array(count).fill(`
+                        <div class="card" style="padding:16px;">
+                            <div class="flex items-center gap-4" style="width:100%;">
+                                <div class="skeleton-box" style="width:44px; height:44px; border-radius:12px; flex-shrink:0;"></div>
+                                <div class="flex-col gap-2" style="flex:1;">
+                                    <div class="skeleton-box" style="width:70%; height:14px; border-radius:4px;"></div>
+                                    <div class="skeleton-box" style="width:40%; height:10px; border-radius:4px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                },
+                highlightPlayingSong() {
+                    document.querySelectorAll('.card.playing').forEach(el => {
+                        el.classList.remove('playing');
+                        const icon = el.querySelector('.btn-icon i');
+                        if(icon && icon.classList.contains('ph-speaker-high')) { icon.classList.replace('ph-speaker-high', 'ph-music-notes'); }
+                    });
+                    if(App.state.currentSongId) {
+                        document.querySelectorAll(`.card[data-song-id="${App.state.currentSongId}"]`).forEach(card => {
+                            card.classList.add('playing');
+                            const icon = card.querySelector('.btn-icon i');
+                            if(icon && icon.classList.contains('ph-music-notes')) { icon.classList.replace('ph-music-notes', 'ph-speaker-high'); }
+                        });
                     }
                 },
-                switchTab(tab, bypassHistory = false) {
-                    if(!bypassHistory) this.pushHistory(tab === 'people' ? 'explore-home' : 'library-home');
-                    else {
-                        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-                        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                        document.getElementById(`tab-${tab}`).classList.remove('hidden');
-                        if(tab==='people') document.getElementById('explore-home').classList.remove('hidden');
-                        else document.getElementById('library-home').classList.remove('hidden');
-                    }
+                setupGuestMode() {
+                    document.getElementById('upload-btn-header').classList.add('hidden');
+                    document.getElementById('library-guest-msg').classList.remove('hidden');
+                    document.getElementById('library-user-content').classList.add('hidden');
+                    
+                    const sc = document.getElementById('storage-content');
+                    if(sc) { sc.style.opacity = '0.3'; sc.style.pointerEvents = 'none'; }
+                    document.getElementById('storage-guest-overlay').classList.remove('hidden');
+                    
+                    document.getElementById('auth-status-row').innerHTML = `<button type="button" class="btn-primary" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">Authenticate to Unlock</button>`;
+                },
+                setupUserMode() {
+                    document.getElementById('upload-btn-header').classList.remove('hidden');
+                    document.getElementById('library-guest-msg').classList.add('hidden');
+                    document.getElementById('library-user-content').classList.remove('hidden');
+                    
+                    const sc = document.getElementById('storage-content');
+                    if(sc) { sc.style.opacity = '1'; sc.style.pointerEvents = 'all'; }
+                    document.getElementById('storage-guest-overlay').classList.add('hidden');
+                    
+                    document.getElementById('auth-status-row').innerHTML = `<button type="button" class="btn-primary" style="background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger);" onclick="App.auth.logout()">Terminate Session (@${App.state.userHandle})</button>`;
+                },
+                switchTab(tab) {
+                    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                    document.getElementById(`tab-${tab}`).classList.remove('hidden');
+                    event.currentTarget.classList.add('active');
                 },
                 toggleModal(id) { document.getElementById(id).classList.toggle('active'); },
+                
                 setPlayerMode(mode) {
                     const p = document.getElementById('player-container');
                     p.classList.remove('mode-mini', 'mode-semi', 'mode-full', 'zen-active');
                     p.classList.add(`mode-${mode}`);
                     App.state.playerMode = mode;
+                    if(mode === 'mini') document.getElementById('zen-hint').classList.add('hidden');
                 },
                 expandPlayer(e) { if(e) e.stopPropagation(); if(App.state.playerMode === 'mini') this.setPlayerMode('semi'); },
-                collapsePlayer(e) { if(e) e.stopPropagation(); if(App.state.playerMode === 'full') this.setPlayerMode('semi'); else this.setPlayerMode('mini'); },
-                togglePlayerFullscreen() { if(App.state.playerMode === 'full') this.setPlayerMode('semi'); else this.setPlayerMode('full'); },
+                collapsePlayer(e) {
+                    if(e) e.stopPropagation();
+                    if(App.state.playerMode === 'full') this.setPlayerMode('semi');
+                    else if(App.state.playerMode === 'semi') this.setPlayerMode('mini');
+                },
+                togglePlayerFullscreen() {
+                    if(App.state.playerMode === 'full') this.setPlayerMode('semi');
+                    else this.setPlayerMode('full');
+                },
+                toggleZenMode(e) {
+                    if(e) e.stopPropagation();
+                    if(App.state.playerMode === 'mini') return;
+                    const p = document.getElementById('player-container');
+                    p.classList.toggle('zen-active');
+                    const hint = document.getElementById('zen-hint');
+                    if(p.classList.contains('zen-active')) {
+                        hint.classList.remove('hidden');
+                        setTimeout(() => hint.classList.add('hidden'), 3000);
+                    } else hint.classList.add('hidden');
+                },
+                toggleAppFullscreen() {
+                    try {
+                        if (!document.fullscreenElement) { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{}); } 
+                        else { if (document.exitFullscreen) document.exitFullscreen().catch(()=>{}); }
+                    } catch(e) {}
+                },
                 toast(msg) {
                     const el = document.getElementById('toast');
                     el.innerText = msg; el.classList.add('show');
                     setTimeout(() => el.classList.remove('show'), 3500);
                 },
-                formatTime(sec) {
-                    if(isNaN(sec) || sec === Infinity) return "0:00";
-                    const m = Math.floor(sec / 60), s = Math.floor(sec % 60).toString().padStart(2, '0');
-                    return `${m}:${s}`;
+                confirm(title, message) {
+                    return new Promise(resolve => {
+                        const m = document.getElementById('custom-dialog');
+                        document.getElementById('cd-title').innerText = title;
+                        document.getElementById('cd-msg').innerText = message;
+                        document.getElementById('cd-input').classList.add('hidden');
+                        
+                        const btnYes = document.getElementById('cd-confirm');
+                        const btnNo = document.getElementById('cd-cancel');
+                        btnYes.classList.remove('hidden');
+                        
+                        const clean = () => { m.classList.remove('active'); btnYes.onclick = null; btnNo.onclick = null; };
+                        btnYes.onclick = () => { clean(); resolve(true); };
+                        btnNo.onclick = () => { clean(); resolve(false); };
+                        m.onclick = (e) => { if(e.target === m) { clean(); resolve(false); }};
+                        m.classList.add('active');
+                    });
                 },
-                updateProgress() {
-                    const curr = App.audioElement.currentTime, tot = App.audioElement.duration;
-                    if(isNaN(tot) || tot === Infinity) return;
-                    document.getElementById('time-current').innerText = this.formatTime(curr);
-                    document.getElementById('time-total').innerText = this.formatTime(tot);
-                    document.getElementById('player-progress').style.width = `${(curr / tot) * 100}%`;
-                },
-                getSkeletonHTML(count=3) { return Array(count).fill(`<div class="skeleton-box" style="width:100%; height:70px; margin-bottom:10px;"></div>`).join(''); },
-                highlightPlayingSong() {
-                    document.querySelectorAll('.card.playing').forEach(el => el.classList.remove('playing'));
-                    if(App.state.currentSongId) {
-                        document.querySelectorAll(`.card[data-song-id="${App.state.currentSongId}"]`).forEach(card => card.classList.add('playing'));
-                    }
-                },
-                setupGuestMode() { document.getElementById('library-guest-msg').classList.remove('hidden'); document.getElementById('library-user-content').classList.add('hidden'); },
-                setupUserMode() { document.getElementById('library-guest-msg').classList.add('hidden'); document.getElementById('library-user-content').classList.remove('hidden'); },
                 prompt(title, placeholder) {
                     return new Promise(resolve => {
                         const m = document.getElementById('custom-dialog');
@@ -1282,13 +1784,187 @@
                         const clean = () => { m.classList.remove('active'); btnYes.onclick = null; btnNo.onclick = null; };
                         btnYes.onclick = () => { clean(); resolve(inp.value.trim()); };
                         btnNo.onclick = () => { clean(); resolve(null); };
+                        m.onclick = (e) => { if(e.target === m) { clean(); resolve(null); }};
                         m.classList.add('active');
                         inp.focus();
                     });
+                },
+                formatTime(sec) {
+                    if(isNaN(sec) || sec === Infinity) return "0:00";
+                    const m = Math.floor(sec / 60), s = Math.floor(sec % 60).toString().padStart(2, '0');
+                    return `${m}:${s}`;
+                },
+                updateProgress() {
+                    const curr = App.audioElement.currentTime, tot = App.audioElement.duration;
+                    if(isNaN(tot) || tot === Infinity) return;
+                    document.getElementById('time-current').innerText = this.formatTime(curr);
+                    document.getElementById('time-total').innerText = this.formatTime(tot);
+                    document.getElementById('player-progress').style.width = `${(curr / tot) * 100}%`;
                 }
             },
-            settings: { loadLocal() {}, setTheme() {} }, // Unchanged logic abstracted for brevity
-            visualizer: { init() {}, connectContext() {} } // Unchanged logic abstracted for brevity
+
+            settings: {
+                seekStep: 10,
+                loadLocal() {
+                    const t = localStorage.getItem('miyu_theme') || 'ips';
+                    const c = localStorage.getItem('miyu_cache') === 'true';
+                    const v = localStorage.getItem('miyu_vis') !== 'false';
+                    const s = localStorage.getItem('miyu_seek');
+                    
+                    this.setTheme(t);
+                    document.getElementById('theme-select').value = t;
+                    if(c) this.toggleCache(); 
+                    if(!v) this.toggleVis();
+                    if(s) {
+                        this.seekStep = parseInt(s);
+                        const sel = document.getElementById('seek-select');
+                        if(sel) sel.value = this.seekStep;
+                    }
+                },
+                setTheme(val) {
+                    App.state.theme = val;
+                    document.body.setAttribute('data-theme', val);
+                    localStorage.setItem('miyu_theme', val);
+                },
+                setSeekStep(val) {
+                    this.seekStep = parseInt(val);
+                    localStorage.setItem('miyu_seek', this.seekStep);
+                },
+                toggleCache() {
+                    App.state.caching = !App.state.caching;
+                    localStorage.setItem('miyu_cache', App.state.caching);
+                    const btn = document.getElementById('cache-toggle');
+                    btn.innerText = App.state.caching ? 'ON' : 'OFF';
+                    btn.style.color = App.state.caching ? 'var(--success)' : 'var(--text-muted)';
+                },
+                toggleVis() {
+                    App.state.visEnabled = !App.state.visEnabled;
+                    localStorage.setItem('miyu_vis', App.state.visEnabled);
+                    const btn = document.getElementById('vis-toggle');
+                    btn.innerText = App.state.visEnabled ? 'ON' : 'OFF';
+                    btn.style.color = App.state.visEnabled ? 'var(--success)' : 'var(--text-muted)';
+                    if(!App.state.visEnabled && App.visualizer.ctx) App.visualizer.ctx.clearRect(0,0,App.visualizer.canvas.width,App.visualizer.canvas.height);
+                },
+                calculateStorage() {
+                    const totalBytes = App.state.songs.reduce((a, b) => a + Number(b.file_size), 0);
+                    const mb = (totalBytes / 1024 / 1024).toFixed(1);
+                    const pct = Math.min((mb / 1000) * 100, 100);
+                    document.getElementById('storage-txt').innerText = `${mb} MB / 1000 MB`;
+                    document.getElementById('storage-bar').style.width = `${pct}%`;
+                    if(pct > 90) document.getElementById('storage-bar').style.background = 'var(--danger)';
+                }
+            },
+
+            visualizer: {
+                canvas: null, ctx: null, audioCtx: null, analyser: null, source: null,
+                dataArray: null, smoothBars: null, blobs: [], embers: [], time: 0, currentHue: 240,
+                
+                init() {
+                    this.canvas = document.getElementById('visualizer-canvas');
+                    this.ctx = this.canvas.getContext('2d');
+                    this.resize(); window.addEventListener('resize', () => this.resize());
+                    
+                    this.smoothBars = new Float32Array(64);
+
+                    for(let i=0; i<6; i++) {
+                        this.blobs.push({
+                            baseX: Math.random() * this.canvas.width, baseY: Math.random() * this.canvas.height,
+                            speedX: (Math.random() - 0.5) * 0.001, speedY: (Math.random() - 0.5) * 0.001,
+                            r: Math.random() * 250 + 150, 
+                            hueOffset: (i % 3) * 10 - 10,
+                            offset: Math.random() * 100
+                        });
+                    }
+
+                    for(let i=0; i<30; i++) {
+                        this.embers.push({ x: Math.random() * 2000, y: Math.random() * 2000, speed: Math.random() * 0.15 + 0.05, size: Math.random() * 1.5 + 0.5, opacity: Math.random() * 0.5 + 0.1 });
+                    }
+
+                    requestAnimationFrame(() => this.draw());
+                },
+                connectContext() {
+                    if (this.audioCtx || !App.state.visEnabled) return;
+                    try {
+                        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                        this.analyser = this.audioCtx.createAnalyser();
+                        this.analyser.fftSize = 128; 
+                        this.source = this.audioCtx.createMediaElementSource(App.audioElement);
+                        this.source.connect(this.analyser);
+                        this.analyser.connect(this.audioCtx.destination);
+                        this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+                    } catch(e) {}
+                },
+                resize() {
+                    if(!this.canvas.parentElement) return;
+                    this.canvas.width = this.canvas.parentElement.clientWidth;
+                    this.canvas.height = this.canvas.parentElement.clientHeight;
+                },
+                draw() {
+                    if (!App.state.visEnabled) { requestAnimationFrame(() => this.draw()); return; }
+
+                    this.time += 1;
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    let intensity = 0;
+                    if (this.analyser && App.state.isPlaying) {
+                        this.analyser.getByteFrequencyData(this.dataArray);
+                        let sum = 0;
+                        const activeBins = 40; 
+                        for(let i=0; i<activeBins; i++) sum += this.dataArray[i];
+                        intensity = sum / activeBins; 
+                    }
+
+                    let targetHue = 230; 
+                    if (intensity > 140) targetHue = 350; 
+                    else if (intensity > 80) targetHue = 320; 
+                    
+                    this.currentHue += (targetHue - this.currentHue) * 0.008;
+                    this.ctx.globalCompositeOperation = 'screen';
+
+                    this.blobs.forEach((b) => {
+                        b.x = b.baseX + Math.sin(this.time * b.speedX + b.offset) * (this.canvas.width * 0.4);
+                        b.y = b.baseY + Math.cos(this.time * b.speedY + b.offset) * (this.canvas.height * 0.4);
+                        
+                        const pulse = App.state.isPlaying ? (intensity / 255) * 40 : 0;
+                        const r = Math.max(1, b.r + pulse);
+                        
+                        const radGrad = this.ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, r);
+                        radGrad.addColorStop(0, `hsla(${(this.currentHue + b.hueOffset)%360}, 85%, ${App.state.theme === 'light' ? '65%' : '40%'}, 0.55)`);
+                        radGrad.addColorStop(1, `hsla(${(this.currentHue + b.hueOffset)%360}, 85%, ${App.state.theme === 'light' ? '65%' : '40%'}, 0)`);
+                        
+                        this.ctx.beginPath();
+                        this.ctx.arc(b.x, b.y, r, 0, Math.PI * 2);
+                        this.ctx.fillStyle = radGrad;
+                        this.ctx.fill();
+                    });
+
+                    if (App.state.isPlaying && !document.getElementById('player-container').classList.contains('mode-mini')) {
+                        this.ctx.fillStyle = `rgba(255,255,255,0.4)`;
+                        this.embers.forEach(e => {
+                            e.y -= e.speed + (intensity * 0.002);
+                            if(e.y < -10) { e.y = this.canvas.height + 10; e.x = Math.random() * this.canvas.width; }
+                            if(e.x > this.canvas.width) e.x = Math.random() * this.canvas.width;
+
+                            this.ctx.globalAlpha = e.opacity * (intensity > 30 ? 1 : 0.5);
+                            this.ctx.beginPath(); this.ctx.arc(e.x, e.y, e.size, 0, Math.PI*2); this.ctx.fill();
+                        });
+                        this.ctx.globalAlpha = 1;
+                    }
+
+                    if (!document.getElementById('player-container').classList.contains('mode-mini')) {
+                        this.ctx.fillStyle = `rgba(255,255,255,0.3)`; 
+                        const activeBins = 40; const barW = (this.canvas.width / activeBins);
+                        
+                        for(let i=0; i<activeBins; i++) {
+                            const targetVal = this.dataArray ? this.dataArray[i] : 0;
+                            this.smoothBars[i] += (targetVal - this.smoothBars[i]) * 0.15; 
+                            const barH = (this.smoothBars[i] / 255) * (this.canvas.height * 0.35);
+                            if(barH > 1) { this.ctx.fillRect(i * barW + 1, this.canvas.height - barH, barW - 2, barH); }
+                        }
+                    }
+                    requestAnimationFrame(() => this.draw());
+                }
+            }
         };
 
         window.addEventListener('DOMContentLoaded', () => App.init());
