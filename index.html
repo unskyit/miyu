@@ -116,16 +116,16 @@
         .card.playing .btn-icon { background: var(--text-main); border-color: var(--text-main); color: var(--accent-invert); }
         .card.playing .card-info h4 { color: var(--text-main); font-weight: 800; }
 
-        /* --- NEW FILE MANAGER CSS --- */
+        /* --- FILE MANAGER CSS --- */
         .fm-breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 16px; overflow-x: auto; white-space: nowrap; padding-bottom: 4px; }
-        .fm-breadcrumb span { cursor: pointer; transition: 0.2s; }
-        .fm-breadcrumb span:hover { color: var(--text-main); }
-        .fm-breadcrumb i { font-size: 10px; }
+        .fm-breadcrumb span { cursor: pointer; transition: 0.2s; padding: 4px 8px; border-radius: 6px; background: rgba(255,255,255,0.05); }
+        .fm-breadcrumb span:hover { color: var(--text-main); background: rgba(255,255,255,0.1); }
+        .fm-breadcrumb i { font-size: 10px; opacity: 0.5; }
         
         .fm-item { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); transition: 0.2s; cursor: pointer; border-radius: 8px;}
         .fm-item:hover { background: rgba(255,255,255,0.05); }
         .fm-item.selected { background: rgba(255,255,255,0.1); border-color: var(--text-main); }
-        .fm-icon-large { font-size: 28px; margin-right: 16px; color: var(--text-main); }
+        .fm-icon-large { font-size: 28px; margin-right: 16px; color: var(--text-main); flex-shrink: 0; }
         .fm-details { flex: 1; min-width: 0; }
         .fm-details h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .fm-details p { font-size: 12px; color: var(--text-muted); }
@@ -134,12 +134,7 @@
         .fm-action-btn { flex-direction: column; gap: 4px; font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
         .fm-action-btn i { font-size: 20px; color: var(--text-main); margin-bottom: 2px;}
 
-        /* Windows-Style Builder Controls (Kept for fallback/legacy functions) */
-        .builder-btn { padding: 6px; border-radius: 6px; color: var(--text-muted); border: 1px solid transparent; transition: 0.2s; background: rgba(255,255,255,0.03); }
-        .builder-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.1); border-color: var(--border); }
-        .builder-btn.danger:hover { color: var(--danger); border-color: var(--danger); background: rgba(255,59,48,0.1); }
-
-        /* Folder Toggle UI */
+        /* Nested Folder UI in Explore View */
         .folder-collapsed .folder-content { display: none !important; }
         .folder-toggle { cursor: pointer; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; transition: 0.2s; background: rgba(255,255,255,0.05); }
         .folder-toggle:hover { background: rgba(255,255,255,0.15); }
@@ -219,16 +214,20 @@
         .stage-prog-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
         .stage-prog-fill { height: 100%; background: var(--success); width: 0%; transition: 0.2s; }
 
-        /* RADAR UI */
-        .radar-container { position: relative; width: 100%; height: 200px; margin: 20px 0; border-radius: 24px; background: rgba(0,0,0,0.2); overflow: hidden; border: 1px solid var(--border); }
-        .radar-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; background: var(--success); border-radius: 50%; box-shadow: 0 0 20px var(--success); z-index: 2; }
-        .radar-sweep { position: absolute; top: 50%; left: 50%; width: 200%; height: 200%; transform-origin: 0 0; background: conic-gradient(from 0deg, transparent 70%, var(--radar) 100%); animation: sweep 4s linear infinite; z-index: 1; pointer-events: none;}
-        .radar-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 1px solid var(--border); border-radius: 50%; opacity: 0.5; }
-        @keyframes sweep { from { transform: rotate(0deg) translate(-50%, -50%); } to { transform: rotate(360deg) translate(-50%, -50%); } }
+        /* CONSTELLATION NETWORK UI (Replaces Old Radar) */
+        .constellation-container { position: relative; width: 100%; height: 260px; margin: 20px 0; border-radius: 24px; background: rgba(0,0,0,0.3); overflow: hidden; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+        .constellation-hub { position: absolute; width: 24px; height: 24px; background: var(--success); border-radius: 50%; box-shadow: 0 0 20px var(--success); z-index: 5; display: flex; align-items: center; justify-content: center; animation: pulseHub 2s infinite; }
+        .constellation-hub::after { content: 'HOST'; position: absolute; bottom: -20px; font-size: 10px; font-weight: 800; color: var(--text-main); letter-spacing: 1px; }
+        @keyframes pulseHub { 0% { box-shadow: 0 0 0 0 rgba(50, 215, 75, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(50, 215, 75, 0); } 100% { box-shadow: 0 0 0 0 rgba(50, 215, 75, 0); } }
         
-        .radar-dot { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 3; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        .radar-dot .dot { width: 12px; height: 12px; background: var(--text-main); border-radius: 50%; box-shadow: 0 0 10px var(--text-main); }
-        .radar-dot .name { font-size: 10px; font-weight: 700; color: var(--text-main); margin-top: 4px; background: var(--surface); padding: 2px 6px; border-radius: 8px; border: 1px solid var(--border); }
+        .c-node { position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 4; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .c-node .dot { width: 14px; height: 14px; background: var(--text-main); border-radius: 50%; box-shadow: 0 0 15px rgba(255,255,255,0.5); }
+        .c-node .name { font-size: 11px; font-weight: 700; color: var(--text-main); margin-top: 6px; background: var(--surface); padding: 4px 8px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap; }
+        
+        /* Connection lines using SVG */
+        .c-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .c-line { stroke: var(--text-main); stroke-width: 1.5; stroke-dasharray: 4; opacity: 0.3; animation: dash 20s linear infinite; }
+        @keyframes dash { to { stroke-dashoffset: 1000; } }
 
         #toast { position: fixed; top: calc(env(safe-area-inset-top, 20px) + 20px); left: 50%; transform: translateX(-50%) translateY(-150px); padding: 14px 28px; border-radius: 30px; font-size: 13px; z-index: 2000; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); background: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border); text-align: center; max-width: 90%; box-shadow: var(--shadow); font-weight: 600; pointer-events: none; backdrop-filter: blur(10px);}
         #toast.show { transform: translateX(-50%) translateY(0); }
@@ -262,7 +261,7 @@
                 <h1>Miyu</h1>
             </div>
             <div class="flex gap-4 items-center">
-                <button type="button" class="btn-icon" id="sync-btn-header" onclick="App.sync.toggleMenu()" title="Listen Together"><i class="ph ph-broadcast size-20"></i></button>
+                <button type="button" class="btn-icon" id="sync-btn-header" onclick="App.ui.toggleModal('sync-modal')" title="Listen Together"><i class="ph ph-broadcast size-20"></i></button>
                 <button type="button" onclick="App.ui.toggleAppFullscreen()" title="Fullscreen"><i class="ph ph-corners-out size-24" id="icon-fullscreen-app"></i></button>
                 <button type="button" id="upload-btn-header" class="btn-icon hidden" onclick="App.ui.toggleModal('upload-modal')" title="Upload"><i class="ph ph-plus size-20"></i></button>
                 <button type="button" class="btn-icon" onclick="App.ui.toggleModal('settings-modal')" title="Settings"><i class="ph ph-sliders-horizontal size-20"></i></button>
@@ -412,7 +411,7 @@
             </div>
         </nav>
 
-        <div id="login-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('login-modal')">
+        <div id="login-modal" class="modal" onclick="if(event.target===this) history.back()">
             <div class="modal-content flex-col gap-4">
                 <h2 style="margin-top: 0; text-align: center;">Identity</h2>
                 <input type="text" id="auth-handle" placeholder="Handle" autocomplete="off" autocapitalize="none">
@@ -421,7 +420,7 @@
             </div>
         </div>
 
-        <div id="settings-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('settings-modal')">
+        <div id="settings-modal" class="modal" onclick="if(event.target===this) history.back()">
             <div class="modal-content">
                 <h2 style="margin-top: 0;">Preferences</h2>
                 <div class="setting-row">
@@ -462,7 +461,7 @@
                             <div id="storage-bar" style="height: 100%; width: 0%; background: var(--text-main); transition: 0.5s;"></div>
                         </div>
                     </div>
-                    <div id="storage-guest-overlay" class="hidden" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; color:var(--text-main);" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">
+                    <div id="storage-guest-overlay" class="hidden" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; color:var(--text-main);" onclick="history.back(); App.ui.toggleModal('login-modal');">
                         Authenticate to View Storage
                     </div>
                 </div>
@@ -471,7 +470,7 @@
             </div>
         </div>
 
-        <div id="upload-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('upload-modal')">
+        <div id="upload-modal" class="modal" onclick="if(event.target===this) history.back()">
             <div class="modal-content flex-col gap-4">
                 <h2 style="margin-top: 0;">Drop Tracks</h2>
                 <input type="file" id="upload-files" accept="audio/*" multiple style="padding: 16px; border: 1px dashed var(--text-muted); background: transparent; text-align: center; cursor:pointer;">
@@ -481,7 +480,7 @@
             </div>
         </div>
 
-        <div id="create-pl-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('create-pl-modal')">
+        <div id="create-pl-modal" class="modal" onclick="if(event.target===this) history.back()">
             <div class="modal-content flex-col gap-4">
                 <h2 style="margin-top: 0;">New Playlist</h2>
                 <input type="text" id="pl-name" placeholder="Name (Max 20 chars)" maxlength="20">
@@ -491,10 +490,10 @@
             </div>
         </div>
 
-        <div id="edit-structure-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('edit-structure-modal')">
+        <div id="edit-structure-modal" class="modal" onclick="if(event.target===this) history.back()">
             <div class="modal-content flex-col" style="height: 100vh; max-height: 100vh; max-width: 100%; border-radius: 0; padding: calc(env(safe-area-inset-top) + 20px) 24px calc(env(safe-area-inset-bottom) + 20px) 24px;">
                 <div class="flex justify-between items-center" style="margin-bottom: 24px;">
-                    <button onclick="App.ui.toggleModal('edit-structure-modal')" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i> Close</button>
+                    <button onclick="history.back()" style="background:var(--surface); padding:10px 18px; border-radius:24px; border:1px solid var(--border); font-weight:700;"><i class="ph ph-arrow-left size-20"></i> Back</button>
                     <button onclick="App.library.saveStructure()" style="color:var(--success); font-weight:800;">SAVE</button>
                 </div>
                 
@@ -514,7 +513,16 @@
             </div>
         </div>
 
-        <div id="stash-builder-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('stash-builder-modal')">
+        <div id="fm-track-picker-modal" class="modal" onclick="if(event.target===this) history.back()">
+            <div class="modal-content flex-col gap-4">
+                <h2 style="margin-top: 0;">Select Tracks</h2>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top:-10px;">Select from your personal library</p>
+                <div id="fm-track-picker-list" class="flex-col gap-2" style="max-height: 350px; overflow-y: auto; border: 1px solid var(--border); padding: 12px; border-radius: 14px;"></div>
+                <button type="button" class="btn-primary" onclick="App.library.builderConfirmAddSongs()">Inject Tracks</button>
+            </div>
+        </div>
+
+        <div id="stash-builder-modal" class="modal" onclick="if(event.target===this) history.back()">
             <div class="modal-content flex-col gap-4">
                 <h2 style="margin-top: 0; color:var(--stash);">Forge Stash</h2>
                 <p style="font-size: 12px; color: var(--text-muted); margin-top:-10px;">Local curation. Doesn't use cloud storage.</p>
@@ -524,35 +532,33 @@
             </div>
         </div>
 
-        <div id="sync-modal" class="modal" onclick="if(event.target===this) App.ui.toggleModal('sync-modal')">
+        <div id="sync-modal" class="modal" onclick="if(event.target===this) history.back()">
             <div class="modal-content flex-col gap-4" style="text-align: center;">
                 <div class="flex justify-between items-center">
                     <h2 style="margin-top: 0;">Listen Together</h2>
-                    <button onclick="App.ui.toggleModal('sync-modal')"><i class="ph ph-x size-24"></i></button>
+                    <button onclick="history.back()"><i class="ph ph-x size-24"></i></button>
                 </div>
                 
                 <div id="sync-init-view">
                     <p style="font-size: 14px; color: var(--text-muted); font-weight: 500; margin-bottom: 20px;">Lock playback seamlessly across devices globally.</p>
-                    <input type="text" id="sync-alias" placeholder="Your Alias..." maxlength="15" style="margin-bottom: 16px; text-align:center;">
+                    <input type="text" id="sync-alias" placeholder="Enter your Name..." maxlength="15" style="margin-bottom: 16px; text-align:center;">
                     <div class="flex gap-4">
-                        <button type="button" class="btn-primary" onclick="App.sync.hostSession()">Create Room</button>
-                        <button type="button" class="btn-primary" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);" onclick="App.sync.joinPrompt()">Join Code</button>
+                        <button type="button" class="btn-primary" onclick="App.sync.hostSession()">Host Room</button>
+                        <button type="button" class="btn-primary" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);" onclick="App.sync.joinPrompt()">Join Room</button>
                     </div>
                 </div>
 
                 <div id="sync-active-view" class="hidden flex-col items-center">
                     <div id="sync-status" class="sync-code-box" style="margin: 0;"></div>
-                    <p id="sync-subtitle" style="color:var(--success); font-weight:600; font-size:13px; margin-top:8px;">Session Live</p>
+                    <p id="sync-subtitle" style="color:var(--success); font-weight:600; font-size:13px; margin-top:8px;">Constellation Active</p>
                     
-                    <div class="radar-container">
-                        <div class="radar-ring" style="width: 100px; height: 100px;"></div>
-                        <div class="radar-ring" style="width: 200px; height: 200px;"></div>
-                        <div class="radar-sweep"></div>
-                        <div class="radar-center"></div>
-                        <div id="radar-dots"></div>
+                    <div class="constellation-container">
+                        <svg class="c-lines" id="c-lines-svg"></svg>
+                        <div class="constellation-hub"></div>
+                        <div id="c-nodes"></div>
                     </div>
 
-                    <button type="button" id="sync-leave-btn" class="btn-primary" style="background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger); margin-top: 10px;" onclick="App.sync.leave()">End Session</button>
+                    <button type="button" id="sync-leave-btn" class="btn-primary" style="background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger); margin-top: 10px;" onclick="App.sync.leave()">Disconnect</button>
                 </div>
             </div>
         </div>
@@ -586,16 +592,9 @@
                 
                 document.getElementById('upload-files').addEventListener('change', (e) => this.library.stageUploads(e));
 
-                // Hardware Back button routing injection - strictly mapped to existing robust functions
-                window.addEventListener('popstate', (e) => {
-                    if (e.state) {
-                        if (e.state.scope === 'explore') App.ui.navigateExplore(e.state.view, true);
-                        else if (e.state.scope === 'library') App.ui.navigateLibrary(e.state.view, true);
-                    } else {
-                        App.ui.navigateExplore('home', true);
-                        App.ui.navigateLibrary('home', true);
-                    }
-                });
+                // Super Robust Hardware Routing Injection
+                history.replaceState({ view: 'explore-home' }, '');
+                window.addEventListener('popstate', (e) => this.ui.handlePopState(e));
 
                 document.addEventListener('click', (e) => {
                     const p = document.getElementById('player-container');
@@ -611,7 +610,6 @@
                     if(icon) icon.classList.replace(document.fullscreenElement ? 'ph-corners-out' : 'ph-corners-in', document.fullscreenElement ? 'ph-corners-in' : 'ph-corners-out');
                 });
 
-                // Audio Context pre-warmers
                 document.body.addEventListener('touchstart', () => {
                     if(this.visualizer.audioCtx && this.visualizer.audioCtx.state === 'suspended') this.visualizer.audioCtx.resume();
                 }, { once: true });
@@ -642,13 +640,8 @@
                 aud.addEventListener('timeupdate', () => this.ui.updateProgress());
                 aud.addEventListener('ended', () => this.audio.handleEnd());
 
-                // Buffering State Handlers for robust playback
-                aud.addEventListener('waiting', () => {
-                    document.getElementById('player-artist').innerText = "Buffering stream...";
-                });
-                aud.addEventListener('playing', () => {
-                    document.getElementById('player-artist').innerText = "Streaming HQ";
-                });
+                aud.addEventListener('waiting', () => { document.getElementById('player-artist').innerText = "Buffering stream..."; });
+                aud.addEventListener('playing', () => { document.getElementById('player-artist').innerText = "Streaming HQ"; });
                 aud.addEventListener('error', (e) => {
                     console.error("Audio Error:", e);
                     App.ui.toast("Stream interrupted. Recovering...");
@@ -701,7 +694,7 @@
                         const { data, error } = await miyuDB.auth.signInWithPassword({ email: `${handle}@miyu.app`, password });
                         if (error) throw error;
                         
-                        App.ui.toggleModal('login-modal');
+                        history.back(); // Closes modal cleanly
                         App.ui.toast("Access Granted");
                         await this.handleSession(data.user);
                     } catch (err) { App.ui.toast(err.message); } 
@@ -725,10 +718,7 @@
                     if(s) this.stashes = JSON.parse(s);
                     this.renderStashes();
                 },
-                saveToStorage() {
-                    localStorage.setItem('miyu_stashes', JSON.stringify(this.stashes));
-                    this.renderStashes();
-                },
+                saveToStorage() { localStorage.setItem('miyu_stashes', JSON.stringify(this.stashes)); this.renderStashes(); },
                 renderStashes() {
                     const sec = document.getElementById('stash-section');
                     const list = document.getElementById('stash-list');
@@ -772,13 +762,13 @@
                     this.stashes.push({ id: Date.now(), name, songs });
                     this.saveToStorage();
                     
-                    App.ui.toggleModal('stash-builder-modal');
+                    history.back(); // Closes modal
                     App.ui.toast("Saved to Local Stash");
                 },
                 viewStash(index) {
                     const st = this.stashes[index];
                     document.getElementById('library-detail-title').innerText = st.name;
-                    App.ui.navigateLibrary('detail');
+                    App.ui.pushView('library-detail');
                     
                     const actionContainer = document.getElementById('library-detail-actions');
                     actionContainer.innerHTML = `<button onclick="App.stash.deleteStash(${index})" style="color:var(--danger); font-size:13px; font-weight:700; background:rgba(255,59,48,0.1); padding:10px 18px; border-radius:24px;"><i class="ph ph-trash size-18" style="margin-right:4px;"></i> DELETE STASH</button>`;
@@ -788,7 +778,7 @@
                 deleteStash(index) {
                     this.stashes.splice(index, 1);
                     this.saveToStorage();
-                    history.back(); // Use hardware routing to go back safely
+                    history.back(); // Popping library-detail
                     App.ui.toast("Stash Purged");
                 }
             },
@@ -884,10 +874,7 @@
                     this.renderStagingArea();
                 },
 
-                removeStage(i) {
-                    App.stagedFiles.splice(i, 1);
-                    this.renderStagingArea();
-                },
+                removeStage(i) { App.stagedFiles.splice(i, 1); this.renderStagingArea(); },
 
                 renderStagingArea() {
                     const btn = document.getElementById('upload-submit-btn');
@@ -954,7 +941,7 @@
 
                     App.ui.toast(`Stored ${successCount}/${App.stagedFiles.length} tracks`);
                     setTimeout(() => {
-                        App.ui.toggleModal('upload-modal');
+                        history.back(); // close upload modal
                         App.stagedFiles = [];
                         this.renderStagingArea();
                         this.loadLibrary();
@@ -973,7 +960,7 @@
                     const confirm = await App.ui.confirm("Destroy Playlist", "Delete this playlist forever?");
                     if(!confirm) return;
                     await miyuDB.from('playlists').delete().eq('id', id);
-                    history.back(); // Safely go back using history API
+                    history.back(); // go back cleanly
                     App.ui.toast("Playlist destroyed");
                     this.loadLibrary();
                 },
@@ -1000,14 +987,14 @@
                         await miyuDB.from('playlist_songs').insert(inserts);
                     }
 
-                    App.ui.toggleModal('create-pl-modal');
+                    history.back(); // close modal
                     App.ui.toast("Collection Forged");
                     document.getElementById('pl-name').value = ''; document.getElementById('pl-desc').value = '';
                     cbs.forEach(c => c.checked = false);
                     this.loadLibrary();
                 },
 
-                /* --- NEW FULL-SCREEN FILE MANAGER BUILDER --- */
+                /* --- FULL-SCREEN FILE MANAGER BUILDER --- */
                 openBuilder(plId, plName, songsData) {
                     const pl = App.state.playlists.find(p => p.id === plId);
                     if(!pl) return;
@@ -1086,17 +1073,38 @@
                     }
                 },
 
-                async builderAddSongPrompt() {
-                    const available = App.state.songs.map(s => ({id: s.id, title: s.title}));
-                    // Fast abstraction for picking tracks. In future versions a full modal selector is ideal.
-                    if(available.length > 0) {
-                        const node = this.fmGetCurrentNode();
-                        node.items.push({ type: 'song', id: available[0].id });
-                        this.fmRender();
-                        App.ui.toast("Added latest library track to current folder.");
-                    } else {
-                        App.ui.toast("Your library is empty.");
-                    }
+                builderAddSongPrompt() {
+                    if(!App.state.songs || App.state.songs.length === 0) return App.ui.toast("Your library is empty.");
+                    
+                    const listHtml = App.state.songs.map(s => `
+                        <label class="custom-cb-wrapper" style="background:var(--surface); border:1px solid var(--border);">
+                            <input type="checkbox" value="${s.id}" class="custom-cb fm-song-add-cb"> 
+                            <div class="flex items-center gap-3">
+                                <div class="song-avatar" style="width:36px; height:36px;"><i class="ph ph-music-notes"></i></div>
+                                <span style="font-size: 14px; font-weight: 600;">${s.title}</span>
+                            </div>
+                        </label>
+                    `).join('');
+                    
+                    document.getElementById('fm-track-picker-list').innerHTML = listHtml;
+                    App.ui.toggleModal('fm-track-picker-modal');
+                },
+
+                builderConfirmAddSongs() {
+                    const cbs = document.querySelectorAll('.fm-song-add-cb:checked');
+                    if(cbs.length === 0) return App.ui.toast("No tracks selected");
+                    
+                    const node = this.fmGetCurrentNode();
+                    let count = 0;
+                    cbs.forEach(cb => {
+                        node.items.push({ type: 'song', id: cb.value });
+                        count++;
+                        cb.checked = false;
+                    });
+                    
+                    this.fmRender();
+                    history.back(); // Closes the track picker modal safely
+                    App.ui.toast(`Injected ${count} tracks`);
                 },
 
                 fmRender() {
@@ -1162,7 +1170,7 @@
                     const plIndex = App.state.playlists.findIndex(p => p.id === this.builderState.plId);
                     if (plIndex > -1) App.state.playlists[plIndex].description = payload;
 
-                    App.ui.toggleModal('edit-structure-modal');
+                    history.back(); // close modal natively
                     App.ui.toast("Architecture Saved");
                     
                     this.viewPlaylist(this.builderState.plId, pl.name);
@@ -1172,7 +1180,7 @@
                     document.getElementById('library-detail-title').innerText = plName;
                     const container = document.getElementById('pl-view-songs');
                     container.innerHTML = App.ui.getSkeletonHTML();
-                    App.ui.navigateLibrary('detail');
+                    App.ui.pushView('library-detail');
 
                     const { data: joins } = await miyuDB.from('playlist_songs').select('song_id').eq('playlist_id', plId);
                     const sIds = joins ? joins.map(j => j.song_id) : [];
@@ -1272,7 +1280,7 @@
                     document.getElementById('explore-profile-title').innerText = `${u.handle}'s Collections`;
                     const container = document.getElementById('explore-playlists-list');
                     container.innerHTML = `<div style="grid-column: 1 / -1">${App.ui.getSkeletonHTML(1)}</div>`;
-                    App.ui.navigateExplore('profile'); // Pushes history state
+                    App.ui.pushView('explore-profile'); 
 
                     const { data: playlists } = await miyuDB.from('playlists').select('*').eq('user_id', u.id);
                     
@@ -1300,7 +1308,7 @@
                     document.getElementById('explore-pl-title').innerText = plName;
                     const container = document.getElementById('explore-pl-songs');
                     container.innerHTML = App.ui.getSkeletonHTML();
-                    App.ui.navigateExplore('playlist'); // Pushes history state
+                    App.ui.pushView('explore-playlist'); 
 
                     const { data: pl } = await miyuDB.from('playlists').select('*').eq('id', plId).single();
                     const { data: joins } = await miyuDB.from('playlist_songs').select('song_id').eq('playlist_id', plId);
@@ -1369,33 +1377,36 @@
                 }
             },
 
+            /* CONSTELLATION SYNC UPDATE */
             sync: {
                 room: null, isHost: false, isRemoteAction: false, lastSeekBroadcast: 0, peers: [], myName: '',
                 
-                toggleMenu() { 
-                    document.getElementById('sync-init-view').classList.remove('hidden');
-                    document.getElementById('sync-active-view').classList.add('hidden');
-                    App.ui.toggleModal('sync-modal'); 
-                },
-                
                 async hostSession() {
-                    const name = document.getElementById('sync-alias').value.trim() || 'Host';
+                    const name = document.getElementById('sync-alias').value.trim();
+                    if(!name) return App.ui.toast("Name Required for Constellation");
+                    
                     this.myName = name;
                     const code = Math.floor(10000 + Math.random() * 90000).toString();
                     this.isHost = true;
+                    this.peers = []; // Reset
                     this.joinRoom(code, name);
                     
-                    this.setupRadarUI(code, "Hosting Session (Share code)");
+                    this.setupRadarUI(code, "Hosting Frequency (Share Code)");
                 },
 
                 async joinPrompt() {
-                    const name = document.getElementById('sync-alias').value.trim() || 'Guest';
+                    const name = document.getElementById('sync-alias').value.trim();
+                    if(!name) return App.ui.toast("Name Required for Constellation");
+
                     this.myName = name;
-                    const code = await App.ui.prompt("Join Room", "Enter 5-digit Host Code");
+                    const code = await App.ui.prompt("Join Frequency", "Enter 5-digit Host Code");
                     if(code && code.length === 5) {
                         this.isHost = false;
+                        this.peers = []; // Reset
                         this.joinRoom(code, name);
-                        this.setupRadarUI(code, "Connected as Guest");
+                        this.setupRadarUI(code, "Connected to Constellation");
+                    } else {
+                        App.ui.toast("Invalid Code");
                     }
                 },
 
@@ -1408,23 +1419,30 @@
                 },
 
                 renderRadar() {
-                    const container = document.getElementById('radar-dots');
+                    const container = document.getElementById('c-nodes');
+                    const svg = document.getElementById('c-lines-svg');
                     container.innerHTML = '';
+                    let linesHtml = '';
                     
-                    const w = 200, h = 200;
+                    const hubX = 150; // container is 300px wide approximately, center is 150
+                    const hubY = 130; // height 260, center is 130
+
                     this.peers.forEach((peer, i) => {
+                        // Distribute evenly around the circle
                         const angle = (i / Math.max(1, this.peers.length)) * Math.PI * 2;
-                        const dist = 50 + Math.random() * 30; // Random distance on radar ring
-                        const x = (w/2) + dist * Math.cos(angle);
-                        const y = (h/2) + dist * Math.sin(angle);
+                        const dist = 70 + Math.random() * 20; // Radius
+                        const x = hubX + dist * Math.cos(angle);
+                        const y = hubY + dist * Math.sin(angle);
                         
                         container.innerHTML += `
-                            <div class="radar-dot" style="left: ${x}px; top: ${y}px;">
+                            <div class="c-node" style="left: ${x}px; top: ${y}px;">
                                 <div class="dot"></div>
                                 <div class="name">${peer.name}</div>
                             </div>
                         `;
+                        linesHtml += `<line class="c-line" x1="50%" y1="50%" x2="${(x/300)*100}%" y2="${(y/260)*100}%" />`;
                     });
+                    svg.innerHTML = linesHtml;
                 },
 
                 joinRoom(code, name) {
@@ -1437,11 +1455,21 @@
                     this.room.on('broadcast', { event: 'playback' }, ({ payload }) => {
                         if(payload.action === 'end_session') { this.leave(true); return; }
                         
-                        if(payload.action === 'ping') {
+                        // Handshake and Network sync
+                        if(payload.action === 'join') {
                             if(this.isHost && !this.peers.find(p => p.name === payload.name)) {
                                 this.peers.push({name: payload.name});
                                 this.renderRadar();
-                                App.ui.toast(`${payload.name} joined the frequency`);
+                                this.room.send({ type: 'broadcast', event: 'playback', payload: { action: 'sync_network', peers: this.peers }});
+                                App.ui.toast(`${payload.name} connected`);
+                            }
+                            return;
+                        }
+
+                        if(payload.action === 'sync_network') {
+                            if(!this.isHost) {
+                                this.peers = payload.peers;
+                                this.renderRadar();
                             }
                             return;
                         }
@@ -1463,10 +1491,11 @@
                             App.audio.playQueue(payload.queue, payload.index, true);
                         }
                         setTimeout(() => this.isRemoteAction = false, 200);
+
                     }).subscribe((status) => {
                         if(status === 'SUBSCRIBED') { 
-                            App.ui.toast("Sync Uplink Established");
-                            if(!this.isHost) this.room.send({ type: 'broadcast', event: 'playback', payload: { action: 'ping', name: this.myName }});
+                            App.ui.toast("Constellation Link Established");
+                            if(!this.isHost) this.room.send({ type: 'broadcast', event: 'playback', payload: { action: 'join', name: this.myName }});
                         }
                     });
                 },
@@ -1493,9 +1522,12 @@
                     
                     if(kicked) {
                         App.audioElement.pause();
-                        App.ui.toast("Host has ended the session.");
-                        App.ui.toggleModal('sync-modal'); 
-                    } else { App.ui.toast("Sync Link Severed"); }
+                        App.ui.toast("Host ended the frequency.");
+                        history.back(); // close modal natively
+                    } else { 
+                        App.ui.toast("Disconnected");
+                        history.back(); // close modal natively
+                    }
                 }
             },
 
@@ -1632,23 +1664,84 @@
                 }
             },
 
+            /* COMPLETELY RE-ENGINEERED ROUTING */
             ui: {
-                /* Hardware back button safe routing wrappers */
-                navigateExplore(view, skipHistory = false) {
-                    if(!skipHistory) history.pushState({ scope: 'explore', view }, '');
+                activeModals: [],
+                
+                pushView(viewId) {
+                    history.pushState({ view: viewId }, '');
+                    this.renderView(viewId);
+                },
+                
+                handlePopState(e) {
+                    // 1. Prioritize Modal Closing
+                    const activeModals = Array.from(document.querySelectorAll('.modal.active'));
+                    if(activeModals.length > 0) {
+                        const topModal = activeModals[activeModals.length - 1];
+                        topModal.classList.remove('active');
+                        // Push current view back so URL doesn't get messed up if they hit back again
+                        history.pushState({ view: this.getCurrentVisibleView() }, '');
+                        return;
+                    }
+
+                    // 2. Prioritize File Manager Depth Navigation
+                    if(document.getElementById('edit-structure-modal').classList.contains('active') && App.library.builderState && App.library.builderState.currentPath.length > 0) {
+                        App.library.fmNavigateTo(App.library.builderState.currentPath.length - 1);
+                        history.pushState({ view: this.getCurrentVisibleView() }, '');
+                        return;
+                    }
+
+                    // 3. Normal View Navigation
+                    if(e.state && e.state.view) { this.renderView(e.state.view); } 
+                    else { this.renderView('explore-home'); }
+                },
+
+                getCurrentVisibleView() {
+                    const views = ['explore-home', 'explore-user-profile', 'explore-playlist-detail', 'library-home', 'library-detail'];
+                    for(let v of views) {
+                        if(!document.getElementById(v).classList.contains('hidden')) return v;
+                    }
+                    return 'explore-home';
+                },
+
+                renderView(viewId) {
+                    // Hide all primary views
                     document.getElementById('explore-home').classList.add('hidden');
                     document.getElementById('explore-user-profile').classList.add('hidden');
                     document.getElementById('explore-playlist-detail').classList.add('hidden');
-                    if (view === 'home') document.getElementById('explore-home').classList.remove('hidden');
-                    if (view === 'profile') document.getElementById('explore-user-profile').classList.remove('hidden');
-                    if (view === 'playlist') document.getElementById('explore-playlist-detail').classList.remove('hidden');
-                },
-                navigateLibrary(view, skipHistory = false) {
-                    if(!skipHistory) history.pushState({ scope: 'library', view }, '');
                     document.getElementById('library-home').classList.add('hidden');
                     document.getElementById('library-detail').classList.add('hidden');
-                    if (view === 'home') document.getElementById('library-home').classList.remove('hidden');
-                    if (view === 'detail') document.getElementById('library-detail').classList.remove('hidden');
+                    
+                    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+
+                    if(viewId.startsWith('explore')) {
+                        document.getElementById('tab-people').classList.remove('hidden');
+                        document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+                        document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+                    } else {
+                        document.getElementById('tab-library').classList.remove('hidden');
+                        document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+                        document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+                    }
+                    
+                    document.getElementById(viewId).classList.remove('hidden');
+                },
+
+                switchTab(tab) {
+                    if(tab === 'people') this.pushView('explore-home');
+                    else this.pushView('library-home');
+                },
+                
+                toggleModal(id) { 
+                    const el = document.getElementById(id);
+                    const isOpening = !el.classList.contains('active');
+                    if(isOpening) {
+                        el.classList.add('active');
+                        history.pushState({ modal: id, view: this.getCurrentVisibleView() }, '');
+                    } else {
+                        // If toggling off manually, trigger back safely to consume the state
+                        history.back(); 
+                    }
                 },
 
                 toggleFolder(btn) {
@@ -1691,7 +1784,7 @@
                     if(sc) { sc.style.opacity = '0.3'; sc.style.pointerEvents = 'none'; }
                     document.getElementById('storage-guest-overlay').classList.remove('hidden');
                     
-                    document.getElementById('auth-status-row').innerHTML = `<button type="button" class="btn-primary" onclick="App.ui.toggleModal('settings-modal'); App.ui.toggleModal('login-modal');">Authenticate to Unlock</button>`;
+                    document.getElementById('auth-status-row').innerHTML = `<button type="button" class="btn-primary" onclick="App.ui.toggleModal('login-modal');">Authenticate to Unlock</button>`;
                 },
                 setupUserMode() {
                     document.getElementById('upload-btn-header').classList.remove('hidden');
@@ -1704,13 +1797,6 @@
                     
                     document.getElementById('auth-status-row').innerHTML = `<button type="button" class="btn-primary" style="background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger);" onclick="App.auth.logout()">Terminate Session (@${App.state.userHandle})</button>`;
                 },
-                switchTab(tab) {
-                    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                    document.getElementById(`tab-${tab}`).classList.remove('hidden');
-                    event.currentTarget.classList.add('active');
-                },
-                toggleModal(id) { document.getElementById(id).classList.toggle('active'); },
                 
                 setPlayerMode(mode) {
                     const p = document.getElementById('player-container');
