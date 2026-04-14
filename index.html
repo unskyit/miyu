@@ -1244,12 +1244,33 @@
                     const currentDesc = parsed.isStruct ? parsed.data.desc : parsed.text;
                     
                     const payload = `__MIYU_STRUCT__${JSON.stringify({ desc: currentDesc, items: this.builderState.items })}`;
+                    
+                    // 1. Save the visual folder structure
                     await miyuDB.from('playlists').update({ description: payload }).eq('id', this.builderState.plId);
                     
+                    // 2. Extract every single song hidden inside the folders
+                    const extractSongIds = (items) => {
+                        let ids = [];
+                        items.forEach(item => {
+                            if (item.type === 'song') ids.push(item.id);
+                            else if (item.type === 'folder') ids = ids.concat(extractSongIds(item.items));
+                        });
+                        return [...new Set(ids)]; // Ensure no duplicates
+                    };
+                    const allSongIds = extractSongIds(this.builderState.items);
+
+                    // 3. Sync the Database relation table so the audio files actually load!
+                    await miyuDB.from('playlist_songs').delete().eq('playlist_id', this.builderState.plId);
+                    if (allSongIds.length > 0) {
+                        const inserts = allSongIds.map(sid => ({ playlist_id: this.builderState.plId, song_id: sid }));
+                        await miyuDB.from('playlist_songs').insert(inserts);
+                    }
+                    
+                    // 4. Update local memory
                     const plIndex = App.state.playlists.findIndex(p => p.id === this.builderState.plId);
                     if (plIndex > -1) App.state.playlists[plIndex].description = payload;
 
-                    history.back(); // close modal natively
+                    history.back(); // Close modal natively
                     App.ui.toast("Architecture Saved");
                     
                     this.viewPlaylist(this.builderState.plId, pl.name);
