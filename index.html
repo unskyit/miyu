@@ -1628,20 +1628,22 @@
                     const { data } = miyuDB.storage.from('music').getPublicUrl(song.file_path);
                     let url = data.publicUrl;
 
+                    // --- ROBUST MEDIASESSION FIX ---
                     if ('mediaSession' in navigator) {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = 512; canvas.height = 512;
-                        const ctx = canvas.getContext('2d');
-                        ctx.fillStyle = '#111'; ctx.fillRect(0,0,512,512);
-                        const grd = ctx.createLinearGradient(0,0,512,512);
-                        grd.addColorStop(0, '#555'); grd.addColorStop(1, '#000');
-                        ctx.fillStyle = grd; ctx.fillRect(0,0,512,512);
+                        // Android requires an ABSOLUTE URL for artwork, Base64 canvas often fails.
+                        // Using your GitHub logo link as the default album art.
+                        const artworkUrl = 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png';
                         
                         navigator.mediaSession.metadata = new MediaMetadata({ 
-                            title: song.title, artist: 'MYR Space',
-                            artwork: [{ src: canvas.toDataURL(), sizes: '512x512', type: 'image/png' }]
+                            title: song.title, 
+                            artist: 'Miyu Premium',   // Explicitly set Artist
+                            album: 'Your Collection', // Explicitly set Album
+                            artwork: [
+                                { src: artworkUrl, sizes: '512x512', type: 'image/png' }
+                            ]
                         });
                     }
+                    // -------------------------------
 
                     if (App.state.caching && 'caches' in window) {
                         try {
@@ -1677,7 +1679,6 @@
                         App.ui.toast("Tap play to initiate Audio");
                     }
                 },
-
                 togglePlay() {
                     if(!App.audioElement.src) return;
                     if(App.state.isPlaying) App.audioElement.pause();
