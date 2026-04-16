@@ -175,30 +175,17 @@
         .player-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-shrink: 0;}
         .main-controls { display: flex; gap: 12px; align-items: center; }
         
-        .play-btn { position: relative; width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); box-shadow: 0 6px 24px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1;}
-        .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        /* CLEAN PLAY/PAUSE BUTTONS */
+        .play-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); color: var(--accent-invert); box-shadow: 0 8px 24px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s; z-index: 1;}
+        .play-btn:active { transform: scale(0.92); }
         
-        /* 1. The Glass Transformation */
-        .play-btn.is-playing { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 0 20px rgba(255,255,255,0.05); transform: scale(1.05); }
-        .play-btn-mini.is-playing { background: transparent; border: 1px solid var(--border); }
-
-        /* 2. The Siri-style Acoustic Bloom Aura */
-        .play-btn::before, .play-btn::after { content: ''; position: absolute; inset: -20px; border-radius: 50%; z-index: -1; opacity: 0; filter: blur(18px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; }
+        .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); color: var(--accent-invert); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .play-btn-mini:active { transform: scale(0.92); }
         
-        /* Cool Cyans/Blues Layer */
-        .play-btn::before { background: radial-gradient(circle at 30% 30%, rgba(10, 132, 255, 0.9), transparent 60%), radial-gradient(circle at 70% 70%, rgba(94, 92, 230, 0.9), transparent 60%); animation: siriSpin 6s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; }
-        
-        /* Warm Pinks/Purples Layer */
-        .play-btn::after { background: radial-gradient(circle at 70% 30%, rgba(255, 55, 95, 0.7), transparent 60%), radial-gradient(circle at 30% 70%, rgba(191, 90, 242, 0.7), transparent 60%); animation: siriSpin 8s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate-reverse; }
-        
-        /* Trigger the Bloom when playing */
-        .play-btn.is-playing::before, .play-btn.is-playing::after { opacity: 1; }
-
-        @keyframes siriSpin { 0% { transform: rotate(0deg) scale(0.9); } 100% { transform: rotate(180deg) scale(1.15); } }
-
-        /* MORPHING PLAY/PAUSE SVG & COLORS */
-        .morph-icon { width: 28px; height: 28px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; z-index: 2; }
-        .play-btn-mini .morph-icon { width: 20px; height: 20px; }
+        /* Icon Toggling System */
+        .play-icon, .pause-icon { display: none; }
+        .is-paused .play-icon { display: block; }
+        .is-playing .pause-icon { display: block; }
         
         .play-btn.is-paused .morph-icon, .play-btn-mini.is-paused .morph-icon { fill: var(--accent-invert); }
         .play-btn.is-playing .morph-icon, .play-btn-mini.is-playing .morph-icon { fill: #ffffff; }
@@ -367,7 +354,8 @@
                 </div>
                 <div class="flex gap-2 items-center">
                     <button type="button" class="play-btn-mini btn-morph is-paused" onclick="event.stopPropagation(); App.audio.togglePlay();">
-                        <svg class="morph-icon" viewBox="0 0 32 32"><path/></svg>
+                        <i class="ph ph-play-fill size-20 play-icon" style="margin-left: 2px;"></i>
+                        <i class="ph ph-pause-fill size-20 pause-icon"></i>
                     </button>
                 </div>
             </div>
@@ -408,7 +396,8 @@
                     <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back-fill size-28"></i></button>
                     <button type="button" onclick="App.audio.seekBy(-App.settings.seekStep)"><i class="ph ph-rewind size-24" style="color:var(--text-muted);"></i></button>
                     <button type="button" class="play-btn btn-morph is-paused" onclick="App.audio.togglePlay()">
-                        <svg class="morph-icon" viewBox="0 0 32 32"><path/></svg>
+                        <i class="ph ph-play-fill size-32 play-icon" style="margin-left: 4px;"></i>
+                        <i class="ph ph-pause-fill size-32 pause-icon"></i>
                     </button>
                     <button type="button" onclick="App.audio.seekBy(App.settings.seekStep)"><i class="ph ph-fast-forward size-24" style="color:var(--text-muted);"></i></button>
                     <button type="button" onclick="App.audio.next()"><i class="ph ph-skip-forward-fill size-28"></i></button>
