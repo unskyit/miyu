@@ -135,13 +135,6 @@
         .fm-action-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
         .fm-action-btn i { font-size: 24px; color: var(--text-main); margin-bottom: 2px;}
 
-        /* Nested Folder UI in Explore View */
-        .folder-collapsed .folder-content { display: none !important; }
-        .folder-toggle { cursor: pointer; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; transition: 0.2s; background: rgba(255,255,255,0.05); }
-        .folder-toggle:hover { background: rgba(255,255,255,0.15); }
-        .folder-toggle i { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-        .folder-collapsed .folder-toggle i { transform: rotate(-90deg); }
-
         .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; margin-right: 16px; flex-shrink: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
         .song-avatar { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-muted); }
         
@@ -182,24 +175,14 @@
         .player-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-shrink: 0;}
         .main-controls { display: flex; gap: 12px; align-items: center; }
         
-        /* --- CLEAN PREMIUM PLAY/PAUSE BUTTONS --- */
-        .play-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); color: var(--accent-invert); box-shadow: 0 8px 24px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease; z-index: 1;}
-        .play-btn:hover { transform: scale(1.05); box-shadow: 0 12px 28px rgba(0,0,0,0.3); }
-        .play-btn:active { transform: scale(0.95); box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.1s ease; }
+        .play-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); box-shadow: 0 6px 24px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;}
+        .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         
-        .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); color: var(--accent-invert); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease; }
-        .play-btn-mini:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
-        .play-btn-mini:active { transform: scale(0.92); transition: transform 0.1s ease; }
-        
-        /* Icon Toggling System with Smooth Fade-Scale */
-        .play-icon, .pause-icon { display: none; }
-        .is-paused .play-icon { display: block; animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .is-playing .pause-icon { display: block; animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.5); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+        /* MORPHING PLAY/PAUSE SVG */
+        .morph-icon { width: 28px; height: 28px; fill: var(--accent-invert); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .play-btn-mini .morph-icon { width: 20px; height: 20px; }
+        .is-playing .morph-icon { d: path('M 6 6 L 10 6 L 10 26 L 6 26 Z M 22 6 L 26 6 L 26 26 L 22 26 Z'); } /* Pause Bars */
+        .is-paused .morph-icon { d: path('M 8 5 L 28 16 L 28 16 L 8 27 Z M 8 5 L 28 16 L 28 16 L 8 27 Z'); } /* Play Triangle */
 
         .progress-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 11px; color: var(--text-main); font-variant-numeric: tabular-nums; font-weight: 600; flex-shrink: 0;}
         .progress-container { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; cursor: pointer; position: relative; overflow: hidden; }
@@ -363,8 +346,7 @@
                 </div>
                 <div class="flex gap-2 items-center">
                     <button type="button" class="play-btn-mini btn-morph is-paused" onclick="event.stopPropagation(); App.audio.togglePlay();">
-                        <i class="ph ph-play-fill play-icon" style="font-size: 20px; margin-left: 2px;"></i>
-                        <i class="ph ph-pause-fill pause-icon" style="font-size: 20px;"></i>
+                        <svg class="morph-icon" viewBox="0 0 32 32"><path/></svg>
                     </button>
                 </div>
             </div>
@@ -405,8 +387,7 @@
                     <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back-fill size-28"></i></button>
                     <button type="button" onclick="App.audio.seekBy(-App.settings.seekStep)"><i class="ph ph-rewind size-24" style="color:var(--text-muted);"></i></button>
                     <button type="button" class="play-btn btn-morph is-paused" onclick="App.audio.togglePlay()">
-                        <i class="ph ph-play-fill play-icon" style="font-size: 32px; margin-left: 4px;"></i>
-                        <i class="ph ph-pause-fill pause-icon" style="font-size: 32px;"></i>
+                        <svg class="morph-icon" viewBox="0 0 32 32"><path/></svg>
                     </button>
                     <button type="button" onclick="App.audio.seekBy(App.settings.seekStep)"><i class="ph ph-fast-forward size-24" style="color:var(--text-muted);"></i></button>
                     <button type="button" onclick="App.audio.next()"><i class="ph ph-skip-forward-fill size-28"></i></button>
@@ -635,21 +616,6 @@
                     if(this.visualizer.audioCtx && this.visualizer.audioCtx.state === 'suspended') this.visualizer.audioCtx.resume();
                 }, { once: true });
 
-                // --- NEW BACKGROUND BATTERY SAVER FIX ---
-                document.addEventListener("visibilitychange", () => {
-                    if (document.hidden) {
-                        // Pause the heavy visualizer loop to prevent OS from killing the app
-                        App.state.isAppVisible = false;
-                    } else {
-                        App.state.isAppVisible = true;
-                        // Wake up audio context if Android put it to sleep
-                        if(App.state.isPlaying && App.visualizer.audioCtx && App.visualizer.audioCtx.state === 'suspended') {
-                            App.visualizer.audioCtx.resume();
-                        }
-                    }
-                });
-                // ----------------------------------------
-
                 this.checkSession();
                 this.explore.loadUsers().finally(() => {
                     setTimeout(() => {
@@ -658,6 +624,7 @@
                     }, 1800); 
                 });
             },
+
             setupHotkeys() {
                 document.addEventListener('keydown', (e) => {
                     if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -669,22 +636,17 @@
 
             setupAudioBindings() {
                 const aud = this.audioElement;
-                aud.preload = "auto"; 
-
                 aud.addEventListener('timeupdate', () => this.ui.updateProgress());
                 aud.addEventListener('ended', () => this.audio.handleEnd());
 
                 aud.addEventListener('waiting', () => { document.getElementById('player-artist').innerText = "Buffering stream..."; });
                 aud.addEventListener('playing', () => { document.getElementById('player-artist').innerText = "Streaming HQ"; });
-                
-                // FIX: Stop aggressively auto-playing on error to prevent OS notification glitching
                 aud.addEventListener('error', (e) => {
-                    console.warn("Stream interrupted by OS.");
-                    App.state.isPlaying = false;
-                    document.querySelectorAll('.btn-morph').forEach(btn => btn.classList.replace('is-playing', 'is-paused'));
-                    App.ui.toast("Stream paused by system. Tap play to resume.");
+                    console.error("Audio Error:", e);
+                    App.ui.toast("Stream interrupted. Recovering...");
+                    setTimeout(() => { if(App.state.isPlaying) aud.play(); }, 1500);
                 });
-
+                
                 aud.addEventListener('play', () => { 
                     this.state.isPlaying = true; 
                     document.querySelectorAll('.btn-morph').forEach(btn => btn.classList.replace('is-paused', 'is-playing'));
@@ -703,11 +665,7 @@
                 });
 
                 if ('mediaSession' in navigator) {
-                    navigator.mediaSession.setActionHandler('play', () => {
-                        // If the stream dropped, force a reload before playing
-                        if (aud.error) aud.load();
-                        this.audio.togglePlay();
-                    });
+                    navigator.mediaSession.setActionHandler('play', () => this.audio.togglePlay());
                     navigator.mediaSession.setActionHandler('pause', () => this.audio.togglePlay());
                     navigator.mediaSession.setActionHandler('previoustrack', () => this.audio.prev());
                     navigator.mediaSession.setActionHandler('nexttrack', () => this.audio.next());
@@ -715,6 +673,7 @@
                     navigator.mediaSession.setActionHandler('seekforward', () => this.audio.seekBy(this.settings.seekStep));
                 }
             },
+
             async checkSession() {
                 try {
                     const { data: { session }, error } = await miyuDB.auth.getSession();
@@ -1628,22 +1587,20 @@
                     const { data } = miyuDB.storage.from('music').getPublicUrl(song.file_path);
                     let url = data.publicUrl;
 
-                    // --- ROBUST MEDIASESSION FIX ---
                     if ('mediaSession' in navigator) {
-                        // Android requires an ABSOLUTE URL for artwork, Base64 canvas often fails.
-                        // Using your GitHub logo link as the default album art.
-                        const artworkUrl = 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png';
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 512; canvas.height = 512;
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#111'; ctx.fillRect(0,0,512,512);
+                        const grd = ctx.createLinearGradient(0,0,512,512);
+                        grd.addColorStop(0, '#555'); grd.addColorStop(1, '#000');
+                        ctx.fillStyle = grd; ctx.fillRect(0,0,512,512);
                         
                         navigator.mediaSession.metadata = new MediaMetadata({ 
-                            title: song.title, 
-                            artist: 'Miyu Premium',   // Explicitly set Artist
-                            album: 'Your Collection', // Explicitly set Album
-                            artwork: [
-                                { src: artworkUrl, sizes: '512x512', type: 'image/png' }
-                            ]
+                            title: song.title, artist: 'MYR Space',
+                            artwork: [{ src: canvas.toDataURL(), sizes: '512x512', type: 'image/png' }]
                         });
                     }
-                    // -------------------------------
 
                     if (App.state.caching && 'caches' in window) {
                         try {
@@ -1679,6 +1636,7 @@
                         App.ui.toast("Tap play to initiate Audio");
                     }
                 },
+
                 togglePlay() {
                     if(!App.audioElement.src) return;
                     if(App.state.isPlaying) App.audioElement.pause();
@@ -2069,18 +2027,12 @@
                     this.canvas.height = this.canvas.parentElement.clientHeight;
                 },
                 draw() {
-                    // --- NEW FIX: Stop drawing if visualizer is disabled OR app is hidden ---
-                    if (!App.state.visEnabled || App.state.isAppVisible === false) { 
-                        requestAnimationFrame(() => this.draw()); 
-                        return; 
-                    }
+                    if (!App.state.visEnabled) { requestAnimationFrame(() => this.draw()); return; }
 
                     this.time += 1;
                     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                     
                     let intensity = 0;
-                    
-                    // ... [Leave the rest of the draw() code completely untouched below here] ...
                     if (this.analyser && App.state.isPlaying) {
                         this.analyser.getByteFrequencyData(this.dataArray);
                         let sum = 0;
