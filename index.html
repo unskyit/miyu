@@ -616,6 +616,21 @@
                     if(this.visualizer.audioCtx && this.visualizer.audioCtx.state === 'suspended') this.visualizer.audioCtx.resume();
                 }, { once: true });
 
+                // --- NEW BACKGROUND BATTERY SAVER FIX ---
+                document.addEventListener("visibilitychange", () => {
+                    if (document.hidden) {
+                        // Pause the heavy visualizer loop to prevent OS from killing the app
+                        App.state.isAppVisible = false;
+                    } else {
+                        App.state.isAppVisible = true;
+                        // Wake up audio context if Android put it to sleep
+                        if(App.state.isPlaying && App.visualizer.audioCtx && App.visualizer.audioCtx.state === 'suspended') {
+                            App.visualizer.audioCtx.resume();
+                        }
+                    }
+                });
+                // ----------------------------------------
+
                 this.checkSession();
                 this.explore.loadUsers().finally(() => {
                     setTimeout(() => {
@@ -624,7 +639,6 @@
                     }, 1800); 
                 });
             },
-
             setupHotkeys() {
                 document.addEventListener('keydown', (e) => {
                     if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -636,15 +650,47 @@
 
             setupAudioBindings() {
                 const aud = this.audioElement;
+                aud.preload = "auto"; // Force browser to buffer as much as possible upfront
+
                 aud.addEventListener('timeupdate', () => this.ui.updateProgress());
                 aud.addEventListener('ended', () => this.audio.handleEnd());
 
+                // Handle standard buffering
                 aud.addEventListener('waiting', () => { document.getElementById('player-artist').innerText = "Buffering stream..."; });
                 aud.addEventListener('playing', () => { document.getElementById('player-artist').innerText = "Streaming HQ"; });
+                
+                // THE ROBUST RECOVERY ENGINE
                 aud.addEventListener('error', (e) => {
-                    console.error("Audio Error:", e);
-                    App.ui.toast("Stream interrupted. Recovering...");
-                    setTimeout(() => { if(App.state.isPlaying) aud.play(); }, 1500);
+                    console.warn("Audio Error/Drop detected. Initiating recovery sequence...");
+                    App.ui.toast("Network drop. Recovering stream...");
+                    
+                    if (App.state.isPlaying && App.state.currentSongId) {
+                        const savedTime = aud.currentTime; // Save exact drop-off point
+                        
+                        // Force the audio element to dump its broken buffer and reconnect
+                        aud.load(); 
+                        
+                        // Wait for metadata to load, jump to saved time, and try to play
+                        aud.onloadedmetadata = () => {
+                            aud.currentTime = savedTime;
+                            aud.play().catch(err => {
+                                console.error("Autoplay blocked background recovery:", err);
+                                App.state.isPlaying = false;
+                                document.querySelectorAll('.btn-morph').forEach(btn => btn.classList.replace('is-playing', 'is-paused'));
+                                App.ui.toast("OS paused playback. Tap play to resume.");
+                            });
+                            aud.onloadedmetadata = null; // clean up listener
+                        };
+                    }
+                });
+
+                // Handle OS forcing the stream to stall (Network sleeping)
+                aud.addEventListener('stalled', () => {
+                    if (App.state.isPlaying) {
+                        console.warn("Stream stalled by OS. Forcing buffer wake-up...");
+                        aud.load(); 
+                        aud.play().catch(()=>{});
+                    }
                 });
                 
                 aud.addEventListener('play', () => { 
@@ -673,7 +719,6 @@
                     navigator.mediaSession.setActionHandler('seekforward', () => this.audio.seekBy(this.settings.seekStep));
                 }
             },
-
             async checkSession() {
                 try {
                     const { data: { session }, error } = await miyuDB.auth.getSession();
@@ -2027,12 +2072,18 @@
                     this.canvas.height = this.canvas.parentElement.clientHeight;
                 },
                 draw() {
-                    if (!App.state.visEnabled) { requestAnimationFrame(() => this.draw()); return; }
+                    // --- NEW FIX: Stop drawing if visualizer is disabled OR app is hidden ---
+                    if (!App.state.visEnabled || App.state.isAppVisible === false) { 
+                        requestAnimationFrame(() => this.draw()); 
+                        return; 
+                    }
 
                     this.time += 1;
                     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                     
                     let intensity = 0;
+                    
+                    // ... [Leave the rest of the draw() code completely untouched below here] ...
                     if (this.analyser && App.state.isPlaying) {
                         this.analyser.getByteFrequencyData(this.dataArray);
                         let sum = 0;
