@@ -650,49 +650,22 @@
 
             setupAudioBindings() {
                 const aud = this.audioElement;
-                aud.preload = "auto"; // Force browser to buffer as much as possible upfront
+                aud.preload = "auto"; 
 
                 aud.addEventListener('timeupdate', () => this.ui.updateProgress());
                 aud.addEventListener('ended', () => this.audio.handleEnd());
 
-                // Handle standard buffering
                 aud.addEventListener('waiting', () => { document.getElementById('player-artist').innerText = "Buffering stream..."; });
                 aud.addEventListener('playing', () => { document.getElementById('player-artist').innerText = "Streaming HQ"; });
                 
-                // THE ROBUST RECOVERY ENGINE
+                // FIX: Stop aggressively auto-playing on error to prevent OS notification glitching
                 aud.addEventListener('error', (e) => {
-                    console.warn("Audio Error/Drop detected. Initiating recovery sequence...");
-                    App.ui.toast("Network drop. Recovering stream...");
-                    
-                    if (App.state.isPlaying && App.state.currentSongId) {
-                        const savedTime = aud.currentTime; // Save exact drop-off point
-                        
-                        // Force the audio element to dump its broken buffer and reconnect
-                        aud.load(); 
-                        
-                        // Wait for metadata to load, jump to saved time, and try to play
-                        aud.onloadedmetadata = () => {
-                            aud.currentTime = savedTime;
-                            aud.play().catch(err => {
-                                console.error("Autoplay blocked background recovery:", err);
-                                App.state.isPlaying = false;
-                                document.querySelectorAll('.btn-morph').forEach(btn => btn.classList.replace('is-playing', 'is-paused'));
-                                App.ui.toast("OS paused playback. Tap play to resume.");
-                            });
-                            aud.onloadedmetadata = null; // clean up listener
-                        };
-                    }
+                    console.warn("Stream interrupted by OS.");
+                    App.state.isPlaying = false;
+                    document.querySelectorAll('.btn-morph').forEach(btn => btn.classList.replace('is-playing', 'is-paused'));
+                    App.ui.toast("Stream paused by system. Tap play to resume.");
                 });
 
-                // Handle OS forcing the stream to stall (Network sleeping)
-                aud.addEventListener('stalled', () => {
-                    if (App.state.isPlaying) {
-                        console.warn("Stream stalled by OS. Forcing buffer wake-up...");
-                        aud.load(); 
-                        aud.play().catch(()=>{});
-                    }
-                });
-                
                 aud.addEventListener('play', () => { 
                     this.state.isPlaying = true; 
                     document.querySelectorAll('.btn-morph').forEach(btn => btn.classList.replace('is-paused', 'is-playing'));
@@ -711,7 +684,11 @@
                 });
 
                 if ('mediaSession' in navigator) {
-                    navigator.mediaSession.setActionHandler('play', () => this.audio.togglePlay());
+                    navigator.mediaSession.setActionHandler('play', () => {
+                        // If the stream dropped, force a reload before playing
+                        if (aud.error) aud.load();
+                        this.audio.togglePlay();
+                    });
                     navigator.mediaSession.setActionHandler('pause', () => this.audio.togglePlay());
                     navigator.mediaSession.setActionHandler('previoustrack', () => this.audio.prev());
                     navigator.mediaSession.setActionHandler('nexttrack', () => this.audio.next());
