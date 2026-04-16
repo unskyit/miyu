@@ -175,12 +175,34 @@
         .player-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-shrink: 0;}
         .main-controls { display: flex; gap: 12px; align-items: center; }
         
-        .play-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); box-shadow: 0 6px 24px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;}
-        .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .play-btn { position: relative; width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); box-shadow: 0 6px 24px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1;}
+        .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         
-        /* MORPHING PLAY/PAUSE SVG */
-        .morph-icon { width: 28px; height: 28px; fill: var(--accent-invert); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* 1. The Glass Transformation */
+        .play-btn.is-playing { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 0 20px rgba(255,255,255,0.05); transform: scale(1.05); }
+        .play-btn-mini.is-playing { background: transparent; border: 1px solid var(--border); }
+
+        /* 2. The Siri-style Acoustic Bloom Aura */
+        .play-btn::before, .play-btn::after { content: ''; position: absolute; inset: -20px; border-radius: 50%; z-index: -1; opacity: 0; filter: blur(18px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; }
+        
+        /* Cool Cyans/Blues Layer */
+        .play-btn::before { background: radial-gradient(circle at 30% 30%, rgba(10, 132, 255, 0.9), transparent 60%), radial-gradient(circle at 70% 70%, rgba(94, 92, 230, 0.9), transparent 60%); animation: siriSpin 6s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; }
+        
+        /* Warm Pinks/Purples Layer */
+        .play-btn::after { background: radial-gradient(circle at 70% 30%, rgba(255, 55, 95, 0.7), transparent 60%), radial-gradient(circle at 30% 70%, rgba(191, 90, 242, 0.7), transparent 60%); animation: siriSpin 8s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate-reverse; }
+        
+        /* Trigger the Bloom when playing */
+        .play-btn.is-playing::before, .play-btn.is-playing::after { opacity: 1; }
+
+        @keyframes siriSpin { 0% { transform: rotate(0deg) scale(0.9); } 100% { transform: rotate(180deg) scale(1.15); } }
+
+        /* MORPHING PLAY/PAUSE SVG & COLORS */
+        .morph-icon { width: 28px; height: 28px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; z-index: 2; }
         .play-btn-mini .morph-icon { width: 20px; height: 20px; }
+        
+        .play-btn.is-paused .morph-icon, .play-btn-mini.is-paused .morph-icon { fill: var(--accent-invert); }
+        .play-btn.is-playing .morph-icon, .play-btn-mini.is-playing .morph-icon { fill: #ffffff; }
+
         .is-playing .morph-icon { d: path('M 6 6 L 10 6 L 10 26 L 6 26 Z M 22 6 L 26 6 L 26 26 L 22 26 Z'); } /* Pause Bars */
         .is-paused .morph-icon { d: path('M 8 5 L 28 16 L 28 16 L 8 27 Z M 8 5 L 28 16 L 28 16 L 8 27 Z'); } /* Play Triangle */
 
@@ -207,7 +229,6 @@
         .stage-item { display: flex; flex-direction: column; gap: 8px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; }
         .stage-prog-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
         .stage-prog-fill { height: 100%; background: var(--success); width: 0%; transition: 0.2s; }
-
         /* CONSTELLATION NETWORK UI (Replaces Old Radar) */
         .constellation-container { position: relative; width: 100%; height: 260px; margin: 20px 0; border-radius: 24px; background: rgba(0,0,0,0.3); overflow: hidden; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
         .constellation-hub { position: absolute; width: 24px; height: 24px; background: var(--success); border-radius: 50%; box-shadow: 0 0 20px var(--success); z-index: 5; display: flex; align-items: center; justify-content: center; animation: pulseHub 2s infinite; }
