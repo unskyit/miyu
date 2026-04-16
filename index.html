@@ -135,6 +135,13 @@
         .fm-action-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
         .fm-action-btn i { font-size: 24px; color: var(--text-main); margin-bottom: 2px;}
 
+        /* Nested Folder UI in Explore View */
+        .folder-collapsed .folder-content { display: none !important; }
+        .folder-toggle { cursor: pointer; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; transition: 0.2s; background: rgba(255,255,255,0.05); }
+        .folder-toggle:hover { background: rgba(255,255,255,0.15); }
+        .folder-toggle i { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .folder-collapsed .folder-toggle i { transform: rotate(-90deg); }
+
         .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; margin-right: 16px; flex-shrink: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
         .song-avatar { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-muted); }
         
@@ -175,23 +182,24 @@
         .player-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-shrink: 0;}
         .main-controls { display: flex; gap: 12px; align-items: center; }
         
-        /* CLEAN PLAY/PAUSE BUTTONS */
-        .play-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); color: var(--accent-invert); box-shadow: 0 8px 24px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s; z-index: 1;}
-        .play-btn:active { transform: scale(0.92); }
+        /* --- CLEAN PREMIUM PLAY/PAUSE BUTTONS --- */
+        .play-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--text-main); color: var(--accent-invert); box-shadow: 0 8px 24px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease; z-index: 1;}
+        .play-btn:hover { transform: scale(1.05); box-shadow: 0 12px 28px rgba(0,0,0,0.3); }
+        .play-btn:active { transform: scale(0.95); box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.1s ease; }
         
-        .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); color: var(--accent-invert); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        .play-btn-mini:active { transform: scale(0.92); }
+        .play-btn-mini { width: 44px; height: 44px; border-radius: 50%; background: var(--text-main); color: var(--accent-invert); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease; }
+        .play-btn-mini:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
+        .play-btn-mini:active { transform: scale(0.92); transition: transform 0.1s ease; }
         
-        /* Icon Toggling System */
+        /* Icon Toggling System with Smooth Fade-Scale */
         .play-icon, .pause-icon { display: none; }
-        .is-paused .play-icon { display: block; }
-        .is-playing .pause-icon { display: block; }
+        .is-paused .play-icon { display: block; animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .is-playing .pause-icon { display: block; animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
-        .play-btn.is-paused .morph-icon, .play-btn-mini.is-paused .morph-icon { fill: var(--accent-invert); }
-        .play-btn.is-playing .morph-icon, .play-btn-mini.is-playing .morph-icon { fill: #ffffff; }
-
-        .is-playing .morph-icon { d: path('M 6 6 L 10 6 L 10 26 L 6 26 Z M 22 6 L 26 6 L 26 26 L 22 26 Z'); } /* Pause Bars */
-        .is-paused .morph-icon { d: path('M 8 5 L 28 16 L 28 16 L 8 27 Z M 8 5 L 28 16 L 28 16 L 8 27 Z'); } /* Play Triangle */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
 
         .progress-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 11px; color: var(--text-main); font-variant-numeric: tabular-nums; font-weight: 600; flex-shrink: 0;}
         .progress-container { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; cursor: pointer; position: relative; overflow: hidden; }
@@ -216,6 +224,7 @@
         .stage-item { display: flex; flex-direction: column; gap: 8px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; }
         .stage-prog-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
         .stage-prog-fill { height: 100%; background: var(--success); width: 0%; transition: 0.2s; }
+
         /* CONSTELLATION NETWORK UI (Replaces Old Radar) */
         .constellation-container { position: relative; width: 100%; height: 260px; margin: 20px 0; border-radius: 24px; background: rgba(0,0,0,0.3); overflow: hidden; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
         .constellation-hub { position: absolute; width: 24px; height: 24px; background: var(--success); border-radius: 50%; box-shadow: 0 0 20px var(--success); z-index: 5; display: flex; align-items: center; justify-content: center; animation: pulseHub 2s infinite; }
@@ -353,9 +362,9 @@
                     </div>
                 </div>
                 <div class="flex gap-2 items-center">
-                    <button type="button" class="play-btn-mini btn-morph is-paused" onclick="event.stopPropagation(); App.audio.togglePlay();">
-                        <i class="ph ph-play-fill size-20 play-icon" style="margin-left: 2px;"></i>
-                        <i class="ph ph-pause-fill size-20 pause-icon"></i>
+                    <button type="button" class="play-btn-mini is-paused" onclick="event.stopPropagation(); App.audio.togglePlay();">
+                        <i class="ph ph-play-fill play-icon" style="font-size: 20px; margin-left: 2px;"></i>
+                        <i class="ph ph-pause-fill pause-icon" style="font-size: 20px;"></i>
                     </button>
                 </div>
             </div>
@@ -395,9 +404,9 @@
                 <div class="main-controls">
                     <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back-fill size-28"></i></button>
                     <button type="button" onclick="App.audio.seekBy(-App.settings.seekStep)"><i class="ph ph-rewind size-24" style="color:var(--text-muted);"></i></button>
-                    <button type="button" class="play-btn btn-morph is-paused" onclick="App.audio.togglePlay()">
-                        <i class="ph ph-play-fill size-32 play-icon" style="margin-left: 4px;"></i>
-                        <i class="ph ph-pause-fill size-32 pause-icon"></i>
+                    <button type="button" class="play-btn is-paused" onclick="App.audio.togglePlay()">
+                        <i class="ph ph-play-fill play-icon" style="font-size: 32px; margin-left: 4px;"></i>
+                        <i class="ph ph-pause-fill pause-icon" style="font-size: 32px;"></i>
                     </button>
                     <button type="button" onclick="App.audio.seekBy(App.settings.seekStep)"><i class="ph ph-fast-forward size-24" style="color:var(--text-muted);"></i></button>
                     <button type="button" onclick="App.audio.next()"><i class="ph ph-skip-forward-fill size-28"></i></button>
