@@ -362,7 +362,7 @@
                     </div>
                 </div>
                 <div class="flex gap-2 items-center">
-                    <button type="button" class="play-btn-mini is-paused" onclick="event.stopPropagation(); App.audio.togglePlay();">
+                    <button type="button" class="play-btn-mini btn-morph is-paused" onclick="event.stopPropagation(); App.audio.togglePlay();">
                         <i class="ph ph-play-fill play-icon" style="font-size: 20px; margin-left: 2px;"></i>
                         <i class="ph ph-pause-fill pause-icon" style="font-size: 20px;"></i>
                     </button>
@@ -404,7 +404,7 @@
                 <div class="main-controls">
                     <button type="button" onclick="App.audio.prev()"><i class="ph ph-skip-back-fill size-28"></i></button>
                     <button type="button" onclick="App.audio.seekBy(-App.settings.seekStep)"><i class="ph ph-rewind size-24" style="color:var(--text-muted);"></i></button>
-                    <button type="button" class="play-btn is-paused" onclick="App.audio.togglePlay()">
+                    <button type="button" class="play-btn btn-morph is-paused" onclick="App.audio.togglePlay()">
                         <i class="ph ph-play-fill play-icon" style="font-size: 32px; margin-left: 4px;"></i>
                         <i class="ph ph-pause-fill pause-icon" style="font-size: 32px;"></i>
                     </button>
